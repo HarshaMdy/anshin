@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter create *)",
+      "Bash(mkdir -p lib/core/config lib/core/theme lib/core/constants lib/core/services lib/core/models lib/core/utils lib/core/widgets)",
+      "Bash(mkdir -p lib/features/auth lib/features/sos lib/features/breathing lib/features/grounding lib/features/daily lib/features/journal lib/features/progress lib/features/learn lib/features/ai_companion lib/features/visualize lib/features/sleep lib/features/subscription lib/features/settings)",
+      "Bash(mkdir -p lib/mascot/assets lib/routing)",
+      "Bash(mkdir -p assets/mascot assets/audio assets/fonts)",
+      "Bash(mkdir -p test/unit test/widget)",
+      "Bash(mkdir -p lib/features/__TRACKED_VAR__/data lib/features/__TRACKED_VAR__/domain lib/features/__TRACKED_VAR__/presentation/screens lib/features/__TRACKED_VAR__/presentation/widgets lib/features/__TRACKED_VAR__/presentation/providers)",
+      "Bash(touch lib/features/__TRACKED_VAR__/__TRACKED_VAR__.dart)",
+      "Bash(flutter pub *)",
+      "Bash(flutter analyze *)"
+    ]
+  }
+}
