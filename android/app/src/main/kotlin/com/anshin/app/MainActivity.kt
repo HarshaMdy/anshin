@@ -1,4 +1,4 @@
-package com.anshin.anshin
+package com.anshin.app
 
 import io.flutter.embedding.android.FlutterActivity
 
