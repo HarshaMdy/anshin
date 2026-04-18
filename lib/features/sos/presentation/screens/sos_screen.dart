@@ -1,26 +1,31 @@
 // PRD §3.1 — SOS active screen
 // Override 2: always dark regardless of user theme
 // Box breathing 4-4-4-4 (inhale 4s → hold 4s → exhale 4s → hold 4s = 16s cycle)
-// No audio yet — wired in a later task
+// Task 8: TTS voice cues synced to phase changes + haptic feedback
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/strings_sos.dart';
+import '../../../../core/services/voice_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../routing/app_routes.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 
-class SosScreen extends StatefulWidget {
+class SosScreen extends ConsumerStatefulWidget {
   const SosScreen({super.key});
 
   @override
-  State<SosScreen> createState() => _SosScreenState();
+  ConsumerState<SosScreen> createState() => _SosScreenState();
 }
 
-class _SosScreenState extends State<SosScreen>
+class _SosScreenState extends ConsumerState<SosScreen>
     with SingleTickerProviderStateMixin {
+  // ── Animation constants ────────────────────────────────────────────────────
+
   // Each phase is 4 s; full box cycle = 16 s
   static const Duration _cycleDuration = Duration(seconds: 16);
 
@@ -28,8 +33,24 @@ class _SosScreenState extends State<SosScreen>
   static const double _minR = 85;
   static const double _maxR = 145;
 
+  // ── Phase table ───────────────────────────────────────────────────────────
+
+  static const List<String> _phaseLabels = [
+    StringsSos.phaseInhale,           // 0 – 25 %
+    StringsSos.phaseHoldAfterInhale,  // 25 – 50 %
+    StringsSos.phaseExhale,           // 50 – 75 %
+    StringsSos.phaseHoldAfterExhale,  // 75 – 100 %
+  ];
+
+  // ── State ─────────────────────────────────────────────────────────────────
+
   late final AnimationController _controller;
   late final Animation<double> _radiusAnim;
+
+  // Tracks the last-fired phase index so we fire exactly once per transition
+  int _lastPhaseIndex = -1;
+
+  // ── Lifecycle ─────────────────────────────────────────────────────────────
 
   @override
   void initState() {
@@ -40,45 +61,76 @@ class _SosScreenState extends State<SosScreen>
 
     // TweenSequence: 4 equal weights → each phase occupies 25% of the 16 s cycle
     _radiusAnim = TweenSequence<double>([
-      // Phase 1 — Inhale: circle expands
+      // Phase 0 — Inhale: circle expands
       TweenSequenceItem(
         tween: Tween(begin: _minR, end: _maxR)
             .chain(CurveTween(curve: Curves.easeInOut)),
         weight: 1,
       ),
-      // Phase 2 — Hold (after inhale): circle stays large
-      TweenSequenceItem(
-        tween: ConstantTween(_maxR),
-        weight: 1,
-      ),
-      // Phase 3 — Exhale: circle contracts
+      // Phase 1 — Hold (after inhale): circle stays large
+      TweenSequenceItem(tween: ConstantTween(_maxR), weight: 1),
+      // Phase 2 — Exhale: circle contracts
       TweenSequenceItem(
         tween: Tween(begin: _maxR, end: _minR)
             .chain(CurveTween(curve: Curves.easeInOut)),
         weight: 1,
       ),
-      // Phase 4 — Hold (after exhale): circle stays small
-      TweenSequenceItem(
-        tween: ConstantTween(_minR),
-        weight: 1,
-      ),
+      // Phase 3 — Hold (after exhale): circle stays small
+      TweenSequenceItem(tween: ConstantTween(_minR), weight: 1),
     ]).animate(_controller);
+
+    // Wire phase-change detector on every animation tick
+    _controller.addListener(_onTick);
+
+    // Init TTS; once ready, speak the opening instruction + fire haptic
+    ref.read(voiceServiceProvider).init().then((_) {
+      if (!mounted) return;
+      _onPhaseChange(0); // "Breathe in"
+    });
   }
 
   @override
   void dispose() {
+    _controller.removeListener(_onTick);
     _controller.dispose();
+    // Stop any in-progress speech so audio doesn't leak after screen closes
+    ref.read(voiceServiceProvider).stop();
     super.dispose();
   }
 
-  // Derives current phase label from controller progress — no setState needed
-  String get _phaseLabel {
+  // ── Phase-change detection ────────────────────────────────────────────────
+
+  int _currentPhaseIndex() {
     final v = _controller.value;
-    if (v < 0.25) return StringsSos.phaseInhale;
-    if (v < 0.50) return StringsSos.phaseHoldAfterInhale;
-    if (v < 0.75) return StringsSos.phaseExhale;
-    return StringsSos.phaseHoldAfterExhale;
+    if (v < 0.25) return 0;
+    if (v < 0.50) return 1;
+    if (v < 0.75) return 2;
+    return 3;
   }
+
+  void _onTick() {
+    final idx = _currentPhaseIndex();
+    if (idx == _lastPhaseIndex) return; // same phase — nothing to do
+    _lastPhaseIndex = idx;
+    _onPhaseChange(idx);
+  }
+
+  void _onPhaseChange(int phaseIndex) {
+    final auth = ref.read(authProvider).valueOrNull;
+
+    // Default ON — voice guidance is critical in an SOS moment
+    final voiceCues =
+        auth is AuthAuthenticated ? auth.user.settings.voiceCues : true;
+    final hapticOn =
+        auth is AuthAuthenticated ? auth.user.settings.hapticOn : true;
+
+    if (hapticOn) HapticFeedback.mediumImpact();
+    if (voiceCues) {
+      ref.read(voiceServiceProvider).speak(_phaseLabels[phaseIndex]);
+    }
+  }
+
+  // ── Navigation ────────────────────────────────────────────────────────────
 
   void _close() {
     if (context.canPop()) {
@@ -87,6 +139,13 @@ class _SosScreenState extends State<SosScreen>
       context.go(AppRoutes.home);
     }
   }
+
+  // ── UI helpers ────────────────────────────────────────────────────────────
+
+  /// Current phase label — derived directly from controller progress
+  String get _phaseLabel => _phaseLabels[_currentPhaseIndex()];
+
+  // ── Build ─────────────────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +158,7 @@ class _SosScreenState extends State<SosScreen>
           backgroundColor: AppColors.sosBackground,
           body: Stack(
             children: [
-              // ── Breathing circle + phase instruction ─────────────────────
+              // ── Breathing circle + phase instruction ───────────────────
               Center(
                 child: AnimatedBuilder(
                   animation: _controller,
@@ -111,13 +170,12 @@ class _SosScreenState extends State<SosScreen>
                     return Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // ── Breathing circle ──────────────────────────────
+                        // ── Breathing circle ───────────────────────────
                         Container(
                           width: r * 2,
                           height: r * 2,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            // Fill: warmer when fully expanded
                             color: AppColors.accentCoral
                                 .withValues(alpha: 0.08 + gf * 0.10),
                             border: Border.all(
@@ -126,14 +184,12 @@ class _SosScreenState extends State<SosScreen>
                               width: 1.5,
                             ),
                             boxShadow: [
-                              // Inner glow
                               BoxShadow(
                                 color: AppColors.accentCoral
                                     .withValues(alpha: 0.10 + gf * 0.22),
                                 blurRadius: 24 + gf * 48,
                                 spreadRadius: gf * 14,
                               ),
-                              // Ambient halo — always present, very subtle
                               BoxShadow(
                                 color: AppColors.accentCoral
                                     .withValues(alpha: 0.04 + gf * 0.06),
@@ -145,19 +201,16 @@ class _SosScreenState extends State<SosScreen>
 
                         const SizedBox(height: 52),
 
-                        // ── Phase text — cross-fades on each phase change ──
+                        // ── Phase text — cross-fades on each phase change
                         AnimatedSwitcher(
                           duration: const Duration(milliseconds: 350),
-                          transitionBuilder: (child, anim) => FadeTransition(
-                            opacity: anim,
-                            child: child,
-                          ),
+                          transitionBuilder: (child, anim) =>
+                              FadeTransition(opacity: anim, child: child),
                           child: Text(
                             _phaseLabel,
                             key: ValueKey(_phaseLabel),
-                            style: AppTypography.sosInstruction.copyWith(
-                              color: AppColors.sosTextPrimary,
-                            ),
+                            style: AppTypography.sosInstruction
+                                .copyWith(color: AppColors.sosTextPrimary),
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -167,7 +220,7 @@ class _SosScreenState extends State<SosScreen>
                 ),
               ),
 
-              // ── Close button — tiny X top right ─────────────────────────
+              // ── Close button — tiny X top right ───────────────────────
               SafeArea(
                 child: Align(
                   alignment: Alignment.topRight,
