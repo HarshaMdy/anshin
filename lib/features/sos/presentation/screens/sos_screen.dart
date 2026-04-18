@@ -1,7 +1,8 @@
-// PRD §3.1 — SOS active screen
+// PRD §3.1 + Content Bible §5 — SOS active screen
 // Override 2: always dark regardless of user theme
-// Box breathing 4-4-4-4 (inhale 4s → hold 4s → exhale 4s → hold 4s = 16s cycle)
-// Task 8: TTS voice cues synced to phase changes + haptic feedback
+// Box breathing 4-4-4-4  |  60-sec grounding prompt  |  90-sec feelings check
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,6 +16,17 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../routing/app_routes.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 
+// ── Prompt state machine ──────────────────────────────────────────────────────
+
+enum _SosPhase {
+  breathing,   // default — circle animating, no overlay
+  prompt60s,   // "Want to try a grounding exercise?"
+  prompt90s,   // "How are you feeling?"
+  transition,  // "Let's try something different." (1.5 s before routing)
+}
+
+// ── Screen ────────────────────────────────────────────────────────────────────
+
 class SosScreen extends ConsumerStatefulWidget {
   const SosScreen({super.key});
 
@@ -24,33 +36,30 @@ class SosScreen extends ConsumerStatefulWidget {
 
 class _SosScreenState extends ConsumerState<SosScreen>
     with SingleTickerProviderStateMixin {
-  // ── Animation constants ────────────────────────────────────────────────────
+  // ── Animation constants ──────────────────────────────────────────────────
 
-  // Each phase is 4 s; full box cycle = 16 s
   static const Duration _cycleDuration = Duration(seconds: 16);
-
-  // Circle radius: grows from _minR to _maxR (diameter 170 → 290 dp)
   static const double _minR = 85;
   static const double _maxR = 145;
 
-  // ── Phase table ───────────────────────────────────────────────────────────
-
   static const List<String> _phaseLabels = [
-    StringsSos.phaseInhale,           // 0 – 25 %
-    StringsSos.phaseHoldAfterInhale,  // 25 – 50 %
-    StringsSos.phaseExhale,           // 50 – 75 %
-    StringsSos.phaseHoldAfterExhale,  // 75 – 100 %
+    StringsSos.phaseInhale,
+    StringsSos.phaseHoldAfterInhale,
+    StringsSos.phaseExhale,
+    StringsSos.phaseHoldAfterExhale,
   ];
 
-  // ── State ─────────────────────────────────────────────────────────────────
+  // ── State ────────────────────────────────────────────────────────────────
 
   late final AnimationController _controller;
   late final Animation<double> _radiusAnim;
-
-  // Tracks the last-fired phase index so we fire exactly once per transition
   int _lastPhaseIndex = -1;
 
-  // ── Lifecycle ─────────────────────────────────────────────────────────────
+  _SosPhase _sosPhase = _SosPhase.breathing;
+  Timer? _timer60s;
+  Timer? _timer90s;
+
+  // ── Lifecycle ────────────────────────────────────────────────────────────
 
   @override
   void initState() {
@@ -59,46 +68,53 @@ class _SosScreenState extends ConsumerState<SosScreen>
     _controller = AnimationController(vsync: this, duration: _cycleDuration)
       ..repeat();
 
-    // TweenSequence: 4 equal weights → each phase occupies 25% of the 16 s cycle
     _radiusAnim = TweenSequence<double>([
-      // Phase 0 — Inhale: circle expands
       TweenSequenceItem(
         tween: Tween(begin: _minR, end: _maxR)
             .chain(CurveTween(curve: Curves.easeInOut)),
         weight: 1,
       ),
-      // Phase 1 — Hold (after inhale): circle stays large
       TweenSequenceItem(tween: ConstantTween(_maxR), weight: 1),
-      // Phase 2 — Exhale: circle contracts
       TweenSequenceItem(
         tween: Tween(begin: _maxR, end: _minR)
             .chain(CurveTween(curve: Curves.easeInOut)),
         weight: 1,
       ),
-      // Phase 3 — Hold (after exhale): circle stays small
       TweenSequenceItem(tween: ConstantTween(_minR), weight: 1),
     ]).animate(_controller);
 
-    // Wire phase-change detector on every animation tick
     _controller.addListener(_onTick);
 
-    // Init TTS; once ready, speak the opening instruction + fire haptic
+    // 60-sec: offer grounding
+    _timer60s = Timer(
+      const Duration(seconds: 60),
+      () { if (mounted) setState(() => _sosPhase = _SosPhase.prompt60s); },
+    );
+
+    // 90-sec: feelings check (fires regardless of 60s outcome unless navigated away)
+    _timer90s = Timer(
+      const Duration(seconds: 90),
+      () { if (mounted) setState(() => _sosPhase = _SosPhase.prompt90s); },
+    );
+
+    // Init TTS; speak first instruction once ready
     ref.read(voiceServiceProvider).init().then((_) {
       if (!mounted) return;
-      _onPhaseChange(0); // "Breathe in"
+      _firePhaseAV(0);
     });
   }
 
   @override
   void dispose() {
+    _timer60s?.cancel();
+    _timer90s?.cancel();
     _controller.removeListener(_onTick);
     _controller.dispose();
-    // Stop any in-progress speech so audio doesn't leak after screen closes
     ref.read(voiceServiceProvider).stop();
     super.dispose();
   }
 
-  // ── Phase-change detection ────────────────────────────────────────────────
+  // ── Phase-change detection ───────────────────────────────────────────────
 
   int _currentPhaseIndex() {
     final v = _controller.value;
@@ -110,67 +126,108 @@ class _SosScreenState extends ConsumerState<SosScreen>
 
   void _onTick() {
     final idx = _currentPhaseIndex();
-    if (idx == _lastPhaseIndex) return; // same phase — nothing to do
+    if (idx == _lastPhaseIndex) return;
     _lastPhaseIndex = idx;
-    _onPhaseChange(idx);
+    // Pause A/V cues while the user is reading a prompt
+    if (_sosPhase == _SosPhase.breathing) _firePhaseAV(idx);
   }
 
-  void _onPhaseChange(int phaseIndex) {
+  void _firePhaseAV(int idx) {
     final auth = ref.read(authProvider).valueOrNull;
-
-    // Default ON — voice guidance is critical in an SOS moment
     final voiceCues =
         auth is AuthAuthenticated ? auth.user.settings.voiceCues : true;
     final hapticOn =
         auth is AuthAuthenticated ? auth.user.settings.hapticOn : true;
 
     if (hapticOn) HapticFeedback.mediumImpact();
-    if (voiceCues) {
-      ref.read(voiceServiceProvider).speak(_phaseLabels[phaseIndex]);
-    }
+    if (voiceCues) ref.read(voiceServiceProvider).speak(_phaseLabels[idx]);
   }
 
-  // ── Navigation ────────────────────────────────────────────────────────────
+  // ── Navigation helper ────────────────────────────────────────────────────
 
-  void _close() {
-    if (context.canPop()) {
-      context.pop();
-    } else {
-      context.go(AppRoutes.home);
-    }
+  /// Cancel pending timers, stop audio, then navigate.
+  void _navigateAway(String route) {
+    _timer60s?.cancel();
+    _timer90s?.cancel();
+    ref.read(voiceServiceProvider).stop();
+    context.go(route);
   }
 
-  // ── UI helpers ────────────────────────────────────────────────────────────
+  // ── Close ────────────────────────────────────────────────────────────────
 
-  /// Current phase label — derived directly from controller progress
+  /// X button always goes to post-session — not directly to home.
+  void _close() => _navigateAway(AppRoutes.postSession);
+
+  // ── 60-sec prompt handlers ───────────────────────────────────────────────
+
+  void _on60sYes() {
+    _timer90s?.cancel();
+    _navigateAway(AppRoutes.groundingPicker);
+  }
+
+  void _on60sKeepBreathing() =>
+      setState(() => _sosPhase = _SosPhase.breathing);
+
+  // ── 90-sec prompt handlers ───────────────────────────────────────────────
+
+  void _on90sBetter() => _navigateAway(AppRoutes.postSession);
+
+  void _on90sSame() => _navigateAway(AppRoutes.postSession);
+
+  void _on90sWorse() {
+    // Show transition message for 1.5 s, then route to grounding
+    setState(() => _sosPhase = _SosPhase.transition);
+    Future.delayed(const Duration(milliseconds: 1500), () {
+      if (mounted) _navigateAway(AppRoutes.groundingPicker);
+    });
+  }
+
+  // ── Overlay switching ────────────────────────────────────────────────────
+
+  Widget _overlayContent() => switch (_sosPhase) {
+        _SosPhase.breathing => const SizedBox.shrink(key: ValueKey('none')),
+        _SosPhase.prompt60s => _Prompt60s(
+            key: const ValueKey('60s'),
+            onYes: _on60sYes,
+            onKeepBreathing: _on60sKeepBreathing,
+          ),
+        _SosPhase.prompt90s => _Prompt90s(
+            key: const ValueKey('90s'),
+            onBetter: _on90sBetter,
+            onSame: _on90sSame,
+            onWorse: _on90sWorse,
+          ),
+        _SosPhase.transition =>
+          const _TransitionOverlay(key: ValueKey('trans')),
+      };
+
+  // ── UI helper ────────────────────────────────────────────────────────────
+
   String get _phaseLabel => _phaseLabels[_currentPhaseIndex()];
 
-  // ── Build ─────────────────────────────────────────────────────────────────
+  // ── Build ────────────────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
     return Theme(
-      // Override 2: force dark regardless of the user's chosen theme
       data: AppTheme.dark(),
       child: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.light, // white status-bar icons on dark bg
+        value: SystemUiOverlayStyle.light,
         child: Scaffold(
           backgroundColor: AppColors.sosBackground,
           body: Stack(
             children: [
-              // ── Breathing circle + phase instruction ───────────────────
+              // ── Breathing circle + phase text ──────────────────────────
               Center(
                 child: AnimatedBuilder(
                   animation: _controller,
                   builder: (context, _) {
                     final r = _radiusAnim.value;
-                    // glowFactor: 0.0 at min radius → 1.0 at max radius
                     final gf = (r - _minR) / (_maxR - _minR);
 
                     return Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // ── Breathing circle ───────────────────────────
                         Container(
                           width: r * 2,
                           height: r * 2,
@@ -198,10 +255,7 @@ class _SosScreenState extends ConsumerState<SosScreen>
                             ],
                           ),
                         ),
-
                         const SizedBox(height: 52),
-
-                        // ── Phase text — cross-fades on each phase change
                         AnimatedSwitcher(
                           duration: const Duration(milliseconds: 350),
                           transitionBuilder: (child, anim) =>
@@ -238,10 +292,219 @@ class _SosScreenState extends ConsumerState<SosScreen>
                   ),
                 ),
               ),
+
+              // ── Prompt overlay — cross-fades between phases ────────────
+              Positioned.fill(
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 400),
+                  transitionBuilder: (child, anim) =>
+                      FadeTransition(opacity: anim, child: child),
+                  child: _overlayContent(),
+                ),
+              ),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// Overlay widgets
+// ═════════════════════════════════════════════════════════════════════════════
+
+// Shared gradient decoration — transparent at top, solid at bottom so the
+// breathing circle is still faintly visible behind the prompt.
+BoxDecoration _promptDecoration() => const BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [Color(0x001A1F2E), AppColors.sosBackground],
+        stops: [0.0, 0.38],
+      ),
+    );
+
+// ─── 60-second prompt ────────────────────────────────────────────────────────
+
+class _Prompt60s extends StatelessWidget {
+  final VoidCallback onYes;
+  final VoidCallback onKeepBreathing;
+
+  const _Prompt60s({
+    super.key,
+    required this.onYes,
+    required this.onKeepBreathing,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Container(
+        width: double.infinity,
+        decoration: _promptDecoration(),
+        padding: const EdgeInsets.fromLTRB(28, 56, 28, 48),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              StringsSos.prompt60s,
+              style: AppTypography.headingMedium
+                  .copyWith(color: AppColors.sosTextPrimary),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 28),
+            Row(
+              children: [
+                Expanded(
+                  child: _SosButton(
+                    label: StringsSos.prompt60sKeepBreathing,
+                    color: AppColors.sosTextSecondary,
+                    outlined: false,
+                    onPressed: onKeepBreathing,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _SosButton(
+                    label: StringsSos.prompt60sYes,
+                    color: AppColors.accentCoral,
+                    outlined: true,
+                    onPressed: onYes,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─── 90-second feelings check ────────────────────────────────────────────────
+
+class _Prompt90s extends StatelessWidget {
+  final VoidCallback onBetter;
+  final VoidCallback onSame;
+  final VoidCallback onWorse;
+
+  const _Prompt90s({
+    super.key,
+    required this.onBetter,
+    required this.onSame,
+    required this.onWorse,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Container(
+        width: double.infinity,
+        decoration: _promptDecoration(),
+        padding: const EdgeInsets.fromLTRB(28, 56, 28, 48),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              StringsSos.prompt90s,
+              style: AppTypography.headingMedium
+                  .copyWith(color: AppColors.sosTextPrimary),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            _SosButton(
+              label: StringsSos.prompt90sBetter,
+              color: AppColors.accentTeal,
+              outlined: true,
+              onPressed: onBetter,
+            ),
+            const SizedBox(height: 10),
+            _SosButton(
+              label: StringsSos.prompt90sSame,
+              color: AppColors.sosTextSecondary,
+              outlined: false,
+              onPressed: onSame,
+            ),
+            const SizedBox(height: 10),
+            _SosButton(
+              label: StringsSos.prompt90sWorse,
+              color: AppColors.sosTextSecondary,
+              outlined: false,
+              onPressed: onWorse,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─── Transition overlay ("Let's try something different.") ───────────────────
+
+class _TransitionOverlay extends StatelessWidget {
+  const _TransitionOverlay({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: AppColors.sosBackground,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 40),
+          child: Text(
+            StringsSos.transitionToGrounding,
+            style: AppTypography.sosInstruction
+                .copyWith(color: AppColors.sosTextPrimary),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─── Shared button style for overlays ────────────────────────────────────────
+
+class _SosButton extends StatelessWidget {
+  final String label;
+  final Color color;
+  final bool outlined;
+  final VoidCallback onPressed;
+
+  const _SosButton({
+    required this.label,
+    required this.color,
+    required this.outlined,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (outlined) {
+      return OutlinedButton(
+        onPressed: onPressed,
+        style: OutlinedButton.styleFrom(
+          foregroundColor: color,
+          side: BorderSide(color: color, width: 1.5),
+          minimumSize: const Size(double.infinity, 52),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14)),
+          textStyle: AppTypography.button,
+        ),
+        child: Text(label),
+      );
+    }
+    return TextButton(
+      onPressed: onPressed,
+      style: TextButton.styleFrom(
+        foregroundColor: color,
+        minimumSize: const Size(double.infinity, 52),
+        textStyle: AppTypography.button,
+      ),
+      child: Text(label),
     );
   }
 }
