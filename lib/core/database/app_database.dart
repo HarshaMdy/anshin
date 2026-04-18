@@ -12,6 +12,35 @@ part 'app_database.g.dart';
 
 // ── Tables ────────────────────────────────────────────────────────────────────
 
+/// One row per daily check-in (one per user per calendar date).
+@DataClassName('DailyCheckinRow')
+class DailyCheckins extends Table {
+  @override
+  String get tableName => 'daily_checkins';
+
+  IntColumn get id => integer().autoIncrement()();
+
+  // Hex UUID — Firestore document ID inside users/{uid}/checkins/
+  TextColumn get uuid => text()();
+
+  TextColumn get userId => text()();
+
+  // 'YYYY-MM-DD' in local time — also the Firestore doc ID so one doc per day
+  TextColumn get date => text()();
+
+  // 1 = Struggling … 5 = Great (Content Bible §10 mood scale)
+  IntColumn get mood => integer()();
+
+  // 1 (low) … 10 (high) (Content Bible §10 anxiety slider)
+  IntColumn get anxiety => integer()();
+
+  // Comma-separated tag list (empty string = no tags)
+  TextColumn get tags => text().withDefault(const Constant(''))();
+
+  BoolColumn get synced =>
+      boolean().withDefault(const Constant(false))();
+}
+
 /// One row per SOS activation.
 @DataClassName('SosEpisodeRow')
 class SosEpisodes extends Table {
@@ -67,7 +96,7 @@ class GroundingSessions extends Table {
 
 // ── Database ──────────────────────────────────────────────────────────────────
 
-@DriftDatabase(tables: [SosEpisodes, GroundingSessions])
+@DriftDatabase(tables: [DailyCheckins, SosEpisodes, GroundingSessions])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
@@ -75,7 +104,56 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onUpgrade: (m, from, to) async {
+      if (from < 2) {
+        // Existing v1 installs: add the daily_checkins table.
+        await m.createTable(dailyCheckins);
+      }
+    },
+  );
+
+  // ── Daily check-in queries ─────────────────────────────────────────────────
+
+  Future<void> insertDailyCheckin(DailyCheckinsCompanion entry) =>
+      into(dailyCheckins).insert(entry);
+
+  Future<void> updateDailyCheckin(
+    String uuid,
+    DailyCheckinsCompanion entry,
+  ) =>
+      (update(dailyCheckins)..where((t) => t.uuid.equals(uuid))).write(entry);
+
+  Future<DailyCheckinRow?> getDailyCheckinByUuid(String uuid) =>
+      (select(dailyCheckins)..where((t) => t.uuid.equals(uuid)))
+          .getSingleOrNull();
+
+  /// Returns the check-in for [userId] on [date] ('YYYY-MM-DD'), or null.
+  Future<DailyCheckinRow?> getDailyCheckinByDate(
+    String userId,
+    String date,
+  ) =>
+      (select(dailyCheckins)
+            ..where((t) => t.userId.equals(userId) & t.date.equals(date)))
+          .getSingleOrNull();
+
+  Future<List<DailyCheckinRow>> unsyncedDailyCheckins(String userId) =>
+      (select(dailyCheckins)
+            ..where((t) => t.userId.equals(userId) & t.synced.equals(false)))
+          .get();
+
+  Future<List<DailyCheckinRow>> recentDailyCheckins(
+    String userId,
+    int limit,
+  ) =>
+      (select(dailyCheckins)
+            ..where((t) => t.userId.equals(userId))
+            ..orderBy([(t) => OrderingTerm.desc(t.date)])
+            ..limit(limit))
+          .get();
 
   // ── SOS episode queries ────────────────────────────────────────────────────
 

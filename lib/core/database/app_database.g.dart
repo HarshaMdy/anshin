@@ -3,6 +3,487 @@
 part of 'app_database.dart';
 
 // ignore_for_file: type=lint
+class $DailyCheckinsTable extends DailyCheckins
+    with TableInfo<$DailyCheckinsTable, DailyCheckinRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $DailyCheckinsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _uuidMeta = const VerificationMeta('uuid');
+  @override
+  late final GeneratedColumn<String> uuid = GeneratedColumn<String>(
+    'uuid',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
+    'user_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _dateMeta = const VerificationMeta('date');
+  @override
+  late final GeneratedColumn<String> date = GeneratedColumn<String>(
+    'date',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _moodMeta = const VerificationMeta('mood');
+  @override
+  late final GeneratedColumn<int> mood = GeneratedColumn<int>(
+    'mood',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _anxietyMeta = const VerificationMeta(
+    'anxiety',
+  );
+  @override
+  late final GeneratedColumn<int> anxiety = GeneratedColumn<int>(
+    'anxiety',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _tagsMeta = const VerificationMeta('tags');
+  @override
+  late final GeneratedColumn<String> tags = GeneratedColumn<String>(
+    'tags',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _syncedMeta = const VerificationMeta('synced');
+  @override
+  late final GeneratedColumn<bool> synced = GeneratedColumn<bool>(
+    'synced',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("synced" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    uuid,
+    userId,
+    date,
+    mood,
+    anxiety,
+    tags,
+    synced,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'daily_checkins';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<DailyCheckinRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('uuid')) {
+      context.handle(
+        _uuidMeta,
+        uuid.isAcceptableOrUnknown(data['uuid']!, _uuidMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_uuidMeta);
+    }
+    if (data.containsKey('user_id')) {
+      context.handle(
+        _userIdMeta,
+        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_userIdMeta);
+    }
+    if (data.containsKey('date')) {
+      context.handle(
+        _dateMeta,
+        date.isAcceptableOrUnknown(data['date']!, _dateMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_dateMeta);
+    }
+    if (data.containsKey('mood')) {
+      context.handle(
+        _moodMeta,
+        mood.isAcceptableOrUnknown(data['mood']!, _moodMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_moodMeta);
+    }
+    if (data.containsKey('anxiety')) {
+      context.handle(
+        _anxietyMeta,
+        anxiety.isAcceptableOrUnknown(data['anxiety']!, _anxietyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_anxietyMeta);
+    }
+    if (data.containsKey('tags')) {
+      context.handle(
+        _tagsMeta,
+        tags.isAcceptableOrUnknown(data['tags']!, _tagsMeta),
+      );
+    }
+    if (data.containsKey('synced')) {
+      context.handle(
+        _syncedMeta,
+        synced.isAcceptableOrUnknown(data['synced']!, _syncedMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  DailyCheckinRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return DailyCheckinRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      uuid: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}uuid'],
+      )!,
+      userId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_id'],
+      )!,
+      date: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}date'],
+      )!,
+      mood: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}mood'],
+      )!,
+      anxiety: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}anxiety'],
+      )!,
+      tags: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tags'],
+      )!,
+      synced: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}synced'],
+      )!,
+    );
+  }
+
+  @override
+  $DailyCheckinsTable createAlias(String alias) {
+    return $DailyCheckinsTable(attachedDatabase, alias);
+  }
+}
+
+class DailyCheckinRow extends DataClass implements Insertable<DailyCheckinRow> {
+  final int id;
+  final String uuid;
+  final String userId;
+  final String date;
+  final int mood;
+  final int anxiety;
+  final String tags;
+  final bool synced;
+  const DailyCheckinRow({
+    required this.id,
+    required this.uuid,
+    required this.userId,
+    required this.date,
+    required this.mood,
+    required this.anxiety,
+    required this.tags,
+    required this.synced,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['uuid'] = Variable<String>(uuid);
+    map['user_id'] = Variable<String>(userId);
+    map['date'] = Variable<String>(date);
+    map['mood'] = Variable<int>(mood);
+    map['anxiety'] = Variable<int>(anxiety);
+    map['tags'] = Variable<String>(tags);
+    map['synced'] = Variable<bool>(synced);
+    return map;
+  }
+
+  DailyCheckinsCompanion toCompanion(bool nullToAbsent) {
+    return DailyCheckinsCompanion(
+      id: Value(id),
+      uuid: Value(uuid),
+      userId: Value(userId),
+      date: Value(date),
+      mood: Value(mood),
+      anxiety: Value(anxiety),
+      tags: Value(tags),
+      synced: Value(synced),
+    );
+  }
+
+  factory DailyCheckinRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return DailyCheckinRow(
+      id: serializer.fromJson<int>(json['id']),
+      uuid: serializer.fromJson<String>(json['uuid']),
+      userId: serializer.fromJson<String>(json['userId']),
+      date: serializer.fromJson<String>(json['date']),
+      mood: serializer.fromJson<int>(json['mood']),
+      anxiety: serializer.fromJson<int>(json['anxiety']),
+      tags: serializer.fromJson<String>(json['tags']),
+      synced: serializer.fromJson<bool>(json['synced']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'uuid': serializer.toJson<String>(uuid),
+      'userId': serializer.toJson<String>(userId),
+      'date': serializer.toJson<String>(date),
+      'mood': serializer.toJson<int>(mood),
+      'anxiety': serializer.toJson<int>(anxiety),
+      'tags': serializer.toJson<String>(tags),
+      'synced': serializer.toJson<bool>(synced),
+    };
+  }
+
+  DailyCheckinRow copyWith({
+    int? id,
+    String? uuid,
+    String? userId,
+    String? date,
+    int? mood,
+    int? anxiety,
+    String? tags,
+    bool? synced,
+  }) => DailyCheckinRow(
+    id: id ?? this.id,
+    uuid: uuid ?? this.uuid,
+    userId: userId ?? this.userId,
+    date: date ?? this.date,
+    mood: mood ?? this.mood,
+    anxiety: anxiety ?? this.anxiety,
+    tags: tags ?? this.tags,
+    synced: synced ?? this.synced,
+  );
+  DailyCheckinRow copyWithCompanion(DailyCheckinsCompanion data) {
+    return DailyCheckinRow(
+      id: data.id.present ? data.id.value : this.id,
+      uuid: data.uuid.present ? data.uuid.value : this.uuid,
+      userId: data.userId.present ? data.userId.value : this.userId,
+      date: data.date.present ? data.date.value : this.date,
+      mood: data.mood.present ? data.mood.value : this.mood,
+      anxiety: data.anxiety.present ? data.anxiety.value : this.anxiety,
+      tags: data.tags.present ? data.tags.value : this.tags,
+      synced: data.synced.present ? data.synced.value : this.synced,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DailyCheckinRow(')
+          ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
+          ..write('userId: $userId, ')
+          ..write('date: $date, ')
+          ..write('mood: $mood, ')
+          ..write('anxiety: $anxiety, ')
+          ..write('tags: $tags, ')
+          ..write('synced: $synced')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, uuid, userId, date, mood, anxiety, tags, synced);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is DailyCheckinRow &&
+          other.id == this.id &&
+          other.uuid == this.uuid &&
+          other.userId == this.userId &&
+          other.date == this.date &&
+          other.mood == this.mood &&
+          other.anxiety == this.anxiety &&
+          other.tags == this.tags &&
+          other.synced == this.synced);
+}
+
+class DailyCheckinsCompanion extends UpdateCompanion<DailyCheckinRow> {
+  final Value<int> id;
+  final Value<String> uuid;
+  final Value<String> userId;
+  final Value<String> date;
+  final Value<int> mood;
+  final Value<int> anxiety;
+  final Value<String> tags;
+  final Value<bool> synced;
+  const DailyCheckinsCompanion({
+    this.id = const Value.absent(),
+    this.uuid = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.date = const Value.absent(),
+    this.mood = const Value.absent(),
+    this.anxiety = const Value.absent(),
+    this.tags = const Value.absent(),
+    this.synced = const Value.absent(),
+  });
+  DailyCheckinsCompanion.insert({
+    this.id = const Value.absent(),
+    required String uuid,
+    required String userId,
+    required String date,
+    required int mood,
+    required int anxiety,
+    this.tags = const Value.absent(),
+    this.synced = const Value.absent(),
+  }) : uuid = Value(uuid),
+       userId = Value(userId),
+       date = Value(date),
+       mood = Value(mood),
+       anxiety = Value(anxiety);
+  static Insertable<DailyCheckinRow> custom({
+    Expression<int>? id,
+    Expression<String>? uuid,
+    Expression<String>? userId,
+    Expression<String>? date,
+    Expression<int>? mood,
+    Expression<int>? anxiety,
+    Expression<String>? tags,
+    Expression<bool>? synced,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (uuid != null) 'uuid': uuid,
+      if (userId != null) 'user_id': userId,
+      if (date != null) 'date': date,
+      if (mood != null) 'mood': mood,
+      if (anxiety != null) 'anxiety': anxiety,
+      if (tags != null) 'tags': tags,
+      if (synced != null) 'synced': synced,
+    });
+  }
+
+  DailyCheckinsCompanion copyWith({
+    Value<int>? id,
+    Value<String>? uuid,
+    Value<String>? userId,
+    Value<String>? date,
+    Value<int>? mood,
+    Value<int>? anxiety,
+    Value<String>? tags,
+    Value<bool>? synced,
+  }) {
+    return DailyCheckinsCompanion(
+      id: id ?? this.id,
+      uuid: uuid ?? this.uuid,
+      userId: userId ?? this.userId,
+      date: date ?? this.date,
+      mood: mood ?? this.mood,
+      anxiety: anxiety ?? this.anxiety,
+      tags: tags ?? this.tags,
+      synced: synced ?? this.synced,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (uuid.present) {
+      map['uuid'] = Variable<String>(uuid.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<String>(userId.value);
+    }
+    if (date.present) {
+      map['date'] = Variable<String>(date.value);
+    }
+    if (mood.present) {
+      map['mood'] = Variable<int>(mood.value);
+    }
+    if (anxiety.present) {
+      map['anxiety'] = Variable<int>(anxiety.value);
+    }
+    if (tags.present) {
+      map['tags'] = Variable<String>(tags.value);
+    }
+    if (synced.present) {
+      map['synced'] = Variable<bool>(synced.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DailyCheckinsCompanion(')
+          ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
+          ..write('userId: $userId, ')
+          ..write('date: $date, ')
+          ..write('mood: $mood, ')
+          ..write('anxiety: $anxiety, ')
+          ..write('tags: $tags, ')
+          ..write('synced: $synced')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $SosEpisodesTable extends SosEpisodes
     with TableInfo<$SosEpisodesTable, SosEpisodeRow> {
   @override
@@ -1135,6 +1616,7 @@ class GroundingSessionsCompanion extends UpdateCompanion<GroundingSessionRow> {
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
+  late final $DailyCheckinsTable dailyCheckins = $DailyCheckinsTable(this);
   late final $SosEpisodesTable sosEpisodes = $SosEpisodesTable(this);
   late final $GroundingSessionsTable groundingSessions =
       $GroundingSessionsTable(this);
@@ -1143,11 +1625,263 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
+    dailyCheckins,
     sosEpisodes,
     groundingSessions,
   ];
 }
 
+typedef $$DailyCheckinsTableCreateCompanionBuilder =
+    DailyCheckinsCompanion Function({
+      Value<int> id,
+      required String uuid,
+      required String userId,
+      required String date,
+      required int mood,
+      required int anxiety,
+      Value<String> tags,
+      Value<bool> synced,
+    });
+typedef $$DailyCheckinsTableUpdateCompanionBuilder =
+    DailyCheckinsCompanion Function({
+      Value<int> id,
+      Value<String> uuid,
+      Value<String> userId,
+      Value<String> date,
+      Value<int> mood,
+      Value<int> anxiety,
+      Value<String> tags,
+      Value<bool> synced,
+    });
+
+class $$DailyCheckinsTableFilterComposer
+    extends Composer<_$AppDatabase, $DailyCheckinsTable> {
+  $$DailyCheckinsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get uuid => $composableBuilder(
+    column: $table.uuid,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get mood => $composableBuilder(
+    column: $table.mood,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get anxiety => $composableBuilder(
+    column: $table.anxiety,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get tags => $composableBuilder(
+    column: $table.tags,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get synced => $composableBuilder(
+    column: $table.synced,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$DailyCheckinsTableOrderingComposer
+    extends Composer<_$AppDatabase, $DailyCheckinsTable> {
+  $$DailyCheckinsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get uuid => $composableBuilder(
+    column: $table.uuid,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get mood => $composableBuilder(
+    column: $table.mood,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get anxiety => $composableBuilder(
+    column: $table.anxiety,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get tags => $composableBuilder(
+    column: $table.tags,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get synced => $composableBuilder(
+    column: $table.synced,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$DailyCheckinsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $DailyCheckinsTable> {
+  $$DailyCheckinsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get uuid =>
+      $composableBuilder(column: $table.uuid, builder: (column) => column);
+
+  GeneratedColumn<String> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
+
+  GeneratedColumn<String> get date =>
+      $composableBuilder(column: $table.date, builder: (column) => column);
+
+  GeneratedColumn<int> get mood =>
+      $composableBuilder(column: $table.mood, builder: (column) => column);
+
+  GeneratedColumn<int> get anxiety =>
+      $composableBuilder(column: $table.anxiety, builder: (column) => column);
+
+  GeneratedColumn<String> get tags =>
+      $composableBuilder(column: $table.tags, builder: (column) => column);
+
+  GeneratedColumn<bool> get synced =>
+      $composableBuilder(column: $table.synced, builder: (column) => column);
+}
+
+class $$DailyCheckinsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $DailyCheckinsTable,
+          DailyCheckinRow,
+          $$DailyCheckinsTableFilterComposer,
+          $$DailyCheckinsTableOrderingComposer,
+          $$DailyCheckinsTableAnnotationComposer,
+          $$DailyCheckinsTableCreateCompanionBuilder,
+          $$DailyCheckinsTableUpdateCompanionBuilder,
+          (
+            DailyCheckinRow,
+            BaseReferences<_$AppDatabase, $DailyCheckinsTable, DailyCheckinRow>,
+          ),
+          DailyCheckinRow,
+          PrefetchHooks Function()
+        > {
+  $$DailyCheckinsTableTableManager(_$AppDatabase db, $DailyCheckinsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$DailyCheckinsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$DailyCheckinsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$DailyCheckinsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> uuid = const Value.absent(),
+                Value<String> userId = const Value.absent(),
+                Value<String> date = const Value.absent(),
+                Value<int> mood = const Value.absent(),
+                Value<int> anxiety = const Value.absent(),
+                Value<String> tags = const Value.absent(),
+                Value<bool> synced = const Value.absent(),
+              }) => DailyCheckinsCompanion(
+                id: id,
+                uuid: uuid,
+                userId: userId,
+                date: date,
+                mood: mood,
+                anxiety: anxiety,
+                tags: tags,
+                synced: synced,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String uuid,
+                required String userId,
+                required String date,
+                required int mood,
+                required int anxiety,
+                Value<String> tags = const Value.absent(),
+                Value<bool> synced = const Value.absent(),
+              }) => DailyCheckinsCompanion.insert(
+                id: id,
+                uuid: uuid,
+                userId: userId,
+                date: date,
+                mood: mood,
+                anxiety: anxiety,
+                tags: tags,
+                synced: synced,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$DailyCheckinsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $DailyCheckinsTable,
+      DailyCheckinRow,
+      $$DailyCheckinsTableFilterComposer,
+      $$DailyCheckinsTableOrderingComposer,
+      $$DailyCheckinsTableAnnotationComposer,
+      $$DailyCheckinsTableCreateCompanionBuilder,
+      $$DailyCheckinsTableUpdateCompanionBuilder,
+      (
+        DailyCheckinRow,
+        BaseReferences<_$AppDatabase, $DailyCheckinsTable, DailyCheckinRow>,
+      ),
+      DailyCheckinRow,
+      PrefetchHooks Function()
+    >;
 typedef $$SosEpisodesTableCreateCompanionBuilder =
     SosEpisodesCompanion Function({
       Value<int> id,
@@ -1715,6 +2449,8 @@ typedef $$GroundingSessionsTableProcessedTableManager =
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
+  $$DailyCheckinsTableTableManager get dailyCheckins =>
+      $$DailyCheckinsTableTableManager(_db, _db.dailyCheckins);
   $$SosEpisodesTableTableManager get sosEpisodes =>
       $$SosEpisodesTableTableManager(_db, _db.sosEpisodes);
   $$GroundingSessionsTableTableManager get groundingSessions =>
