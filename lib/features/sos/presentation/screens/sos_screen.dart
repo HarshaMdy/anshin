@@ -1,7 +1,7 @@
 // PRD §3.1 + Content Bible §5 — SOS active screen
 // Override 2: always dark regardless of user theme
 // Box breathing 4-4-4-4  |  60-sec grounding prompt  |  90-sec feelings check
-import 'dart:async';
+import 'dart:async' show Timer, unawaited;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,6 +15,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../routing/app_routes.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../activity_log/presentation/providers/activity_log_provider.dart';
 
 // ── Prompt state machine ──────────────────────────────────────────────────────
 
@@ -59,6 +60,11 @@ class _SosScreenState extends ConsumerState<SosScreen>
   Timer? _timer60s;
   Timer? _timer90s;
 
+  // Episode UUID returned by the local DB; null until the async insert
+  // completes (takes <5ms, so it's always set before the user can exit).
+  String? _episodeUuid;
+  late final Future<void> _loggingStarted;
+
   // ── Lifecycle ────────────────────────────────────────────────────────────
 
   @override
@@ -84,6 +90,9 @@ class _SosScreenState extends ConsumerState<SosScreen>
     ]).animate(_controller);
 
     _controller.addListener(_onTick);
+
+    // Start logging the SOS episode as soon as auth is known
+    _loggingStarted = _startLogging();
 
     // 60-sec: offer grounding
     _timer60s = Timer(
@@ -112,6 +121,30 @@ class _SosScreenState extends ConsumerState<SosScreen>
     _controller.dispose();
     ref.read(voiceServiceProvider).stop();
     super.dispose();
+  }
+
+  // ── Episode logging ──────────────────────────────────────────────────────
+
+  Future<void> _startLogging() async {
+    final auth = ref.read(authProvider).valueOrNull;
+    if (auth is AuthAuthenticated) {
+      _episodeUuid = await ref
+          .read(activityLogRepositoryProvider)
+          .startSosEpisode(auth.user.userId);
+    }
+  }
+
+  void _endLogging(String outcome) {
+    unawaited(_doEndLogging(outcome));
+  }
+
+  Future<void> _doEndLogging(String outcome) async {
+    await _loggingStarted; // guarantees the insert completed first
+    final uuid = _episodeUuid;
+    if (uuid == null) return;
+    await ref
+        .read(activityLogRepositoryProvider)
+        .endSosEpisode(uuid, outcome);
   }
 
   // ── Phase-change detection ───────────────────────────────────────────────
@@ -145,24 +178,26 @@ class _SosScreenState extends ConsumerState<SosScreen>
 
   // ── Navigation helper ────────────────────────────────────────────────────
 
-  /// Cancel pending timers, stop audio, then navigate.
-  void _navigateAway(String route) {
+  /// Cancel pending timers, stop audio, log the outcome, then navigate.
+  void _navigateAway(String route, {required String outcome}) {
     _timer60s?.cancel();
     _timer90s?.cancel();
     ref.read(voiceServiceProvider).stop();
+    _endLogging(outcome);
     context.go(route);
   }
 
   // ── Close ────────────────────────────────────────────────────────────────
 
   /// X button always goes to post-session — not directly to home.
-  void _close() => _navigateAway(AppRoutes.postSession);
+  void _close() =>
+      _navigateAway(AppRoutes.postSession, outcome: 'x_button');
 
   // ── 60-sec prompt handlers ───────────────────────────────────────────────
 
   void _on60sYes() {
     _timer90s?.cancel();
-    _navigateAway(AppRoutes.groundingPicker);
+    _navigateAway(AppRoutes.groundingPicker, outcome: 'grounding_60s');
   }
 
   void _on60sKeepBreathing() =>
@@ -170,15 +205,22 @@ class _SosScreenState extends ConsumerState<SosScreen>
 
   // ── 90-sec prompt handlers ───────────────────────────────────────────────
 
-  void _on90sBetter() => _navigateAway(AppRoutes.postSession);
+  void _on90sBetter() =>
+      _navigateAway(AppRoutes.postSession, outcome: 'better_90s');
 
-  void _on90sSame() => _navigateAway(AppRoutes.postSession);
+  void _on90sSame() =>
+      _navigateAway(AppRoutes.postSession, outcome: 'same_90s');
 
   void _on90sWorse() {
     // Show transition message for 1.5 s, then route to grounding
     setState(() => _sosPhase = _SosPhase.transition);
     Future.delayed(const Duration(milliseconds: 1500), () {
-      if (mounted) _navigateAway(AppRoutes.groundingPicker);
+      if (mounted) {
+        _navigateAway(
+          AppRoutes.groundingPicker,
+          outcome: 'worse_to_grounding',
+        );
+      }
     });
   }
 

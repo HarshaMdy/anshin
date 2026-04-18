@@ -3,8 +3,12 @@
 // All text from local constants — zero network calls.
 // Forced dark (Override 2 — still in crisis/recovery mode).
 // Ends with completion message + feeling check on one screen.
+// Every session is logged to SQLite on start; closed with outcome on finish.
+import 'dart:async' show unawaited;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/strings_grounding.dart';
@@ -12,18 +16,22 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../routing/app_routes.dart';
+import '../../../activity_log/presentation/providers/activity_log_provider.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../domain/grounding_technique.dart';
 
-class GroundingSessionScreen extends StatefulWidget {
+class GroundingSessionScreen extends ConsumerStatefulWidget {
   final String techniqueId;
 
   const GroundingSessionScreen({super.key, required this.techniqueId});
 
   @override
-  State<GroundingSessionScreen> createState() => _GroundingSessionScreenState();
+  ConsumerState<GroundingSessionScreen> createState() =>
+      _GroundingSessionScreenState();
 }
 
-class _GroundingSessionScreenState extends State<GroundingSessionScreen> {
+class _GroundingSessionScreenState
+    extends ConsumerState<GroundingSessionScreen> {
   late final GroundingTechnique _technique;
 
   // Step index within technique.steps (0 = intro, 1..N = prompts).
@@ -32,10 +40,44 @@ class _GroundingSessionScreenState extends State<GroundingSessionScreen> {
   // True once all steps are done — shows completion + feeling check.
   bool _done = false;
 
+  // Session UUID returned by the DB insert; null until init completes.
+  String? _sessionUuid;
+  late final Future<void> _loggingStarted;
+
   @override
   void initState() {
     super.initState();
     _technique = GroundingTechnique.byId(widget.techniqueId);
+    _loggingStarted = _startLogging();
+  }
+
+  // ── Session logging ─────────────────────────────────────────────────────
+
+  Future<void> _startLogging() async {
+    final auth = ref.read(authProvider).valueOrNull;
+    if (auth is AuthAuthenticated) {
+      _sessionUuid = await ref
+          .read(activityLogRepositoryProvider)
+          .startGroundingSession(auth.user.userId, widget.techniqueId);
+    }
+  }
+
+  void _logEnd({required bool completed, String? feelingOutcome}) {
+    unawaited(_doLogEnd(completed: completed, feelingOutcome: feelingOutcome));
+  }
+
+  Future<void> _doLogEnd({
+    required bool completed,
+    String? feelingOutcome,
+  }) async {
+    await _loggingStarted;
+    final uuid = _sessionUuid;
+    if (uuid == null) return;
+    await ref.read(activityLogRepositoryProvider).endGroundingSession(
+          uuid,
+          completed: completed,
+          feelingOutcome: feelingOutcome,
+        );
   }
 
   // ── Navigation ─────────────────────────────────────────────────────────
@@ -51,19 +93,34 @@ class _GroundingSessionScreenState extends State<GroundingSessionScreen> {
 
   void _onBack() {
     if (_done) {
-      setState(() { _done = false; }); // back to last step
+      setState(() {
+        _done = false;
+      }); // back to last step
     } else if (_stepIndex > 0) {
       setState(() => _stepIndex--);
     } else {
+      // Backing out from the intro = session abandoned
+      _logEnd(completed: false);
       if (context.canPop()) context.pop();
     }
   }
 
   // ── Feeling-check navigation ────────────────────────────────────────────
 
-  void _onBetter() => context.go(AppRoutes.postSession);
-  void _onSame()   => context.go(AppRoutes.home);
-  void _onWorse()  => context.go(AppRoutes.home);
+  void _onBetter() {
+    _logEnd(completed: true, feelingOutcome: 'better');
+    context.go(AppRoutes.postSession);
+  }
+
+  void _onSame() {
+    _logEnd(completed: true, feelingOutcome: 'same');
+    context.go(AppRoutes.home);
+  }
+
+  void _onWorse() {
+    _logEnd(completed: true, feelingOutcome: 'worse');
+    context.go(AppRoutes.home);
+  }
 
   // ── Build ───────────────────────────────────────────────────────────────
 

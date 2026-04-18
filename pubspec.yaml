@@ -31,6 +31,8 @@ dependencies:
   # Local database (offline-first for SOS, sessions, journal)
   drift: ^2.18.0
   sqflite: ^2.3.3+1
+  sqlite3_flutter_libs: ^0.5.0   # bundles a fresh SQLite binary — required by NativeDatabase on Android
+  path: ^1.9.0                   # runtime path joining for DB file location
 
   # Storage & preferences
   path_provider: ^2.1.3
