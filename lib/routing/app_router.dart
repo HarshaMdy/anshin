@@ -6,6 +6,7 @@ import '../features/auth/presentation/screens/splash_screen.dart';
 import '../features/breathing/presentation/screens/breathing_picker_screen.dart';
 import '../features/daily/presentation/screens/checkin_screen.dart';
 import '../features/grounding/presentation/screens/grounding_picker_screen.dart';
+import '../features/grounding/presentation/screens/grounding_session_screen.dart';
 import '../features/home/presentation/screens/home_screen.dart';
 import '../features/journal/presentation/screens/journal_entry_screen.dart';
 import '../features/journal/presentation/screens/journal_home_screen.dart';
@@ -89,6 +90,13 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.groundingPicker,
         builder: (_, _) => const GroundingPickerScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.groundingSession,
+        builder: (_, state) => GroundingSessionScreen(
+          techniqueId:
+              state.pathParameters['techniqueId'] ?? 'fiveSenses',
+        ),
       ),
 
       // ── Journal ───────────────────────────────────────────────────────────

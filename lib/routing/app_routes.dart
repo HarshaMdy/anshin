@@ -27,6 +27,8 @@ abstract final class AppRoutes {
 
   // ─── Grounding (accessible from tools tab + SOS) ─────────────────────────
   static const groundingPicker = '/grounding';
+  static const groundingSession = '/grounding/:techniqueId'; // param: techniqueId
+  static String groundingSessionPath(String id) => '/grounding/$id';
 
   // ─── Journal ─────────────────────────────────────────────────────────────
   static const journalHome = '/journal';
