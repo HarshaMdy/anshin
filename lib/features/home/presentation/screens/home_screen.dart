@@ -11,6 +11,7 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../routing/app_routes.dart';
 import '../../../activity_log/presentation/providers/activity_log_provider.dart';
 import '../../../daily/presentation/providers/checkin_provider.dart';
+import '../../../journal/presentation/providers/journal_provider.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -30,6 +31,7 @@ class HomeScreen extends ConsumerWidget {
     // Trigger background sync for any unsynced local rows
     ref.watch(activityLogSyncProvider);
     ref.watch(checkinSyncProvider);
+    ref.watch(journalSyncProvider);
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg =

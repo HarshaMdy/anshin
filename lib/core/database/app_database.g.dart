@@ -3,6 +3,592 @@
 part of 'app_database.dart';
 
 // ignore_for_file: type=lint
+class $JournalEntriesTable extends JournalEntries
+    with TableInfo<$JournalEntriesTable, JournalEntryRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $JournalEntriesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _uuidMeta = const VerificationMeta('uuid');
+  @override
+  late final GeneratedColumn<String> uuid = GeneratedColumn<String>(
+    'uuid',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
+    'user_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _moodMeta = const VerificationMeta('mood');
+  @override
+  late final GeneratedColumn<String> mood = GeneratedColumn<String>(
+    'mood',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _accomplishmentsMeta = const VerificationMeta(
+    'accomplishments',
+  );
+  @override
+  late final GeneratedColumn<String> accomplishments = GeneratedColumn<String>(
+    'accomplishments',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _releaseMeta = const VerificationMeta(
+    'release',
+  );
+  @override
+  late final GeneratedColumn<String> release = GeneratedColumn<String>(
+    'release',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _gratitudeMeta = const VerificationMeta(
+    'gratitude',
+  );
+  @override
+  late final GeneratedColumn<String> gratitude = GeneratedColumn<String>(
+    'gratitude',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+    'notes',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _syncedMeta = const VerificationMeta('synced');
+  @override
+  late final GeneratedColumn<bool> synced = GeneratedColumn<bool>(
+    'synced',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("synced" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    uuid,
+    userId,
+    createdAt,
+    mood,
+    accomplishments,
+    release,
+    gratitude,
+    notes,
+    synced,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'journal_entries';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<JournalEntryRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('uuid')) {
+      context.handle(
+        _uuidMeta,
+        uuid.isAcceptableOrUnknown(data['uuid']!, _uuidMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_uuidMeta);
+    }
+    if (data.containsKey('user_id')) {
+      context.handle(
+        _userIdMeta,
+        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_userIdMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('mood')) {
+      context.handle(
+        _moodMeta,
+        mood.isAcceptableOrUnknown(data['mood']!, _moodMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_moodMeta);
+    }
+    if (data.containsKey('accomplishments')) {
+      context.handle(
+        _accomplishmentsMeta,
+        accomplishments.isAcceptableOrUnknown(
+          data['accomplishments']!,
+          _accomplishmentsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('release')) {
+      context.handle(
+        _releaseMeta,
+        release.isAcceptableOrUnknown(data['release']!, _releaseMeta),
+      );
+    }
+    if (data.containsKey('gratitude')) {
+      context.handle(
+        _gratitudeMeta,
+        gratitude.isAcceptableOrUnknown(data['gratitude']!, _gratitudeMeta),
+      );
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+        _notesMeta,
+        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
+      );
+    }
+    if (data.containsKey('synced')) {
+      context.handle(
+        _syncedMeta,
+        synced.isAcceptableOrUnknown(data['synced']!, _syncedMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  JournalEntryRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return JournalEntryRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      uuid: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}uuid'],
+      )!,
+      userId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      mood: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}mood'],
+      )!,
+      accomplishments: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}accomplishments'],
+      )!,
+      release: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}release'],
+      )!,
+      gratitude: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}gratitude'],
+      )!,
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      )!,
+      synced: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}synced'],
+      )!,
+    );
+  }
+
+  @override
+  $JournalEntriesTable createAlias(String alias) {
+    return $JournalEntriesTable(attachedDatabase, alias);
+  }
+}
+
+class JournalEntryRow extends DataClass implements Insertable<JournalEntryRow> {
+  final int id;
+  final String uuid;
+  final String userId;
+  final DateTime createdAt;
+  final String mood;
+  final String accomplishments;
+  final String release;
+  final String gratitude;
+  final String notes;
+  final bool synced;
+  const JournalEntryRow({
+    required this.id,
+    required this.uuid,
+    required this.userId,
+    required this.createdAt,
+    required this.mood,
+    required this.accomplishments,
+    required this.release,
+    required this.gratitude,
+    required this.notes,
+    required this.synced,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['uuid'] = Variable<String>(uuid);
+    map['user_id'] = Variable<String>(userId);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['mood'] = Variable<String>(mood);
+    map['accomplishments'] = Variable<String>(accomplishments);
+    map['release'] = Variable<String>(release);
+    map['gratitude'] = Variable<String>(gratitude);
+    map['notes'] = Variable<String>(notes);
+    map['synced'] = Variable<bool>(synced);
+    return map;
+  }
+
+  JournalEntriesCompanion toCompanion(bool nullToAbsent) {
+    return JournalEntriesCompanion(
+      id: Value(id),
+      uuid: Value(uuid),
+      userId: Value(userId),
+      createdAt: Value(createdAt),
+      mood: Value(mood),
+      accomplishments: Value(accomplishments),
+      release: Value(release),
+      gratitude: Value(gratitude),
+      notes: Value(notes),
+      synced: Value(synced),
+    );
+  }
+
+  factory JournalEntryRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return JournalEntryRow(
+      id: serializer.fromJson<int>(json['id']),
+      uuid: serializer.fromJson<String>(json['uuid']),
+      userId: serializer.fromJson<String>(json['userId']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      mood: serializer.fromJson<String>(json['mood']),
+      accomplishments: serializer.fromJson<String>(json['accomplishments']),
+      release: serializer.fromJson<String>(json['release']),
+      gratitude: serializer.fromJson<String>(json['gratitude']),
+      notes: serializer.fromJson<String>(json['notes']),
+      synced: serializer.fromJson<bool>(json['synced']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'uuid': serializer.toJson<String>(uuid),
+      'userId': serializer.toJson<String>(userId),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'mood': serializer.toJson<String>(mood),
+      'accomplishments': serializer.toJson<String>(accomplishments),
+      'release': serializer.toJson<String>(release),
+      'gratitude': serializer.toJson<String>(gratitude),
+      'notes': serializer.toJson<String>(notes),
+      'synced': serializer.toJson<bool>(synced),
+    };
+  }
+
+  JournalEntryRow copyWith({
+    int? id,
+    String? uuid,
+    String? userId,
+    DateTime? createdAt,
+    String? mood,
+    String? accomplishments,
+    String? release,
+    String? gratitude,
+    String? notes,
+    bool? synced,
+  }) => JournalEntryRow(
+    id: id ?? this.id,
+    uuid: uuid ?? this.uuid,
+    userId: userId ?? this.userId,
+    createdAt: createdAt ?? this.createdAt,
+    mood: mood ?? this.mood,
+    accomplishments: accomplishments ?? this.accomplishments,
+    release: release ?? this.release,
+    gratitude: gratitude ?? this.gratitude,
+    notes: notes ?? this.notes,
+    synced: synced ?? this.synced,
+  );
+  JournalEntryRow copyWithCompanion(JournalEntriesCompanion data) {
+    return JournalEntryRow(
+      id: data.id.present ? data.id.value : this.id,
+      uuid: data.uuid.present ? data.uuid.value : this.uuid,
+      userId: data.userId.present ? data.userId.value : this.userId,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      mood: data.mood.present ? data.mood.value : this.mood,
+      accomplishments: data.accomplishments.present
+          ? data.accomplishments.value
+          : this.accomplishments,
+      release: data.release.present ? data.release.value : this.release,
+      gratitude: data.gratitude.present ? data.gratitude.value : this.gratitude,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      synced: data.synced.present ? data.synced.value : this.synced,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('JournalEntryRow(')
+          ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
+          ..write('userId: $userId, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('mood: $mood, ')
+          ..write('accomplishments: $accomplishments, ')
+          ..write('release: $release, ')
+          ..write('gratitude: $gratitude, ')
+          ..write('notes: $notes, ')
+          ..write('synced: $synced')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    uuid,
+    userId,
+    createdAt,
+    mood,
+    accomplishments,
+    release,
+    gratitude,
+    notes,
+    synced,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is JournalEntryRow &&
+          other.id == this.id &&
+          other.uuid == this.uuid &&
+          other.userId == this.userId &&
+          other.createdAt == this.createdAt &&
+          other.mood == this.mood &&
+          other.accomplishments == this.accomplishments &&
+          other.release == this.release &&
+          other.gratitude == this.gratitude &&
+          other.notes == this.notes &&
+          other.synced == this.synced);
+}
+
+class JournalEntriesCompanion extends UpdateCompanion<JournalEntryRow> {
+  final Value<int> id;
+  final Value<String> uuid;
+  final Value<String> userId;
+  final Value<DateTime> createdAt;
+  final Value<String> mood;
+  final Value<String> accomplishments;
+  final Value<String> release;
+  final Value<String> gratitude;
+  final Value<String> notes;
+  final Value<bool> synced;
+  const JournalEntriesCompanion({
+    this.id = const Value.absent(),
+    this.uuid = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.mood = const Value.absent(),
+    this.accomplishments = const Value.absent(),
+    this.release = const Value.absent(),
+    this.gratitude = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.synced = const Value.absent(),
+  });
+  JournalEntriesCompanion.insert({
+    this.id = const Value.absent(),
+    required String uuid,
+    required String userId,
+    required DateTime createdAt,
+    required String mood,
+    this.accomplishments = const Value.absent(),
+    this.release = const Value.absent(),
+    this.gratitude = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.synced = const Value.absent(),
+  }) : uuid = Value(uuid),
+       userId = Value(userId),
+       createdAt = Value(createdAt),
+       mood = Value(mood);
+  static Insertable<JournalEntryRow> custom({
+    Expression<int>? id,
+    Expression<String>? uuid,
+    Expression<String>? userId,
+    Expression<DateTime>? createdAt,
+    Expression<String>? mood,
+    Expression<String>? accomplishments,
+    Expression<String>? release,
+    Expression<String>? gratitude,
+    Expression<String>? notes,
+    Expression<bool>? synced,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (uuid != null) 'uuid': uuid,
+      if (userId != null) 'user_id': userId,
+      if (createdAt != null) 'created_at': createdAt,
+      if (mood != null) 'mood': mood,
+      if (accomplishments != null) 'accomplishments': accomplishments,
+      if (release != null) 'release': release,
+      if (gratitude != null) 'gratitude': gratitude,
+      if (notes != null) 'notes': notes,
+      if (synced != null) 'synced': synced,
+    });
+  }
+
+  JournalEntriesCompanion copyWith({
+    Value<int>? id,
+    Value<String>? uuid,
+    Value<String>? userId,
+    Value<DateTime>? createdAt,
+    Value<String>? mood,
+    Value<String>? accomplishments,
+    Value<String>? release,
+    Value<String>? gratitude,
+    Value<String>? notes,
+    Value<bool>? synced,
+  }) {
+    return JournalEntriesCompanion(
+      id: id ?? this.id,
+      uuid: uuid ?? this.uuid,
+      userId: userId ?? this.userId,
+      createdAt: createdAt ?? this.createdAt,
+      mood: mood ?? this.mood,
+      accomplishments: accomplishments ?? this.accomplishments,
+      release: release ?? this.release,
+      gratitude: gratitude ?? this.gratitude,
+      notes: notes ?? this.notes,
+      synced: synced ?? this.synced,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (uuid.present) {
+      map['uuid'] = Variable<String>(uuid.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<String>(userId.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (mood.present) {
+      map['mood'] = Variable<String>(mood.value);
+    }
+    if (accomplishments.present) {
+      map['accomplishments'] = Variable<String>(accomplishments.value);
+    }
+    if (release.present) {
+      map['release'] = Variable<String>(release.value);
+    }
+    if (gratitude.present) {
+      map['gratitude'] = Variable<String>(gratitude.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (synced.present) {
+      map['synced'] = Variable<bool>(synced.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('JournalEntriesCompanion(')
+          ..write('id: $id, ')
+          ..write('uuid: $uuid, ')
+          ..write('userId: $userId, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('mood: $mood, ')
+          ..write('accomplishments: $accomplishments, ')
+          ..write('release: $release, ')
+          ..write('gratitude: $gratitude, ')
+          ..write('notes: $notes, ')
+          ..write('synced: $synced')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $DailyCheckinsTable extends DailyCheckins
     with TableInfo<$DailyCheckinsTable, DailyCheckinRow> {
   @override
@@ -1616,6 +2202,7 @@ class GroundingSessionsCompanion extends UpdateCompanion<GroundingSessionRow> {
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
+  late final $JournalEntriesTable journalEntries = $JournalEntriesTable(this);
   late final $DailyCheckinsTable dailyCheckins = $DailyCheckinsTable(this);
   late final $SosEpisodesTable sosEpisodes = $SosEpisodesTable(this);
   late final $GroundingSessionsTable groundingSessions =
@@ -1625,12 +2212,310 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
+    journalEntries,
     dailyCheckins,
     sosEpisodes,
     groundingSessions,
   ];
 }
 
+typedef $$JournalEntriesTableCreateCompanionBuilder =
+    JournalEntriesCompanion Function({
+      Value<int> id,
+      required String uuid,
+      required String userId,
+      required DateTime createdAt,
+      required String mood,
+      Value<String> accomplishments,
+      Value<String> release,
+      Value<String> gratitude,
+      Value<String> notes,
+      Value<bool> synced,
+    });
+typedef $$JournalEntriesTableUpdateCompanionBuilder =
+    JournalEntriesCompanion Function({
+      Value<int> id,
+      Value<String> uuid,
+      Value<String> userId,
+      Value<DateTime> createdAt,
+      Value<String> mood,
+      Value<String> accomplishments,
+      Value<String> release,
+      Value<String> gratitude,
+      Value<String> notes,
+      Value<bool> synced,
+    });
+
+class $$JournalEntriesTableFilterComposer
+    extends Composer<_$AppDatabase, $JournalEntriesTable> {
+  $$JournalEntriesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get uuid => $composableBuilder(
+    column: $table.uuid,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get mood => $composableBuilder(
+    column: $table.mood,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get accomplishments => $composableBuilder(
+    column: $table.accomplishments,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get release => $composableBuilder(
+    column: $table.release,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get gratitude => $composableBuilder(
+    column: $table.gratitude,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get synced => $composableBuilder(
+    column: $table.synced,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$JournalEntriesTableOrderingComposer
+    extends Composer<_$AppDatabase, $JournalEntriesTable> {
+  $$JournalEntriesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get uuid => $composableBuilder(
+    column: $table.uuid,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get mood => $composableBuilder(
+    column: $table.mood,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get accomplishments => $composableBuilder(
+    column: $table.accomplishments,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get release => $composableBuilder(
+    column: $table.release,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get gratitude => $composableBuilder(
+    column: $table.gratitude,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get synced => $composableBuilder(
+    column: $table.synced,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$JournalEntriesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $JournalEntriesTable> {
+  $$JournalEntriesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get uuid =>
+      $composableBuilder(column: $table.uuid, builder: (column) => column);
+
+  GeneratedColumn<String> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<String> get mood =>
+      $composableBuilder(column: $table.mood, builder: (column) => column);
+
+  GeneratedColumn<String> get accomplishments => $composableBuilder(
+    column: $table.accomplishments,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get release =>
+      $composableBuilder(column: $table.release, builder: (column) => column);
+
+  GeneratedColumn<String> get gratitude =>
+      $composableBuilder(column: $table.gratitude, builder: (column) => column);
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+
+  GeneratedColumn<bool> get synced =>
+      $composableBuilder(column: $table.synced, builder: (column) => column);
+}
+
+class $$JournalEntriesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $JournalEntriesTable,
+          JournalEntryRow,
+          $$JournalEntriesTableFilterComposer,
+          $$JournalEntriesTableOrderingComposer,
+          $$JournalEntriesTableAnnotationComposer,
+          $$JournalEntriesTableCreateCompanionBuilder,
+          $$JournalEntriesTableUpdateCompanionBuilder,
+          (
+            JournalEntryRow,
+            BaseReferences<
+              _$AppDatabase,
+              $JournalEntriesTable,
+              JournalEntryRow
+            >,
+          ),
+          JournalEntryRow,
+          PrefetchHooks Function()
+        > {
+  $$JournalEntriesTableTableManager(
+    _$AppDatabase db,
+    $JournalEntriesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$JournalEntriesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$JournalEntriesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$JournalEntriesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> uuid = const Value.absent(),
+                Value<String> userId = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<String> mood = const Value.absent(),
+                Value<String> accomplishments = const Value.absent(),
+                Value<String> release = const Value.absent(),
+                Value<String> gratitude = const Value.absent(),
+                Value<String> notes = const Value.absent(),
+                Value<bool> synced = const Value.absent(),
+              }) => JournalEntriesCompanion(
+                id: id,
+                uuid: uuid,
+                userId: userId,
+                createdAt: createdAt,
+                mood: mood,
+                accomplishments: accomplishments,
+                release: release,
+                gratitude: gratitude,
+                notes: notes,
+                synced: synced,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String uuid,
+                required String userId,
+                required DateTime createdAt,
+                required String mood,
+                Value<String> accomplishments = const Value.absent(),
+                Value<String> release = const Value.absent(),
+                Value<String> gratitude = const Value.absent(),
+                Value<String> notes = const Value.absent(),
+                Value<bool> synced = const Value.absent(),
+              }) => JournalEntriesCompanion.insert(
+                id: id,
+                uuid: uuid,
+                userId: userId,
+                createdAt: createdAt,
+                mood: mood,
+                accomplishments: accomplishments,
+                release: release,
+                gratitude: gratitude,
+                notes: notes,
+                synced: synced,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$JournalEntriesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $JournalEntriesTable,
+      JournalEntryRow,
+      $$JournalEntriesTableFilterComposer,
+      $$JournalEntriesTableOrderingComposer,
+      $$JournalEntriesTableAnnotationComposer,
+      $$JournalEntriesTableCreateCompanionBuilder,
+      $$JournalEntriesTableUpdateCompanionBuilder,
+      (
+        JournalEntryRow,
+        BaseReferences<_$AppDatabase, $JournalEntriesTable, JournalEntryRow>,
+      ),
+      JournalEntryRow,
+      PrefetchHooks Function()
+    >;
 typedef $$DailyCheckinsTableCreateCompanionBuilder =
     DailyCheckinsCompanion Function({
       Value<int> id,
@@ -2449,6 +3334,8 @@ typedef $$GroundingSessionsTableProcessedTableManager =
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
+  $$JournalEntriesTableTableManager get journalEntries =>
+      $$JournalEntriesTableTableManager(_db, _db.journalEntries);
   $$DailyCheckinsTableTableManager get dailyCheckins =>
       $$DailyCheckinsTableTableManager(_db, _db.dailyCheckins);
   $$SosEpisodesTableTableManager get sosEpisodes =>

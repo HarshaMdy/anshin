@@ -49,6 +49,10 @@ dependencies:
 
   # Encryption (journal AES-256 client-side)
   encrypt: ^5.0.3
+  crypto: ^3.0.3      # SHA-256 key derivation for journal encryption
+
+  # Share sheet (journal completion screen)
+  share_plus: ^10.1.4
 
   # SVG rendering (mascot)
   flutter_svg: ^2.0.10+1

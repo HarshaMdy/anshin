@@ -33,6 +33,8 @@ abstract final class AppRoutes {
   // ─── Journal ─────────────────────────────────────────────────────────────
   static const journalHome = '/journal';
   static const journalEntry = '/journal/entry';
+  static const journalDetail = '/journal/detail/:entryId'; // param: entryId
+  static String journalDetailPath(String id) => '/journal/detail/$id';
 
   // ─── Learn ───────────────────────────────────────────────────────────────
   static const learnHome = '/learn';

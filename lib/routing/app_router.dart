@@ -8,6 +8,7 @@ import '../features/daily/presentation/screens/checkin_screen.dart';
 import '../features/grounding/presentation/screens/grounding_picker_screen.dart';
 import '../features/grounding/presentation/screens/grounding_session_screen.dart';
 import '../features/home/presentation/screens/home_screen.dart';
+import '../features/journal/presentation/screens/journal_detail_screen.dart';
 import '../features/journal/presentation/screens/journal_entry_screen.dart';
 import '../features/journal/presentation/screens/journal_home_screen.dart';
 import '../features/learn/presentation/screens/learn_home_screen.dart';
@@ -107,6 +108,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.journalEntry,
         builder: (_, _) => const JournalEntryScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.journalDetail,
+        builder: (_, state) => JournalDetailScreen(
+          entryId: state.pathParameters['entryId'] ?? '',
+        ),
       ),
 
       // ── Learn ─────────────────────────────────────────────────────────────

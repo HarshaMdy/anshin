@@ -1,5 +1,7 @@
 // Drift/SQLite local database — source of truth for all session data.
 // Schema v1: sos_episodes + grounding_sessions.
+// Schema v2: + daily_checkins.
+// Schema v3: + journal_entries.
 // NativeDatabase uses the bundled SQLite (sqlite3_flutter_libs) for reliability.
 import 'dart:io';
 
@@ -36,6 +38,33 @@ class DailyCheckins extends Table {
 
   // Comma-separated tag list (empty string = no tags)
   TextColumn get tags => text().withDefault(const Constant(''))();
+
+  BoolColumn get synced =>
+      boolean().withDefault(const Constant(false))();
+}
+
+/// One row per journal entry.  Text fields except [mood] are AES-256 encrypted
+/// (stored as '{iv_base64}:{cipher_base64}'); [mood] is plaintext so the
+/// calendar can show dots without decrypting.
+@DataClassName('JournalEntryRow')
+class JournalEntries extends Table {
+  @override
+  String get tableName => 'journal_entries';
+
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get uuid => text()();
+  TextColumn get userId => text()();
+  DateTimeColumn get createdAt => dateTime()();
+
+  // One of the 12 emotion labels from StringsMascot — plaintext
+  TextColumn get mood => text()();
+
+  // AES-256-CBC encrypted — '{iv_base64}:{cipher_base64}'; empty = skipped
+  TextColumn get accomplishments =>
+      text().withDefault(const Constant(''))();
+  TextColumn get release => text().withDefault(const Constant(''))();
+  TextColumn get gratitude => text().withDefault(const Constant(''))();
+  TextColumn get notes => text().withDefault(const Constant(''))();
 
   BoolColumn get synced =>
       boolean().withDefault(const Constant(false))();
@@ -96,7 +125,7 @@ class GroundingSessions extends Table {
 
 // ── Database ──────────────────────────────────────────────────────────────────
 
-@DriftDatabase(tables: [DailyCheckins, SosEpisodes, GroundingSessions])
+@DriftDatabase(tables: [JournalEntries, DailyCheckins, SosEpisodes, GroundingSessions])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
@@ -104,17 +133,74 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onUpgrade: (m, from, to) async {
       if (from < 2) {
-        // Existing v1 installs: add the daily_checkins table.
         await m.createTable(dailyCheckins);
+      }
+      if (from < 3) {
+        await m.createTable(journalEntries);
       }
     },
   );
+
+  // ── Journal entry queries ─────────────────────────────────────────────────
+
+  Future<void> insertJournalEntry(JournalEntriesCompanion entry) =>
+      into(journalEntries).insert(entry);
+
+  Future<void> updateJournalEntry(
+    String uuid,
+    JournalEntriesCompanion entry,
+  ) =>
+      (update(journalEntries)..where((t) => t.uuid.equals(uuid))).write(entry);
+
+  Future<JournalEntryRow?> getJournalEntryByUuid(String uuid) =>
+      (select(journalEntries)..where((t) => t.uuid.equals(uuid)))
+          .getSingleOrNull();
+
+  Future<List<JournalEntryRow>> journalEntriesForUser(String userId) =>
+      (select(journalEntries)
+            ..where((t) => t.userId.equals(userId))
+            ..orderBy([(t) => OrderingTerm.desc(t.createdAt)]))
+          .get();
+
+  /// Returns all entries for [userId] in [year]/[month] (1-indexed month).
+  Future<List<JournalEntryRow>> journalEntriesForMonth(
+    String userId,
+    int year,
+    int month,
+  ) async {
+    final start = DateTime(year, month);
+    final end = DateTime(year, month + 1);
+    return (select(journalEntries)
+          ..where(
+            (t) =>
+                t.userId.equals(userId) &
+                t.createdAt.isBiggerOrEqualValue(start) &
+                t.createdAt.isSmallerThanValue(end),
+          ))
+        .get();
+  }
+
+  Future<int> countJournalEntries(String userId) async {
+    final count = journalEntries.uuid.count();
+    final query = selectOnly(journalEntries)
+      ..addColumns([count])
+      ..where(journalEntries.userId.equals(userId));
+    return (await query.getSingle()).read(count) ?? 0;
+  }
+
+  Future<void> deleteJournalEntry(String uuid) =>
+      (delete(journalEntries)..where((t) => t.uuid.equals(uuid))).go();
+
+  Future<List<JournalEntryRow>> unsyncedJournalEntries(String userId) =>
+      (select(journalEntries)
+            ..where((t) => t.userId.equals(userId) & t.synced.equals(false)))
+          .get();
 
   // ── Daily check-in queries ─────────────────────────────────────────────────
 
