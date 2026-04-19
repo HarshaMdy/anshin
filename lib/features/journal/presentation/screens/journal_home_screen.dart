@@ -235,14 +235,15 @@ class _MonthCalendar extends ConsumerWidget {
     final firstDay = DateTime(month.year, month.month, 1);
     // Monday-based weekday offset (Mon=1→0, Sun=7→6)
     final offset = (firstDay.weekday - 1) % 7;
-    final daysInMonth =
-        DateTime(month.year, month.month + 1, 0).day;
+    final daysInMonth = DateTime(month.year, month.month + 1, 0).day;
 
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // Month/year header + nav arrows
+          // ── Month/year header ──────────────────────────────────────────
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -253,79 +254,86 @@ class _MonthCalendar extends ConsumerWidget {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => PageStorage.maybeOf(context),
-                    // handled by PageView swipe; arrows are visual hints only
-                  ),
-                  Icon(Icons.swipe_outlined,
-                      size: 18, color: textSecondary.withValues(alpha: 0.4)),
-                ],
+              Icon(
+                Icons.swipe_outlined,
+                size: 16,
+                color: textSecondary.withValues(alpha: 0.35),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          // Day-of-week headers
+
+          const SizedBox(height: 10),
+
+          // ── Day-of-week headers ────────────────────────────────────────
           Row(
-            children: _dayHeaders.map((d) => Expanded(
-              child: Text(
-                d,
-                textAlign: TextAlign.center,
-                style: AppTypography.caption.copyWith(
-                  color: textSecondary.withValues(alpha: 0.6),
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            )).toList(),
-          ),
-          const SizedBox(height: 8),
-          // Day grid
-          Expanded(
-            child: GridView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 7,
-                mainAxisSpacing: 4,
-                crossAxisSpacing: 4,
-              ),
-              itemCount: offset + daysInMonth,
-              itemBuilder: (context, i) {
-                if (i < offset) return const SizedBox.shrink();
-                final day = i - offset + 1;
-                final hasEntry = entryDays.contains(day);
-                final isToday = DateTime.now().year == month.year &&
-                    DateTime.now().month == month.month &&
-                    DateTime.now().day == day;
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '$day',
+            children: _dayHeaders
+                .map(
+                  (d) => Expanded(
+                    child: Text(
+                      d,
+                      textAlign: TextAlign.center,
                       style: AppTypography.caption.copyWith(
-                        fontSize: 12,
-                        color: isToday
-                            ? AppColors.accentCoral
-                            : textPrimary.withValues(alpha: 0.85),
-                        fontWeight: isToday
-                            ? FontWeight.w700
-                            : FontWeight.w400,
+                        color: textSecondary.withValues(alpha: 0.55),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 11,
                       ),
                     ),
-                    if (hasEntry)
-                      Container(
-                        width: 5,
-                        height: 5,
-                        margin: const EdgeInsets.only(top: 2),
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: AppColors.accentTeal,
-                        ),
-                      ),
-                  ],
-                );
-              },
+                  ),
+                )
+                .toList(),
+          ),
+
+          const SizedBox(height: 6),
+
+          // ── Day grid — shrink-wrapped, fixed cell height ───────────────
+          // Uses shrinkWrap + mainAxisExtent to avoid Expanded/unbounded
+          // height errors inside the PageView.
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate:
+                const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 7,
+              mainAxisSpacing: 2,
+              crossAxisSpacing: 2,
+              mainAxisExtent: 34, // fixed height per row
             ),
+            itemCount: offset + daysInMonth,
+            itemBuilder: (context, i) {
+              if (i < offset) return const SizedBox.shrink();
+              final day = i - offset + 1;
+              final hasEntry = entryDays.contains(day);
+              final isToday = DateTime.now().year == month.year &&
+                  DateTime.now().month == month.month &&
+                  DateTime.now().day == day;
+
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '$day',
+                    textAlign: TextAlign.center,
+                    style: AppTypography.caption.copyWith(
+                      fontSize: 12,
+                      color: isToday
+                          ? AppColors.accentCoral
+                          : textPrimary.withValues(alpha: 0.85),
+                      fontWeight: isToday
+                          ? FontWeight.w700
+                          : FontWeight.w400,
+                    ),
+                  ),
+                  // Gold star on days with a journal entry
+                  if (hasEntry)
+                    const Icon(
+                      Icons.star_rounded,
+                      color: AppColors.accentGold,
+                      size: 8,
+                    ),
+                ],
+              );
+            },
           ),
         ],
       ),
