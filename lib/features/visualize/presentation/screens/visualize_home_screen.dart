@@ -1,12 +1,97 @@
+// Visualize — coming-soon empty state per Content Bible §16
 import 'package:flutter/material.dart';
+
+import '../../../../core/constants/strings_empty_states.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_typography.dart';
+import '../../../../core/widgets/mascot_widget.dart';
 
 class VisualizeHomeScreen extends StatelessWidget {
   const VisualizeHomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: Text('Visualize Home')),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bg =
+        isDark ? AppColors.darkBackground : AppColors.lightBackground;
+    final borderColor =
+        isDark ? AppColors.darkCardBorder : AppColors.lightCardBorder;
+    final textPrimary =
+        isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
+    final textSecondary =
+        isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
+
+    return Scaffold(
+      backgroundColor: bg,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Spacer(flex: 2),
+
+              // Mascot — eyes closed, calm
+              const Center(
+                child: MascotWidget(
+                  emotion: MascotEmotion.eyesClosed,
+                  size: 110,
+                  breathe: true,
+                ),
+              ),
+
+              const SizedBox(height: 32),
+
+              // Heading
+              Text(
+                StringsEmptyStates.visualizeHeading,
+                style: AppTypography.headingMedium
+                    .copyWith(color: textPrimary),
+                textAlign: TextAlign.center,
+              ),
+
+              const SizedBox(height: 14),
+
+              // Body
+              Text(
+                StringsEmptyStates.visualizeBody,
+                style: AppTypography.bodyMedium
+                    .copyWith(color: textSecondary, height: 1.6),
+                textAlign: TextAlign.center,
+              ),
+
+              const Spacer(flex: 2),
+
+              // Notify CTA
+              OutlinedButton(
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                          "You'll be notified when Visualize is ready."),
+                    ),
+                  );
+                },
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: textPrimary,
+                  minimumSize: const Size.fromHeight(52),
+                  side: BorderSide(color: borderColor),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14)),
+                ),
+                child: Text(
+                  StringsEmptyStates.visualizeNotifyButton,
+                  style: AppTypography.button
+                      .copyWith(color: textPrimary),
+                ),
+              ),
+
+              const SizedBox(height: 32),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

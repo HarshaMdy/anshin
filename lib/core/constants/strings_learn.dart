@@ -128,6 +128,16 @@ That's what the rest of Anshin is built to help you do.''';
   static const String lesson2CompletionLabel = 'Lesson 2 complete.';
   static const String lesson2BackButton = 'Back to Learn';
 
+  // ─── Lessons 3–6 (locked — titles only; body not yet written) ───────────────
+  static const String lesson3Title = 'How anxiety affects your body';
+  static const String lesson3Number = '3 of 6';
+  static const String lesson4Title = 'The anxiety–sleep connection';
+  static const String lesson4Number = '4 of 6';
+  static const String lesson5Title = 'Why avoidance makes it worse';
+  static const String lesson5Number = '5 of 6';
+  static const String lesson6Title = 'Your nervous system, explained';
+  static const String lesson6Number = '6 of 6';
+
   // ─── Locked lesson card ──────────────────────────────────────────────────────
   static const String lockedLessonBody =
       "This lesson is coming soon.\nWe're writing it carefully — it's worth the wait.";
