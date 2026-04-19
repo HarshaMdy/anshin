@@ -97,8 +97,11 @@ class _JournalEntryScreenState extends ConsumerState<JournalEntryScreen> {
     final mood = _mood;
     if (mood == null) return;
 
-    final insights = StringsJournal.completionInsights;
-    final insight = insights[DateTime.now().millisecond % insights.length];
+    final insights   = StringsJournal.completionInsights;
+    final insight    = insights[DateTime.now().millisecond % insights.length];
+    // Read the calendar-selected date (set before navigation from the home
+    // screen when the user taps a specific past date).  null → today.
+    final entryDate  = ref.read(journalEntryDateProvider);
 
     await ref.read(journalNotifierProvider.notifier).save(
           mood: mood,
@@ -106,7 +109,11 @@ class _JournalEntryScreenState extends ConsumerState<JournalEntryScreen> {
           release: _releaseCtrl.text,
           gratitude: _gratitudeCtrl.text,
           notes: _notesCtrl.text,
+          entryDate: entryDate,
         );
+
+    // Clear the entry date so it doesn't leak into a subsequent new entry.
+    ref.read(journalEntryDateProvider.notifier).state = null;
 
     if (mounted) {
       setState(() {

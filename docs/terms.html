@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terms of Service — Anshin</title>
+  <style>
+    /* ── Brand tokens ─────────────────────────────────────────────────────── */
+    :root {
+      --coral:   #E8907A;
+      --teal:    #7BA8B0;
+      --gold:    #D4B480;
+      --bg:      #F8F5F0;
+      --surface: #FFFFFF;
+      --text:    #1A1F2E;
+      --muted:   #6B7280;
+      --border:  #E5DDD4;
+      --radius:  12px;
+    }
+
+    /* ── Reset & base ─────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                   Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      font-size: 16px;
+    }
+
+    /* ── Layout ───────────────────────────────────────────────────────────── */
+    .page {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* ── Header ───────────────────────────────────────────────────────────── */
+    .site-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 48px;
+    }
+
+    .logo-mark {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--coral);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .site-name {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    /* ── Hero ─────────────────────────────────────────────────────────────── */
+    .doc-title {
+      font-size: clamp(26px, 5vw, 36px);
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    .doc-meta {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+
+    /* ── Plain-language summary card ─────────────────────────────────────── */
+    .summary-card {
+      background: var(--surface);
+      border: 1.5px solid var(--teal);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      margin-bottom: 48px;
+    }
+
+    .summary-card .card-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--teal);
+      margin-bottom: 10px;
+    }
+
+    .summary-card p {
+      font-size: 15px;
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    /* ── Sections ─────────────────────────────────────────────────────────── */
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 32px;
+      margin-bottom: 20px;
+    }
+
+    .section h2 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section p {
+      font-size: 15px;
+      color: #374151;
+      margin-bottom: 12px;
+    }
+
+    .section p:last-child { margin-bottom: 0; }
+
+    .section ul {
+      margin: 8px 0 12px 20px;
+    }
+
+    .section ul li {
+      font-size: 15px;
+      color: #374151;
+      margin-bottom: 6px;
+      line-height: 1.6;
+    }
+
+    .section ul li:last-child { margin-bottom: 0; }
+
+    /* ── Warning callout ──────────────────────────────────────────────────── */
+    .callout-warning {
+      background: #FFF8F0;
+      border-left: 4px solid var(--coral);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      padding: 14px 18px;
+      margin: 12px 0;
+      font-size: 14px;
+      color: #374151;
+    }
+
+    /* ── Info callout ─────────────────────────────────────────────────────── */
+    .callout {
+      background: #F0FAF9;
+      border-left: 4px solid var(--teal);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      padding: 14px 18px;
+      margin: 12px 0;
+      font-size: 14px;
+      color: #374151;
+    }
+
+    /* ── Legal caps ───────────────────────────────────────────────────────── */
+    .legal-caps {
+      font-size: 13px;
+      color: var(--muted);
+      font-style: normal;
+      line-height: 1.6;
+    }
+
+    /* ── Contact block ────────────────────────────────────────────────────── */
+    .contact-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 32px;
+      margin-top: 32px;
+      text-align: center;
+    }
+
+    .contact-block p { color: var(--muted); font-size: 15px; margin-bottom: 10px; }
+
+    .contact-email {
+      display: inline-block;
+      background: var(--teal);
+      color: #fff;
+      font-weight: 600;
+      font-size: 15px;
+      padding: 10px 24px;
+      border-radius: 50px;
+      text-decoration: none;
+    }
+
+    .contact-email:hover { opacity: 0.88; }
+
+    /* ── Footer ───────────────────────────────────────────────────────────── */
+    footer {
+      margin-top: 56px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    footer a { color: var(--teal); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── Responsive ───────────────────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .section { padding: 20px 18px; }
+      .summary-card { padding: 18px 20px; }
+      .contact-block { padding: 20px 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- Header -->
+    <header class="site-header">
+      <div class="logo-mark">A</div>
+      <a class="site-name" href="https://harshamdy.github.io/anshin/">Anshin</a>
+    </header>
+
+    <!-- Title -->
+    <h1 class="doc-title">Terms of Service</h1>
+    <p class="doc-meta">Last updated: April 20, 2026 &nbsp;·&nbsp; Effective upon download</p>
+
+    <!-- Plain-language summary -->
+    <div class="summary-card">
+      <div class="card-label">Plain-language summary</div>
+      <p>
+        Use Anshin however it helps you. Don't use it as a replacement for emergency
+        medical care. We're not therapists. If you need a human, please call one —
+        we've made it easy to find crisis lines in the app. You can cancel your
+        subscription anytime through Google Play. We can update these terms, and
+        we'll tell you if we do.
+      </p>
+    </div>
+
+    <!-- 1. The App -->
+    <div class="section">
+      <h2>1. The App</h2>
+      <p>
+        Anshin is a self-help wellness application that provides breathing exercises,
+        grounding techniques, journaling, mood tracking, educational content, and
+        related features for managing anxiety and panic.
+      </p>
+      <div class="callout-warning">
+        The App is <strong>not</strong> a medical device, diagnostic tool,
+        therapeutic service, or substitute for professional medical or mental health
+        treatment.
+      </div>
+    </div>
+
+    <!-- 2. Not medical advice -->
+    <div class="section">
+      <h2>2. Not medical advice</h2>
+      <p>
+        Nothing in the App constitutes medical advice, diagnosis, or treatment.
+        The App does not create a therapist-patient or doctor-patient relationship.
+      </p>
+      <div class="callout-warning">
+        If you are experiencing a medical or mental health emergency, contact your
+        local emergency services (911 in the US) or a crisis helpline immediately.
+        We provide crisis resources within the App as a convenience — we are not
+        responsible for the services provided by those organisations.
+      </div>
+    </div>
+
+    <!-- 3. Eligibility -->
+    <div class="section">
+      <h2>3. Eligibility</h2>
+      <p>
+        You must be at least <strong>18 years old</strong> to use the App. By using
+        the App, you represent that you are at least 18 years old.
+      </p>
+    </div>
+
+    <!-- 4. Your account -->
+    <div class="section">
+      <h2>4. Your account</h2>
+      <p>
+        You may use the App without creating an account (anonymous mode). If you
+        create an account, you are responsible for maintaining the security of your
+        credentials. We are not liable for unauthorised access to your account.
+      </p>
+    </div>
+
+    <!-- 5. Subscriptions and billing -->
+    <div class="section">
+      <h2>5. Subscriptions and billing</h2>
+      <p>
+        Anshin offers a free tier and a premium subscription ("Anshin Premium").
+        Subscriptions are billed through Google Play. Prices are displayed before
+        purchase.
+      </p>
+      <ul>
+        <li>Free trials automatically convert to paid subscriptions unless cancelled
+            before the trial ends.</li>
+        <li>You can cancel your subscription at any time through
+            <strong>Google Play Store → Subscriptions</strong>.</li>
+        <li>Cancellation takes effect at the end of the current billing period —
+            you retain access until then.</li>
+        <li>We do not offer refunds outside of Google Play's refund policy.</li>
+      </ul>
+    </div>
+
+    <!-- 6. Your content -->
+    <div class="section">
+      <h2>6. Your content</h2>
+      <p>
+        You retain ownership of all content you create in the App (journal entries,
+        check-in data, notes). By using the App, you grant us a limited licence to
+        store, process, and transmit your content solely to provide the App's
+        features. We do not claim ownership of your content.
+      </p>
+      <div class="callout">
+        Your journal entries are encrypted and we cannot read them.
+      </div>
+    </div>
+
+    <!-- 7. Acceptable use -->
+    <div class="section">
+      <h2>7. Acceptable use</h2>
+      <p>You agree not to:</p>
+      <ul>
+        <li>Attempt to reverse-engineer, decompile, or extract source code from
+            the App</li>
+        <li>Use the App to harm, threaten, or harass others</li>
+        <li>Impersonate another person</li>
+        <li>Use the App for any illegal purpose</li>
+        <li>Attempt to bypass subscription restrictions or payment systems</li>
+      </ul>
+    </div>
+
+    <!-- 8. Intellectual property -->
+    <div class="section">
+      <h2>8. Intellectual property</h2>
+      <p>
+        The App, including its design, code, content, educational materials, mascot
+        character, and branding, is owned by us and protected by intellectual
+        property laws. You may not copy, modify, distribute, or create derivative
+        works from any part of the App without our written permission.
+      </p>
+    </div>
+
+    <!-- 9. Disclaimers -->
+    <div class="section">
+      <h2>9. Disclaimers</h2>
+      <p class="legal-caps">
+        THE APP IS PROVIDED "AS IS" WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR
+        IMPLIED. WE DO NOT WARRANT THAT THE APP WILL BE UNINTERRUPTED, ERROR-FREE,
+        OR FREE OF HARMFUL COMPONENTS. WE DISCLAIM ALL WARRANTIES INCLUDING
+        MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
+      </p>
+    </div>
+
+    <!-- 10. Limitation of liability -->
+    <div class="section">
+      <h2>10. Limitation of liability</h2>
+      <p class="legal-caps">
+        TO THE MAXIMUM EXTENT PERMITTED BY LAW, WE SHALL NOT BE LIABLE FOR ANY
+        INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES ARISING
+        FROM YOUR USE OF THE APP. OUR TOTAL LIABILITY SHALL NOT EXCEED THE AMOUNT
+        YOU PAID US IN THE 12 MONTHS PRECEDING THE CLAIM.
+      </p>
+    </div>
+
+    <!-- 11. Changes to these Terms -->
+    <div class="section">
+      <h2>11. Changes to these Terms</h2>
+      <p>
+        We may update these Terms. Material changes will be communicated through an
+        in-app notification. Your continued use after changes constitutes
+        acceptance.
+      </p>
+    </div>
+
+    <!-- 12. Governing law -->
+    <div class="section">
+      <h2>12. Governing law</h2>
+      <p>
+        These Terms are governed by the laws of India. Disputes will be resolved
+        in the courts of Karnataka, India.
+      </p>
+    </div>
+
+    <!-- Contact -->
+    <div class="contact-block">
+      <p>Questions about these Terms?</p>
+      <a class="contact-email" href="mailto:legal@anshin.app">legal@anshin.app</a>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <p>
+        &copy; 2026 Anshin &nbsp;·&nbsp;
+        <a href="https://harshamdy.github.io/anshin/terms.html">Terms of Service</a>
+        &nbsp;·&nbsp;
+        <a href="https://harshamdy.github.io/anshin/privacy.html">Privacy Policy</a>
+      </p>
+    </footer>
+
+  </div>
+</body>
+</html>

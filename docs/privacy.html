@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — Anshin</title>
+  <style>
+    /* ── Brand tokens ─────────────────────────────────────────────────────── */
+    :root {
+      --coral:   #E8907A;
+      --teal:    #7BA8B0;
+      --gold:    #D4B480;
+      --bg:      #F8F5F0;
+      --surface: #FFFFFF;
+      --text:    #1A1F2E;
+      --muted:   #6B7280;
+      --border:  #E5DDD4;
+      --radius:  12px;
+    }
+
+    /* ── Reset & base ─────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                   Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      font-size: 16px;
+    }
+
+    /* ── Layout ───────────────────────────────────────────────────────────── */
+    .page {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* ── Header ───────────────────────────────────────────────────────────── */
+    .site-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 48px;
+    }
+
+    .logo-mark {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--coral);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .site-name {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    /* ── Hero ─────────────────────────────────────────────────────────────── */
+    .doc-title {
+      font-size: clamp(26px, 5vw, 36px);
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    .doc-meta {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+
+    /* ── Plain-language summary card ─────────────────────────────────────── */
+    .summary-card {
+      background: var(--surface);
+      border: 1.5px solid var(--coral);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      margin-bottom: 48px;
+    }
+
+    .summary-card .card-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--coral);
+      margin-bottom: 10px;
+    }
+
+    .summary-card p {
+      font-size: 15px;
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    /* ── Sections ─────────────────────────────────────────────────────────── */
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 32px;
+      margin-bottom: 20px;
+    }
+
+    .section h2 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section p {
+      font-size: 15px;
+      color: #374151;
+      margin-bottom: 12px;
+    }
+
+    .section p:last-child { margin-bottom: 0; }
+
+    .section ul {
+      margin: 8px 0 12px 20px;
+    }
+
+    .section ul li {
+      font-size: 15px;
+      color: #374151;
+      margin-bottom: 6px;
+      line-height: 1.6;
+    }
+
+    .section ul li:last-child { margin-bottom: 0; }
+
+    /* ── Third-party table ────────────────────────────────────────────────── */
+    .third-party-item {
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .third-party-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .third-party-item strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .third-party-item span {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .third-party-item a {
+      color: var(--teal);
+      text-decoration: none;
+      font-size: 13px;
+    }
+
+    .third-party-item a:hover { text-decoration: underline; }
+
+    /* ── Highlight callout ────────────────────────────────────────────────── */
+    .callout {
+      background: #F0FAF9;
+      border-left: 4px solid var(--teal);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      padding: 14px 18px;
+      margin: 12px 0;
+      font-size: 14px;
+      color: #374151;
+    }
+
+    /* ── Contact block ────────────────────────────────────────────────────── */
+    .contact-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 32px;
+      margin-top: 32px;
+      text-align: center;
+    }
+
+    .contact-block p { color: var(--muted); font-size: 15px; margin-bottom: 10px; }
+
+    .contact-email {
+      display: inline-block;
+      background: var(--coral);
+      color: #fff;
+      font-weight: 600;
+      font-size: 15px;
+      padding: 10px 24px;
+      border-radius: 50px;
+      text-decoration: none;
+    }
+
+    .contact-email:hover { opacity: 0.88; }
+
+    /* ── Footer ───────────────────────────────────────────────────────────── */
+    footer {
+      margin-top: 56px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    footer a { color: var(--teal); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── Responsive ───────────────────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .section { padding: 20px 18px; }
+      .summary-card { padding: 18px 20px; }
+      .contact-block { padding: 20px 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- Header -->
+    <header class="site-header">
+      <div class="logo-mark">A</div>
+      <a class="site-name" href="https://harshamdy.github.io/anshin/">Anshin</a>
+    </header>
+
+    <!-- Title -->
+    <h1 class="doc-title">Privacy Policy</h1>
+    <p class="doc-meta">Last updated: April 20, 2026 &nbsp;·&nbsp; Effective upon download</p>
+
+    <!-- Plain-language summary -->
+    <div class="summary-card">
+      <div class="card-label">Plain-language summary</div>
+      <p>
+        Here's the short version: your data belongs to you. We don't sell it, we
+        don't share it with advertisers, and we don't use it for anything other
+        than making Anshin work for you. Your journal entries are encrypted — we
+        can't read them even if we wanted to. You can export or delete everything
+        at any time.
+      </p>
+    </div>
+
+    <!-- 1. Information we collect -->
+    <div class="section">
+      <h2>1. Information we collect</h2>
+
+      <p><strong>Information you provide directly:</strong></p>
+      <ul>
+        <li>When you create an account, we collect your email address (if you choose
+            to sign in — anonymous use requires no personal information).</li>
+        <li>When you use the journal feature, your entries are encrypted on your
+            device before being stored in our database — we cannot read the
+            content.</li>
+        <li>When you complete check-ins, we store your mood ratings, anxiety levels,
+            and tags.</li>
+        <li>When you contact support, we collect your email address and the content
+            of your message.</li>
+      </ul>
+
+      <p><strong>Information collected automatically:</strong></p>
+      <ul>
+        <li>Anonymised usage data including which features you use, how often, and
+            for how long.</li>
+        <li>Crash reports to fix bugs.</li>
+        <li>Your device type and operating system version for compatibility
+            purposes.</li>
+      </ul>
+
+      <div class="callout">
+        We do <strong>not</strong> collect your location, contacts, photos,
+        microphone data, or browsing history.
+      </div>
+
+      <p><strong>Information from third parties:</strong></p>
+      <ul>
+        <li>If you sign in with Google, we receive your email address and display
+            name from Google. We do not access your Google contacts, calendar, or
+            other data.</li>
+        <li>If you subscribe to Anshin Premium, your payment is processed by Google
+            Play — we receive confirmation of your subscription status but never
+            see your payment details.</li>
+      </ul>
+    </div>
+
+    <!-- 2. How we use your information -->
+    <div class="section">
+      <h2>2. How we use your information</h2>
+
+      <p>We use your information to:</p>
+      <ul>
+        <li>Provide the App's features (check-ins, journal, progress tracking,
+            breathing exercises)</li>
+        <li>Personalise your experience (recommended activities based on your
+            check-in data)</li>
+        <li>Send you notifications you've opted into (daily reminders, post-SOS
+            follow-ups)</li>
+        <li>Improve the App (anonymised usage patterns help us understand what
+            works)</li>
+        <li>Communicate with you (support responses, important product updates
+            only)</li>
+      </ul>
+
+      <div class="callout">
+        We do <strong>NOT</strong> use your information to: sell to third parties;
+        serve advertisements; build marketing profiles; train AI models on your
+        personal data; share with employers, insurers, or any other entity.
+      </div>
+    </div>
+
+    <!-- 3. Data storage and security -->
+    <div class="section">
+      <h2>3. Data storage and security</h2>
+      <p>
+        Your data is stored in Firebase (operated by Google) on servers located in
+        the United States. Journal entries are encrypted on your device using
+        AES-256 encryption before being transmitted or stored. Your encryption key
+        is derived from your account credentials and is never stored on our servers
+        in plain text.
+      </p>
+      <p>We implement industry-standard security measures including:</p>
+      <ul>
+        <li>Encrypted data transmission (TLS 1.3)</li>
+        <li>Firebase security rules that restrict data access to authenticated
+            users only</li>
+        <li>Regular security audits</li>
+        <li>No plain-text storage of sensitive information</li>
+      </ul>
+      <p>
+        No system is perfectly secure. We cannot guarantee absolute security, but
+        we take every reasonable step to protect your data.
+      </p>
+    </div>
+
+    <!-- 4. Data retention -->
+    <div class="section">
+      <h2>4. Data retention</h2>
+      <p>
+        We retain your data for as long as your account is active. If you delete
+        your account, we initiate a 30-day soft deletion period during which you
+        can recover your account by signing back in. After 30 days, all your data
+        is permanently and irreversibly deleted from our systems and backups.
+      </p>
+      <p>
+        Anonymous usage data (not linked to your identity) may be retained
+        indefinitely for product improvement purposes.
+      </p>
+    </div>
+
+    <!-- 5. Your rights -->
+    <div class="section">
+      <h2>5. Your rights</h2>
+      <p>Regardless of where you live, you have the right to:</p>
+      <ul>
+        <li>Access all data we hold about you</li>
+        <li>Export your data in a portable format</li>
+        <li>Correct inaccurate data</li>
+        <li>Delete your account and all associated data</li>
+        <li>Opt out of non-essential communications</li>
+        <li>Withdraw consent for data processing at any time</li>
+      </ul>
+      <p>
+        <strong>EEA &amp; United Kingdom users:</strong> you have additional rights
+        under GDPR, including the right to lodge a complaint with your local data
+        protection authority. Our legal basis for processing is legitimate interest
+        (providing the App's features) and consent (for optional features like
+        notifications).
+      </p>
+      <p>
+        <strong>California users:</strong> you have additional rights under CCPA.
+        We do not sell personal information. We do not use personal information for
+        cross-context behavioural advertising.
+      </p>
+      <p>To exercise any of these rights, contact us at
+        <a href="mailto:privacy@anshin.app" style="color: var(--teal);">privacy@anshin.app</a>.
+      </p>
+    </div>
+
+    <!-- 6. Children's privacy -->
+    <div class="section">
+      <h2>6. Children's privacy</h2>
+      <p>
+        Anshin is intended for users aged 18 and older. We do not knowingly collect
+        information from children under 18. If we learn that we have collected
+        information from a child under 18, we will delete that information
+        immediately.
+      </p>
+    </div>
+
+    <!-- 7. Third-party services -->
+    <div class="section">
+      <h2>7. Third-party services</h2>
+      <p>The App uses the following third-party services:</p>
+
+      <div class="third-party-item">
+        <strong>Firebase (Google)</strong>
+        <span>Authentication, database, analytics, crash reporting.</span><br/>
+        <a href="https://policies.google.com/privacy" target="_blank"
+           rel="noopener noreferrer">Google Privacy Policy ↗</a>
+      </div>
+
+      <div class="third-party-item">
+        <strong>RevenueCat</strong>
+        <span>Subscription management.</span><br/>
+        <a href="https://www.revenuecat.com/privacy" target="_blank"
+           rel="noopener noreferrer">RevenueCat Privacy Policy ↗</a>
+      </div>
+
+      <div class="third-party-item">
+        <strong>Anthropic (future, V1.1+)</strong>
+        <span>AI-powered companion feature. When this feature launches,
+          conversations with the AI companion will be processed by Anthropic's
+          Claude API. Conversations are not used to train AI models.</span><br/>
+        <a href="https://www.anthropic.com/privacy" target="_blank"
+           rel="noopener noreferrer">Anthropic Privacy Policy ↗</a>
+      </div>
+
+      <p style="margin-top: 16px; font-size: 14px; color: var(--muted);">
+        We do not use any advertising SDKs, social media trackers, or third-party
+        analytics tools beyond Firebase Analytics.
+      </p>
+    </div>
+
+    <!-- 8. Changes to this policy -->
+    <div class="section">
+      <h2>8. Changes to this policy</h2>
+      <p>
+        We may update this Privacy Policy from time to time. We will notify you of
+        material changes through an in-app notification or email. Your continued
+        use of the App after changes constitutes acceptance.
+      </p>
+    </div>
+
+    <!-- Contact -->
+    <div class="contact-block">
+      <p>Questions or data requests?</p>
+      <a class="contact-email" href="mailto:privacy@anshin.app">privacy@anshin.app</a>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <p>
+        &copy; 2026 Anshin &nbsp;·&nbsp;
+        <a href="https://harshamdy.github.io/anshin/terms.html">Terms of Service</a>
+        &nbsp;·&nbsp;
+        <a href="https://harshamdy.github.io/anshin/privacy.html">Privacy Policy</a>
+      </p>
+    </footer>
+
+  </div>
+</body>
+</html>

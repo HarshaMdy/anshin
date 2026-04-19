@@ -48,6 +48,34 @@ final journalEntriesForMonthProvider =
       .entriesForMonth(auth.user.userId, month.year, month.month);
 });
 
+// ── Selected calendar date (null = no date selected → show whole month) ──────
+
+final journalSelectedDateProvider = StateProvider<DateTime?>((ref) => null);
+
+// ── Entry date for new entries (null = use DateTime.now()) ───────────────────
+// Set to the calendar-selected date before pushing to JournalEntryScreen so
+// that entries written from a past date are correctly timestamped.
+// Cleared by JournalEntryScreen after every save.
+
+final journalEntryDateProvider = StateProvider<DateTime?>((ref) => null);
+
+// ── Date-filtered entries (used by the entry list below the calendar) ─────────
+// When a date is selected, returns only entries for that day.
+// When null, returns all entries for the current month.
+
+final journalEntriesForDateProvider =
+    FutureProvider<List<JournalEntryRow>>((ref) async {
+  final allEntries = await ref.watch(journalEntriesForMonthProvider.future);
+  final selected   = ref.watch(journalSelectedDateProvider);
+  if (selected == null) return allEntries;
+  return allEntries
+      .where((e) =>
+          e.createdAt.year  == selected.year  &&
+          e.createdAt.month == selected.month &&
+          e.createdAt.day   == selected.day)
+      .toList();
+});
+
 // ── Entry count + free cap ────────────────────────────────────────────────────
 
 const int kFreeJournalEntryLimit = 30;
@@ -83,6 +111,7 @@ class JournalNotifier extends AsyncNotifier<void> {
     required String release,
     required String gratitude,
     required String notes,
+    DateTime? entryDate,
   }) async {
     final auth = ref.read(authProvider).valueOrNull;
     if (auth is! AuthAuthenticated) return null;
@@ -97,6 +126,7 @@ class JournalNotifier extends AsyncNotifier<void> {
             release: release,
             gratitude: gratitude,
             notes: notes,
+            entryDate: entryDate,
           );
       ref.invalidate(journalEntriesProvider);
       ref.invalidate(journalEntryCountProvider);

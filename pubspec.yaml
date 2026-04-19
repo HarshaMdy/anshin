@@ -56,7 +56,7 @@ dependencies:
 
   # Timezone support (required by flutter_local_notifications zonedSchedule)
   timezone: ^0.9.4
-  flutter_timezone: ^1.0.4
+  flutter_timezone: ^3.0.0
 
   # URL launcher (Rate Anshin, Privacy Policy, Terms, support email)
   url_launcher: ^6.3.1

@@ -33,6 +33,9 @@ class JournalRepository {
   // ── Public API ────────────────────────────────────────────────────────────
 
   /// Saves a new journal entry.  Returns the new uuid.
+  ///
+  /// [entryDate] lets callers backdate an entry (e.g. when the user taps a
+  /// past calendar date before writing).  Defaults to [DateTime.now()].
   Future<String> saveEntry({
     required String userId,
     required String mood,
@@ -40,13 +43,15 @@ class JournalRepository {
     required String release,
     required String gratitude,
     required String notes,
+    DateTime? entryDate,
   }) async {
-    final uuid = _newUuid();
-    final enc = _enc(userId);
+    final uuid      = _newUuid();
+    final enc       = _enc(userId);
+    final timestamp = entryDate ?? DateTime.now();
     await _db.insertJournalEntry(JournalEntriesCompanion.insert(
       uuid: uuid,
       userId: userId,
-      createdAt: DateTime.now(),
+      createdAt: timestamp,
       mood: mood,
       accomplishments: Value(enc.encrypt(accomplishments)),
       release: Value(enc.encrypt(release)),
@@ -122,6 +127,8 @@ class JournalRepository {
       if (row == null) return;
 
       // Firestore stores encrypted blobs as-is; only mood + timestamp decoded.
+      // Use the entry's actual createdAt (not server time) so backdated entries
+      // appear under the correct date in any future multi-device sync.
       await _firestore
           .collection('users')
           .doc(userId)
@@ -130,7 +137,7 @@ class JournalRepository {
           .set({
         'uuid': row.uuid,
         'userId': row.userId,
-        'createdAt': FieldValue.serverTimestamp(),
+        'createdAt': Timestamp.fromDate(row.createdAt),
         'mood': row.mood,
         // encrypted blobs — Firestore keeps them opaque
         'accomplishments': row.accomplishments,

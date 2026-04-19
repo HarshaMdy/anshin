@@ -228,38 +228,51 @@ class _SosButton extends StatelessWidget {
   final VoidCallback onTap;
   const _SosButton({required this.onTap});
 
-  // Material Red 700 (#D32F2F) — universally recognisable emergency red,
-  // vivid enough to stand out without being aggressive. SOS-only colour.
-  static const Color _red = Color(0xFFD32F2F);
+  // Fully-opaque backgrounds — no content bleeds through while scrolling.
+  // Light: Material Red 700 — vivid, universally recognisable emergency red.
+  // Dark:  Material Red 800 — slightly deeper so it doesn't wash out on dark bg.
+  static const Color _redLight = Color(0xFFD32F2F); // Red 700
+  static const Color _redDark  = Color(0xFFC62828); // Red 800
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bg = isDark ? _redDark : _redLight;
+
     return Material(
-      color: _red.withValues(alpha: 0.10),
+      // Fully opaque: no transparency, so scrolling content never shows through.
+      color: bg,
       borderRadius: BorderRadius.circular(16),
+      elevation: 6,
+      shadowColor: bg.withValues(alpha: 0.45),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: onTap,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: _red.withValues(alpha: 0.50),
-            ),
-          ),
-          padding:
-              const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        splashColor: Colors.white.withValues(alpha: 0.18),
+        highlightColor: Colors.white.withValues(alpha: 0.10),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           child: Row(
             children: [
-              // Left: label stack
+              // Left: crisis icon
+              const Icon(
+                Icons.crisis_alert_rounded,
+                color: Colors.white,
+                size: 30,
+              ),
+
+              const SizedBox(width: 14),
+
+              // Centre: label + subtitle
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       StringsHome.sosButtonLabel,
                       style: AppTypography.headingSmall.copyWith(
-                        color: _red,
+                        color: Colors.white,
                         letterSpacing: 1.0,
                         fontWeight: FontWeight.w700,
                       ),
@@ -268,16 +281,17 @@ class _SosButton extends StatelessWidget {
                     Text(
                       StringsHome.firstLaunchPrimary,
                       style: AppTypography.caption.copyWith(
-                        color: _red.withValues(alpha: 0.80),
+                        color: Colors.white.withValues(alpha: 0.88),
                       ),
                     ),
                   ],
                 ),
               ),
-              // Right: arrow
-              Icon(
+
+              // Right: forward arrow
+              const Icon(
                 Icons.arrow_forward_ios_rounded,
-                color: _red,
+                color: Colors.white,
                 size: 18,
               ),
             ],

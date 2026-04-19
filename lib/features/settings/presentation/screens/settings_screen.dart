@@ -16,8 +16,23 @@ import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../subscription/presentation/providers/subscription_provider.dart';
 import '../providers/settings_provider.dart';
 
-class SettingsScreen extends ConsumerWidget {
+class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
+
+  @override
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
+  // ── Optimistic local state ───────────────────────────────────────────────────
+  // null = "not yet set by user in this session" → fall back to auth value.
+  // Once the user flips a switch, we hold that value locally so the UI never
+  // flickers back to the default during the AuthNotifier.refresh() cycle
+  // (which temporarily sets state = AsyncData(AuthLoading()), making user null).
+  bool? _voiceCues;
+  bool? _hapticOn;
+  bool? _notifEnabled;
+  bool? _postSosEnabled;
 
   // ── URL helpers ─────────────────────────────────────────────────────────────
 
@@ -38,7 +53,7 @@ class SettingsScreen extends ConsumerWidget {
 
   // ── Delete account dialog ────────────────────────────────────────────────────
 
-  static Future<void> _showDeleteDialog(BuildContext context) async {
+  Future<void> _showDeleteDialog() async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -58,7 +73,7 @@ class SettingsScreen extends ConsumerWidget {
         ],
       ),
     );
-    if (confirmed == true && context.mounted) {
+    if (confirmed == true && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
@@ -71,8 +86,7 @@ class SettingsScreen extends ConsumerWidget {
 
   // ── Sign out dialog ──────────────────────────────────────────────────────────
 
-  static Future<void> _showSignOutDialog(
-      BuildContext context, WidgetRef ref) async {
+  Future<void> _showSignOutDialog() async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -96,37 +110,48 @@ class SettingsScreen extends ConsumerWidget {
         ],
       ),
     );
-    if (confirmed == true && context.mounted) {
+    if (confirmed == true && mounted) {
       await ref.read(authServiceProvider).signOut();
     }
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final auth = ref.watch(authProvider).valueOrNull;
+    // user is null during AuthLoading (background refresh after a save).
+    // The optimistic _field values shield the UI during that window.
     final user = auth is AuthAuthenticated ? auth.user : null;
 
-    final voiceCues = user?.settings.voiceCues ?? true;
-    final hapticOn = user?.settings.hapticOn ?? true;
+    // ── Eager seeding ────────────────────────────────────────────────────────
+    // Populate every local field from the real user values as soon as user is
+    // available (??= skips fields already set by a user tap this session).
+    // After this block, no _field is ever null while the screen is mounted,
+    // so auth refreshes that temporarily set user=null cannot flicker any
+    // toggle — not even ones the user hasn't touched this session.
+    if (user != null) {
+      _voiceCues      ??= user.settings.voiceCues;
+      _hapticOn       ??= user.settings.hapticOn;
+      _notifEnabled   ??= user.notificationPreferences.enabled;
+      _postSosEnabled ??= user.notificationPreferences.postSosEnabled;
+    }
+
+    // Resolve each toggle: local optimistic value (always non-null after
+    // seeding above) → safe default only on very first frame before auth loads.
+    final voiceCues      = _voiceCues      ?? true;
+    final hapticOn       = _hapticOn       ?? true;
+    final notifEnabled   = _notifEnabled   ?? true;
+    final postSosEnabled = _postSosEnabled ?? true;
+
+    final notifTime = user?.notificationPreferences.dailyTime ?? '20:00';
+
     final currentTheme = ref.watch(themeProvider);
+    final isPremium    = ref.watch(isPremiumProvider);
 
-    final notifEnabled =
-        user?.notificationPreferences.enabled ?? true;
-    final notifTime =
-        user?.notificationPreferences.dailyTime ?? '20:00';
-    final postSosEnabled =
-        user?.notificationPreferences.postSosEnabled ?? true;
-
-    final isPremium = ref.watch(isPremiumProvider);
-
-    final bg =
-        isDark ? AppColors.darkBackground : AppColors.lightBackground;
-    final surface =
-        isDark ? AppColors.darkSurface : AppColors.lightSurface;
-    final textPrimary =
-        isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
+    final bg           = isDark ? AppColors.darkBackground  : AppColors.lightBackground;
+    final surface      = isDark ? AppColors.darkSurface     : AppColors.lightSurface;
+    final textPrimary  = isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
     final textSecondary =
         isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
     final dividerColor =
@@ -139,10 +164,7 @@ class SettingsScreen extends ConsumerWidget {
         // Show the title instead of a back button.
         automaticallyImplyLeading: false,
         title: Text(
-          StringsSettings.sectionAbout
-              .isEmpty // fallback label
-              ? 'Settings'
-              : 'Settings',
+          'Settings',
           style: AppTypography.headingSmall.copyWith(color: textPrimary),
         ),
         backgroundColor: bg,
@@ -161,9 +183,14 @@ class SettingsScreen extends ConsumerWidget {
             value: voiceCues,
             onChanged: user == null
                 ? null
-                : (v) => ref
-                    .read(settingsNotifierProvider.notifier)
-                    .setVoiceCues(v),
+                : (v) {
+                    // Update local state immediately so the UI reflects the
+                    // new value even during the auth refresh that follows.
+                    setState(() => _voiceCues = v);
+                    ref
+                        .read(settingsNotifierProvider.notifier)
+                        .setVoiceCues(v);
+                  },
             title: Text(
               StringsSettings.voiceGuidanceToggle,
               style: AppTypography.bodyLarge.copyWith(color: textPrimary),
@@ -178,9 +205,12 @@ class SettingsScreen extends ConsumerWidget {
             value: hapticOn,
             onChanged: user == null
                 ? null
-                : (v) => ref
-                    .read(settingsNotifierProvider.notifier)
-                    .setHapticOn(v),
+                : (v) {
+                    setState(() => _hapticOn = v);
+                    ref
+                        .read(settingsNotifierProvider.notifier)
+                        .setHapticOn(v);
+                  },
             title: Text(
               StringsSettings.vibrationToggle,
               style: AppTypography.bodyLarge.copyWith(color: textPrimary),
@@ -221,34 +251,50 @@ class SettingsScreen extends ConsumerWidget {
             textSecondary: textSecondary,
           ),
 
-          RadioGroup<ThemeMode>(
-            groupValue: currentTheme,
-            onChanged: (v) =>
-                ref.read(themeProvider.notifier).setTheme(v!),
-            child: Column(
-              children: [
-                _ThemeRadio(
-                  label: StringsSettings.themeLight,
-                  value: ThemeMode.light,
-                  surface: surface,
-                  textPrimary: textPrimary,
+          Column(
+            children: [
+              RadioListTile<ThemeMode>(
+                value: ThemeMode.light,
+                groupValue: currentTheme,
+                onChanged: (v) =>
+                    ref.read(themeProvider.notifier).setTheme(v!),
+                tileColor: surface,
+                activeColor: AppColors.accentCoral,
+                title: Text(
+                  StringsSettings.themeLight,
+                  style:
+                      AppTypography.bodyLarge.copyWith(color: textPrimary),
                 ),
-                Divider(height: 1, color: dividerColor),
-                _ThemeRadio(
-                  label: StringsSettings.themeDark,
-                  value: ThemeMode.dark,
-                  surface: surface,
-                  textPrimary: textPrimary,
+              ),
+              Divider(height: 1, color: dividerColor),
+              RadioListTile<ThemeMode>(
+                value: ThemeMode.dark,
+                groupValue: currentTheme,
+                onChanged: (v) =>
+                    ref.read(themeProvider.notifier).setTheme(v!),
+                tileColor: surface,
+                activeColor: AppColors.accentCoral,
+                title: Text(
+                  StringsSettings.themeDark,
+                  style:
+                      AppTypography.bodyLarge.copyWith(color: textPrimary),
                 ),
-                Divider(height: 1, color: dividerColor),
-                _ThemeRadio(
-                  label: StringsSettings.themeSystem,
-                  value: ThemeMode.system,
-                  surface: surface,
-                  textPrimary: textPrimary,
+              ),
+              Divider(height: 1, color: dividerColor),
+              RadioListTile<ThemeMode>(
+                value: ThemeMode.system,
+                groupValue: currentTheme,
+                onChanged: (v) =>
+                    ref.read(themeProvider.notifier).setTheme(v!),
+                tileColor: surface,
+                activeColor: AppColors.accentCoral,
+                title: Text(
+                  StringsSettings.themeSystem,
+                  style:
+                      AppTypography.bodyLarge.copyWith(color: textPrimary),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
 
           const SizedBox(height: 24),
@@ -264,9 +310,12 @@ class SettingsScreen extends ConsumerWidget {
             value: notifEnabled,
             onChanged: user == null
                 ? null
-                : (v) => ref
-                    .read(settingsNotifierProvider.notifier)
-                    .setReminderEnabled(v),
+                : (v) {
+                    setState(() => _notifEnabled = v);
+                    ref
+                        .read(settingsNotifierProvider.notifier)
+                        .setReminderEnabled(v);
+                  },
             title: Text(
               StringsSettings.dailyReminderToggle,
               style: AppTypography.bodyLarge.copyWith(color: textPrimary),
@@ -315,7 +364,7 @@ class SettingsScreen extends ConsumerWidget {
                           child: child!,
                         ),
                       );
-                      if (picked != null && context.mounted) {
+                      if (picked != null && mounted) {
                         final timeStr =
                             '${picked.hour.toString().padLeft(2, '0')}:'
                             '${picked.minute.toString().padLeft(2, '0')}';
@@ -334,9 +383,12 @@ class SettingsScreen extends ConsumerWidget {
             value: postSosEnabled,
             onChanged: user == null
                 ? null
-                : (v) => ref
-                    .read(settingsNotifierProvider.notifier)
-                    .setPostSosEnabled(v),
+                : (v) {
+                    setState(() => _postSosEnabled = v);
+                    ref
+                        .read(settingsNotifierProvider.notifier)
+                        .setPostSosEnabled(v);
+                  },
             title: Text(
               StringsSettings.postSosToggle,
               style: AppTypography.bodyLarge.copyWith(color: textPrimary),
@@ -471,7 +523,7 @@ class SettingsScreen extends ConsumerWidget {
               style: AppTypography.bodyLarge
                   .copyWith(color: textSecondary),
             ),
-            onTap: () => _showSignOutDialog(context, ref),
+            onTap: _showSignOutDialog,
           ),
 
           Divider(height: 1, color: dividerColor),
@@ -484,7 +536,7 @@ class SettingsScreen extends ConsumerWidget {
               style: AppTypography.bodyLarge
                   .copyWith(color: AppColors.accentError),
             ),
-            onTap: () => _showDeleteDialog(context),
+            onTap: _showDeleteDialog,
           ),
 
           const SizedBox(height: 24),
@@ -533,7 +585,7 @@ class SettingsScreen extends ConsumerWidget {
             trailing:
                 Icon(Icons.chevron_right, color: textSecondary, size: 20),
             onTap: () =>
-                _launch('https://anshin.app/privacy'),
+                _launch('https://harshamdy.github.io/anshin/privacy.html'),
           ),
 
           Divider(height: 1, color: dividerColor),
@@ -548,7 +600,7 @@ class SettingsScreen extends ConsumerWidget {
             trailing:
                 Icon(Icons.chevron_right, color: textSecondary, size: 20),
             onTap: () =>
-                _launch('https://anshin.app/terms'),
+                _launch('https://harshamdy.github.io/anshin/terms.html'),
           ),
 
           Divider(height: 1, color: dividerColor),
@@ -596,30 +648,3 @@ class _SectionHeader extends StatelessWidget {
   }
 }
 
-// ─── Theme radio tile ─────────────────────────────────────────────────────────
-
-class _ThemeRadio extends StatelessWidget {
-  final String label;
-  final ThemeMode value;
-  final Color surface;
-  final Color textPrimary;
-
-  const _ThemeRadio({
-    required this.label,
-    required this.value,
-    required this.surface,
-    required this.textPrimary,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return RadioListTile<ThemeMode>(
-      value: value,
-      tileColor: surface,
-      title: Text(
-        label,
-        style: AppTypography.bodyLarge.copyWith(color: textPrimary),
-      ),
-    );
-  }
-}
