@@ -31,7 +31,7 @@ class JournalHomeScreen extends ConsumerWidget {
     final borderColor =
         isDark ? AppColors.darkCardBorder : AppColors.lightCardBorder;
 
-    final entriesAsync = ref.watch(journalEntriesProvider);
+    final entriesAsync = ref.watch(journalEntriesForMonthProvider);
     final canCreateAsync = ref.watch(canCreateJournalEntryProvider);
 
     return Scaffold(

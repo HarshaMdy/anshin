@@ -22,8 +22,10 @@ abstract final class AppRoutes {
   static const progress = '/progress';
   static const profile = '/profile';
 
-  // ─── Breathing (accessible from tools tab + SOS) ─────────────────────────
+  // ─── Breathing (accessible from home + SOS) ──────────────────────────────
   static const breathingPicker = '/breathing';
+  static const breathingSession = '/breathing-session/:patternId';
+  static String breathingSessionPath(String id) => '/breathing-session/$id';
 
   // ─── Grounding (accessible from tools tab + SOS) ─────────────────────────
   static const groundingPicker = '/grounding';

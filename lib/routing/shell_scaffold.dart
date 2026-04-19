@@ -29,9 +29,9 @@ class ShellScaffold extends StatelessWidget {
             label: 'Home',
           ),
           NavigationDestination(
-            icon: const Icon(Icons.spa_outlined),
-            selectedIcon: Icon(Icons.spa, color: colors.primary),
-            label: 'Tools',
+            icon: const Icon(Icons.book_outlined),
+            selectedIcon: Icon(Icons.book, color: colors.primary),
+            label: 'Journal',
           ),
           NavigationDestination(
             icon: const Icon(Icons.bar_chart_outlined),
@@ -39,9 +39,9 @@ class ShellScaffold extends StatelessWidget {
             label: 'Progress',
           ),
           NavigationDestination(
-            icon: const Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person, color: colors.primary),
-            label: 'Profile',
+            icon: const Icon(Icons.settings_outlined),
+            selectedIcon: Icon(Icons.settings, color: colors.primary),
+            label: 'Settings',
           ),
         ],
       ),

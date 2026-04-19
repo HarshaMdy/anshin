@@ -31,7 +31,9 @@ class BreathingPickerScreen extends ConsumerWidget {
         .read(breathingPreferenceNotifierProvider.notifier)
         .save(pattern.id);
 
-    if (context.mounted && context.canPop()) context.pop();
+    if (context.mounted) {
+      context.push(AppRoutes.breathingSessionPath(pattern.id));
+    }
   }
 
   @override
@@ -49,7 +51,7 @@ class BreathingPickerScreen extends ConsumerWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () =>
-              context.canPop() ? context.pop() : context.go(AppRoutes.tools),
+              context.canPop() ? context.pop() : context.go(AppRoutes.home),
         ),
         title: null,
         backgroundColor: isDark

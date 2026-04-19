@@ -24,7 +24,7 @@ class GroundingPickerScreen extends ConsumerWidget {
       context.push(AppRoutes.paywall);
       return;
     }
-    context.go(AppRoutes.groundingSessionPath(technique.id));
+    context.push(AppRoutes.groundingSessionPath(technique.id));
   }
 
   @override
@@ -41,7 +41,7 @@ class GroundingPickerScreen extends ConsumerWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () =>
-              context.canPop() ? context.pop() : context.go(AppRoutes.tools),
+              context.canPop() ? context.pop() : context.go(AppRoutes.home),
         ),
         backgroundColor:
             isDark ? AppColors.darkBackground : AppColors.lightBackground,

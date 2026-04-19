@@ -126,10 +126,14 @@ class HomeScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: bg,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: _SosButton(onTap: () => context.push(AppRoutes.sos)),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding:
-              const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          padding: const EdgeInsets.fromLTRB(20, 24, 20, 120),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -162,12 +166,7 @@ class HomeScreen extends ConsumerWidget {
                 error: (_, _) => const SizedBox.shrink(),
               ),
 
-              const SizedBox(height: 20),
-
-              // ── SOS button ───────────────────────────────────────────────
-              _SosButton(onTap: () => context.push(AppRoutes.sos)),
-
-              const SizedBox(height: 32),
+              const SizedBox(height: 28),
 
               // ── Section cards (2-column grid) ────────────────────────────
               GridView.builder(
@@ -193,8 +192,6 @@ class HomeScreen extends ConsumerWidget {
                   );
                 },
               ),
-
-              const SizedBox(height: 8),
             ],
           ),
         ),
