@@ -1,11 +1,22 @@
 // Journal entry flow — Content Bible §9
 // 6 steps: mood picker → accomplishments → release → gratitude → notes → completion.
 // AES-256 encrypted before saving; free users capped at 30 entries.
+//
+// Completion step:
+//   • shows a live preview of the shareable card (RepaintBoundary)
+//   • share button captures the card at 3.6× → 1080×1080 PNG via
+//     RepaintBoundary.toImage(), writes to temp dir, shares via ShareXFiles
+import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show RenderRepaintBoundary;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:share_plus/share_plus.dart' show Share;
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../../../core/constants/strings_journal.dart';
 import '../../../../core/constants/strings_mascot.dart';
@@ -15,6 +26,7 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/mascot_widget.dart';
 import '../../../../routing/app_routes.dart';
 import '../providers/journal_provider.dart';
+import '../widgets/journal_share_card.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Step enum
@@ -45,6 +57,10 @@ class _JournalEntryScreenState extends ConsumerState<JournalEntryScreen> {
 
   // Completion state
   String? _savedInsight;
+  bool _isSharing = false;
+
+  // Key for the RepaintBoundary wrapping the share card
+  final GlobalKey _shareCardKey = GlobalKey();
 
   @override
   void dispose() {
@@ -81,7 +97,6 @@ class _JournalEntryScreenState extends ConsumerState<JournalEntryScreen> {
     final mood = _mood;
     if (mood == null) return;
 
-    // Pick a random insight for the completion screen
     final insights = StringsJournal.completionInsights;
     final insight = insights[DateTime.now().millisecond % insights.length];
 
@@ -101,10 +116,60 @@ class _JournalEntryScreenState extends ConsumerState<JournalEntryScreen> {
     }
   }
 
-  // ── Share ──────────────────────────────────────────────────────────────────
+  // ── Share — capture card image and share via system sheet ──────────────────
 
   Future<void> _share() async {
-    await Share.share(StringsShare.journalCardText);
+    if (_isSharing) return;
+    setState(() => _isSharing = true);
+    try {
+      await _captureAndShare();
+    } catch (_) {
+      // Fallback: share text if image capture fails
+      if (mounted) await Share.share(StringsShare.journalCardText);
+    } finally {
+      if (mounted) setState(() => _isSharing = false);
+    }
+  }
+
+  Future<void> _captureAndShare() async {
+    final context = _shareCardKey.currentContext;
+    if (context == null) {
+      await Share.share(StringsShare.journalCardText);
+      return;
+    }
+
+    final boundary =
+        context.findRenderObject() as RenderRepaintBoundary?;
+    if (boundary == null) {
+      await Share.share(StringsShare.journalCardText);
+      return;
+    }
+
+    // Render to image — pixelRatio 3.6 turns 300 dp → 1080 px
+    final ui.Image image =
+        await boundary.toImage(pixelRatio: JournalShareCard.capturePixelRatio);
+    final ByteData? byteData =
+        await image.toByteData(format: ui.ImageByteFormat.png);
+    image.dispose();
+
+    if (byteData == null) {
+      await Share.share(StringsShare.journalCardText);
+      return;
+    }
+
+    final Uint8List pngBytes = byteData.buffer.asUint8List();
+
+    // Write to temp file
+    final Directory tempDir = await getTemporaryDirectory();
+    final File file =
+        File('${tempDir.path}/anshin_journal_card.png');
+    await file.writeAsBytes(pngBytes, flush: true);
+
+    // Open system share sheet with the PNG
+    await Share.shareXFiles(
+      [XFile(file.path, mimeType: 'image/png')],
+      text: StringsShare.journalCardText,
+    );
   }
 
   // ── Build ──────────────────────────────────────────────────────────────────
@@ -135,7 +200,6 @@ class _JournalEntryScreenState extends ConsumerState<JournalEntryScreen> {
                 icon: const Icon(Icons.arrow_back),
                 onPressed: _back,
               ),
-              // Progress dots
               title: _ProgressDots(step: _step),
               centerTitle: true,
             ),
@@ -235,6 +299,9 @@ class _JournalEntryScreenState extends ConsumerState<JournalEntryScreen> {
         return _CompletionStep(
           key: const ValueKey('completion'),
           insight: _savedInsight ?? StringsJournal.completionInsights.first,
+          mood: _mood,
+          shareCardKey: _shareCardKey,
+          isSharing: _isSharing,
           textPrimary: textPrimary,
           textSecondary: textSecondary,
           onDone: () =>
@@ -255,9 +322,8 @@ class _ProgressDots extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 5 content steps (mood → notes); completion doesn't show dots
     const total = 5;
-    final current = step.index; // 0-based, completion = 5
+    final current = step.index;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -304,7 +370,6 @@ class _MoodStep extends StatelessWidget {
     required this.borderColor,
   });
 
-  // SVG asset paths for each emotion (same order as StringsMascot.allLabels)
   static const List<MascotEmotion> _emotions = [
     MascotEmotion.calm,
     MascotEmotion.anxious,
@@ -522,6 +587,9 @@ class _TextStep extends StatelessWidget {
 
 class _CompletionStep extends StatelessWidget {
   final String insight;
+  final String? mood;
+  final GlobalKey shareCardKey;
+  final bool isSharing;
   final Color textPrimary;
   final Color textSecondary;
   final VoidCallback onDone;
@@ -530,6 +598,9 @@ class _CompletionStep extends StatelessWidget {
   const _CompletionStep({
     super.key,
     required this.insight,
+    required this.mood,
+    required this.shareCardKey,
+    required this.isSharing,
     required this.textPrimary,
     required this.textSecondary,
     required this.onDone,
@@ -538,24 +609,28 @@ class _CompletionStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 48),
+    // Resolve the user's mood → mascot emotion for the share card
+    final emotion = mood != null
+        ? MascotEmotionAsset.fromLabel(mood!)
+        : MascotEmotion.calm;
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(24, 40, 24, 40),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Mascot proud — celebrating completion
+          // ── Celebration mascot ─────────────────────────────────────────
           const Center(
             child: MascotWidget(
               emotion: MascotEmotion.proud,
-              size: 110,
+              size: 90,
               breathe: true,
             ),
           ),
 
-          const SizedBox(height: 28),
+          const SizedBox(height: 20),
 
-          // +5 points pill
+          // ── Points pill ────────────────────────────────────────────────
           Center(
             child: Container(
               padding:
@@ -576,29 +651,58 @@ class _CompletionStep extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
 
+          // ── Saved heading ──────────────────────────────────────────────
           Text(
             StringsJournal.completionSaved,
             textAlign: TextAlign.center,
-            style: AppTypography.headingMedium.copyWith(color: textPrimary),
+            style:
+                AppTypography.headingMedium.copyWith(color: textPrimary),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 10),
 
+          // ── Insight ────────────────────────────────────────────────────
           Text(
             insight,
             textAlign: TextAlign.center,
             style: AppTypography.bodyMedium.copyWith(color: textSecondary),
           ),
 
-          const Spacer(),
+          const SizedBox(height: 28),
 
-          // Share button
+          // ── Share card preview ─────────────────────────────────────────
+          // Wrapped in RepaintBoundary so toImage() captures only this card.
+          // ClipRRect gives the on-screen preview a matching corner radius.
+          Center(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(28),
+              child: RepaintBoundary(
+                key: shareCardKey,
+                child: JournalShareCard(emotion: emotion),
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 28),
+
+          // ── Share button ───────────────────────────────────────────────
           OutlinedButton.icon(
-            onPressed: onShare,
-            icon: const Icon(Icons.share_outlined, size: 18),
-            label: Text(StringsJournal.completionShare),
+            onPressed: isSharing ? null : onShare,
+            icon: isSharing
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                      color: AppColors.accentCoral,
+                      strokeWidth: 2,
+                    ),
+                  )
+                : const Icon(Icons.share_outlined, size: 18),
+            label: Text(isSharing
+                ? 'Preparing…'
+                : StringsJournal.completionShare),
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.accentCoral,
               side: BorderSide(
@@ -612,6 +716,7 @@ class _CompletionStep extends StatelessWidget {
 
           const SizedBox(height: 12),
 
+          // ── Done button ────────────────────────────────────────────────
           ElevatedButton(
             onPressed: onDone,
             style: ElevatedButton.styleFrom(
