@@ -10,8 +10,17 @@ final routerNotifierProvider = Provider<RouterNotifier>((ref) {
 class RouterNotifier extends ChangeNotifier {
   final Ref _ref;
 
+  // True once we have seen an AuthAuthenticated state at least once.
+  // Used to distinguish "initial auth loading" from "background refresh"
+  // (e.g. after saving settings). During a background refresh we must NOT
+  // redirect — the user should stay exactly where they are.
+  bool _hasAuthenticatedOnce = false;
+
   RouterNotifier(this._ref) {
-    _ref.listen<AsyncValue<AuthState>>(authProvider, (_, _) {
+    _ref.listen<AsyncValue<AuthState>>(authProvider, (_, next) {
+      if (next.valueOrNull is AuthAuthenticated) {
+        _hasAuthenticatedOnce = true;
+      }
       notifyListeners();
     });
   }
@@ -20,8 +29,13 @@ class RouterNotifier extends ChangeNotifier {
     final location = state.matchedLocation as String;
     final authAsync = _ref.read(authProvider);
 
-    // Auth still initialising — park on splash
+    // ── Loading ─────────────────────────────────────────────────────────────
+    // If we have already been authenticated (e.g. user is on Settings and
+    // toggles a switch which calls authProvider.notifier.refresh()), the
+    // loading state is a background refresh — hold position, do NOT bounce to
+    // splash/home. Only redirect to splash on the very first load.
     if (authAsync.isLoading) {
+      if (_hasAuthenticatedOnce) return null;
       return location == AppRoutes.splash ? null : AppRoutes.splash;
     }
 
@@ -48,11 +62,12 @@ class RouterNotifier extends ChangeNotifier {
           location.startsWith('/onboarding');
       if (onOnboarding && onboardingDone) return AppRoutes.home;
 
-      // Incomplete-onboarding users must stay in gate/onboarding
+      // Incomplete-onboarding users must stay in gate/onboarding.
+      // inShell reflects the current 4-tab layout: Home | Journal | Progress | Settings
       final inShell = location == AppRoutes.home ||
-          location == AppRoutes.tools ||
+          location == AppRoutes.journalHome ||
           location == AppRoutes.progress ||
-          location == AppRoutes.profile;
+          location == AppRoutes.settings;
       if (inShell && !onboardingDone) return AppRoutes.gate;
     }
 
