@@ -54,6 +54,13 @@ dependencies:
   # Share sheet (journal completion screen)
   share_plus: ^10.1.4
 
+  # Timezone support (required by flutter_local_notifications zonedSchedule)
+  timezone: ^0.9.4
+  flutter_timezone: ^1.0.4
+
+  # URL launcher (Rate Anshin, Privacy Policy, Terms, support email)
+  url_launcher: ^6.3.1
+
   # SVG rendering (mascot)
   flutter_svg: ^2.0.10+1
 

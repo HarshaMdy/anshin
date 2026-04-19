@@ -6,6 +6,7 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 
 import 'app.dart';
 import 'core/constants/revenuecat_constants.dart';
+import 'core/services/notification_service.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -14,6 +15,9 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // ── Notifications initialisation ─────────────────────────────────────────
+  await NotificationService().init();
 
   // ── RevenueCat SDK initialisation ────────────────────────────────────────
   // Sandbox mode: using placeholder key until Play Console products are live

@@ -9,6 +9,7 @@ import '../../../../core/database/app_database.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../routing/app_routes.dart';
+import '../../../../core/providers/notification_provider.dart';
 import '../../../activity_log/presentation/providers/activity_log_provider.dart';
 import '../../../daily/presentation/providers/checkin_provider.dart';
 import '../../../journal/presentation/providers/journal_provider.dart';
@@ -35,6 +36,8 @@ class HomeScreen extends ConsumerWidget {
     ref.watch(journalSyncProvider);
     // Associate Firebase userId with RevenueCat customer record
     ref.watch(rcIdentityProvider);
+    // Re-apply notification schedule + reset 7-day re-engagement clock
+    ref.watch(notificationSetupProvider);
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg =

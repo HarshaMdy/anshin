@@ -3,27 +3,34 @@
 // Forced dark — visual continuity with SOS, still in the recovery moment.
 // Message is selected randomly from rotatingMessages on screen creation and
 // never changes on rebuild.
+//
+// Schedules the 4-hour post-SOS follow-up notification in initState,
+// subject to the user's postSosEnabled preference.
+import 'dart:async' show unawaited;
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/strings_post_session.dart';
+import '../../../../core/providers/notification_provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/mascot_widget.dart';
 import '../../../../routing/app_routes.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 
-class PostSessionScreen extends StatefulWidget {
+class PostSessionScreen extends ConsumerStatefulWidget {
   const PostSessionScreen({super.key});
 
   @override
-  State<PostSessionScreen> createState() => _PostSessionScreenState();
+  ConsumerState<PostSessionScreen> createState() => _PostSessionScreenState();
 }
 
-class _PostSessionScreenState extends State<PostSessionScreen> {
+class _PostSessionScreenState extends ConsumerState<PostSessionScreen> {
   late final String _message;
 
   @override
@@ -33,6 +40,22 @@ class _PostSessionScreenState extends State<PostSessionScreen> {
     final idx =
         Random().nextInt(StringsPostSession.rotatingMessages.length);
     _message = StringsPostSession.rotatingMessages[idx];
+
+    // Schedule 4-hour follow-up if user has post-SOS notifications enabled
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final auth = ref.read(authProvider).valueOrNull;
+      final enabled = auth is AuthAuthenticated
+          ? auth.user.notificationPreferences.postSosEnabled
+          : true; // default on if prefs not loaded
+      if (enabled) {
+        unawaited(
+          ref
+              .read(notificationServiceProvider)
+              .schedulePostSosFollowUp()
+              .catchError((_) {}),
+        );
+      }
+    });
   }
 
   @override
