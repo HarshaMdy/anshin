@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/strings_gate.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/widgets/mascot_widget.dart';
 import '../../../../routing/app_routes.dart';
 
 class GateScreen extends ConsumerWidget {
@@ -35,24 +36,12 @@ class GateScreen extends ConsumerWidget {
             children: [
               const Spacer(flex: 2),
 
-              // ── Mascot placeholder ──────────────────────────────────────────
-              Center(
-                child: Container(
-                  width: 96,
-                  height: 96,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: AppColors.accentTeal.withValues(alpha: 0.10),
-                    border: Border.all(
-                      color: AppColors.accentTeal.withValues(alpha: 0.28),
-                      width: 1.5,
-                    ),
-                  ),
-                  child: Icon(
-                    Icons.self_improvement_outlined,
-                    size: 46,
-                    color: AppColors.accentTeal,
-                  ),
+              // ── Mascot — welcoming calm pose ────────────────────────────────
+              const Center(
+                child: MascotWidget(
+                  emotion: MascotEmotion.calm,
+                  size: 96,
+                  breathe: true,
                 ),
               ),
 

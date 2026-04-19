@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <ellipse cx="50" cy="89" rx="18" ry="3.5" fill="#7AAFBB" opacity="0.2"/>
+  <path d="M39 72 Q36 80 38 85 Q40 89 44 88 Q48 87 46 80 Q46 73 43 72 Z" fill="#7AAFBB"/>
+  <path d="M61 72 Q64 80 62 85 Q60 89 56 88 Q52 87 54 80 Q54 73 57 72 Z" fill="#7AAFBB"/>
+  <path d="M24 52 Q16 50 14 58 Q12 65 20 66 Q27 67 29 60 Z" fill="#7AAFBB"/>
+  <path d="M76 52 Q84 50 86 58 Q88 65 80 66 Q73 67 71 60 Z" fill="#7AAFBB"/>
+  <ellipse cx="50" cy="47" rx="28" ry="30" fill="#99C9D7"/>
+  <ellipse cx="42" cy="38" rx="9" ry="7" fill="#C5E4EC" opacity="0.55"/>
+  <!-- Left eye — open, hopeful -->
+  <circle cx="41" cy="43" r="5" fill="#2D4A52"/>
+  <circle cx="43" cy="41" r="1.8" fill="white"/>
+  <!-- Right eye — open with sparkle -->
+  <circle cx="59" cy="43" r="5" fill="#2D4A52"/>
+  <circle cx="61" cy="41" r="1.8" fill="white"/>
+  <!-- Sparkle star near right eye -->
+  <path d="M65 34 L65.8 37 L68.5 36.5 L66.5 38.5 L68 41 L65.5 40 L65 43 L64.5 40 L62 41 L63.5 38.5 L61.5 36.5 L64.2 37 Z" fill="#FFD166" opacity="0.9"/>
+  <!-- Upward smile -->
+  <path d="M42 55 Q50 63 58 55" stroke="#2D4A52" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- Rosy cheeks -->
+  <ellipse cx="34" cy="51" rx="4" ry="2.5" fill="#F4A0A0" opacity="0.45"/>
+  <ellipse cx="66" cy="51" rx="4" ry="2.5" fill="#F4A0A0" opacity="0.45"/>
+</svg>

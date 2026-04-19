@@ -3,6 +3,7 @@
 // AES-256 encrypted before saving; free users capped at 30 entries.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart' show Share;
 
@@ -11,6 +12,7 @@ import '../../../../core/constants/strings_mascot.dart';
 import '../../../../core/constants/strings_share.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/widgets/mascot_widget.dart';
 import '../../../../routing/app_routes.dart';
 import '../providers/journal_provider.dart';
 
@@ -302,20 +304,20 @@ class _MoodStep extends StatelessWidget {
     required this.borderColor,
   });
 
-  // Placeholder icons matching the 12 emotions in order
-  static const List<IconData> _icons = [
-    Icons.self_improvement_outlined,          // Calm
-    Icons.sentiment_dissatisfied_outlined,    // Anxious
-    Icons.warning_amber_outlined,             // Panicked
-    Icons.sentiment_very_dissatisfied_outlined, // Sad
-    Icons.bedtime_outlined,                   // Tired
-    Icons.layers_outlined,                    // Overwhelmed
-    Icons.wb_sunny_outlined,                  // Hopeful
-    Icons.check_circle_outline,               // Relieved
-    Icons.favorite_border,                    // Grateful
-    Icons.bolt_outlined,                      // Frustrated
-    Icons.radio_button_unchecked,             // Numb
-    Icons.emoji_events_outlined,              // Proud
+  // SVG asset paths for each emotion (same order as StringsMascot.allLabels)
+  static const List<MascotEmotion> _emotions = [
+    MascotEmotion.calm,
+    MascotEmotion.anxious,
+    MascotEmotion.panicked,
+    MascotEmotion.sad,
+    MascotEmotion.tired,
+    MascotEmotion.overwhelmed,
+    MascotEmotion.hopeful,
+    MascotEmotion.relieved,
+    MascotEmotion.grateful,
+    MascotEmotion.frustrated,
+    MascotEmotion.numb,
+    MascotEmotion.proud,
   ];
 
   @override
@@ -366,12 +368,10 @@ class _MoodStep extends StatelessWidget {
                           width: selected ? 2 : 1,
                         ),
                       ),
-                      child: Icon(
-                        _icons[i],
-                        size: 26,
-                        color: selected
-                            ? AppColors.accentCoral
-                            : textSecondary,
+                      child: SvgPicture.asset(
+                        _emotions[i].assetPath,
+                        width: 38,
+                        height: 38,
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -544,24 +544,12 @@ class _CompletionStep extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Mascot proud placeholder
-          Center(
-            child: Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.accentGold.withValues(alpha: 0.12),
-                border: Border.all(
-                  color: AppColors.accentGold.withValues(alpha: 0.40),
-                  width: 2,
-                ),
-              ),
-              child: Icon(
-                Icons.emoji_events_outlined,
-                size: 48,
-                color: AppColors.accentGold,
-              ),
+          // Mascot proud — celebrating completion
+          const Center(
+            child: MascotWidget(
+              emotion: MascotEmotion.proud,
+              size: 110,
+              breathe: true,
             ),
           ),
 

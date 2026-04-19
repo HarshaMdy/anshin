@@ -11,6 +11,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/strings_onboarding.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/widgets/mascot_widget.dart';
 import '../../../../routing/app_routes.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../providers/onboarding_provider.dart';
@@ -121,25 +122,14 @@ class _OnboardingCScreenState extends ConsumerState<OnboardingCScreen> {
 
               const SizedBox(height: 40),
 
-              // ── Bell icon ───────────────────────────────────────────────────
+              // ── Mascot — hopeful when time set, calm otherwise ──────────────
               Center(
-                child: Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: AppColors.accentTeal.withValues(alpha: 0.10),
-                    border: Border.all(
-                      color: AppColors.accentTeal.withValues(alpha: 0.28),
-                    ),
-                  ),
-                  child: Icon(
-                    _reminderTime != null
-                        ? Icons.notifications_active_outlined
-                        : Icons.notifications_none_outlined,
-                    size: 38,
-                    color: AppColors.accentTeal,
-                  ),
+                child: MascotWidget(
+                  emotion: _reminderTime != null
+                      ? MascotEmotion.hopeful
+                      : MascotEmotion.calm,
+                  size: 90,
+                  breathe: true,
                 ),
               ),
 

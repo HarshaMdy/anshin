@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Ground shadow -->
+  <ellipse cx="50" cy="89" rx="18" ry="3.5" fill="#7AAFBB" opacity="0.2"/>
+  <!-- Left leg -->
+  <path d="M39 72 Q36 80 38 85 Q40 89 44 88 Q48 87 46 80 Q46 73 43 72 Z" fill="#7AAFBB"/>
+  <!-- Right leg -->
+  <path d="M61 72 Q64 80 62 85 Q60 89 56 88 Q52 87 54 80 Q54 73 57 72 Z" fill="#7AAFBB"/>
+  <!-- Left arm -->
+  <path d="M24 52 Q16 50 14 58 Q12 65 20 66 Q27 67 29 60 Z" fill="#7AAFBB"/>
+  <!-- Right arm -->
+  <path d="M76 52 Q84 50 86 58 Q88 65 80 66 Q73 67 71 60 Z" fill="#7AAFBB"/>
+  <!-- Body -->
+  <ellipse cx="50" cy="47" rx="28" ry="30" fill="#99C9D7"/>
+  <!-- Body highlight -->
+  <ellipse cx="42" cy="38" rx="9" ry="7" fill="#C5E4EC" opacity="0.55"/>
+  <!-- Left eye — happy closed arc -->
+  <path d="M37 43 Q41 38 45 43" stroke="#2D4A52" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <!-- Right eye — happy closed arc -->
+  <path d="M55 43 Q59 38 63 43" stroke="#2D4A52" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <!-- Gentle smile -->
+  <path d="M43 55 Q50 61 57 55" stroke="#2D4A52" stroke-width="2" fill="none" stroke-linecap="round"/>
+</svg>

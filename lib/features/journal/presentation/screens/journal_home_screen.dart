@@ -9,6 +9,7 @@ import '../../../../core/constants/strings_journal.dart';
 import '../../../../core/database/app_database.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/widgets/mascot_widget.dart';
 import '../../../../routing/app_routes.dart';
 import '../providers/journal_provider.dart';
 
@@ -416,10 +417,9 @@ class _EmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.book_outlined,
-              size: 56,
-              color: textSecondary.withValues(alpha: 0.3),
+            const MascotWidget(
+              emotion: MascotEmotion.holdingPen,
+              size: 80,
             ),
             const SizedBox(height: 16),
             Text(

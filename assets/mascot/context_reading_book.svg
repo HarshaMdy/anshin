@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <ellipse cx="50" cy="92" rx="20" ry="3.5" fill="#7AAFBB" opacity="0.2"/>
+  <path d="M39 72 Q36 80 38 85 Q40 89 44 88 Q48 87 46 80 Q46 73 43 72 Z" fill="#7AAFBB"/>
+  <path d="M61 72 Q64 80 62 85 Q60 89 56 88 Q52 87 54 80 Q54 73 57 72 Z" fill="#7AAFBB"/>
+  <!-- Left arm extended inward (holding book) -->
+  <path d="M26 58 Q20 58 18 64 Q17 70 24 71 Q30 71 33 65 Z" fill="#7AAFBB"/>
+  <!-- Right arm extended inward (holding book) -->
+  <path d="M74 58 Q80 58 82 64 Q83 70 76 71 Q70 71 67 65 Z" fill="#7AAFBB"/>
+  <!-- Open book between arms -->
+  <path d="M28 72 Q50 68 72 72 L72 88 Q50 84 28 88 Z" fill="#F5F0E8"/>
+  <path d="M28 72 Q50 68 50 72 L50 88 Q50 84 28 88 Z" fill="#E8E0D0"/>
+  <line x1="50" y1="68" x2="50" y2="88" stroke="#D0C8B8" stroke-width="1.2"/>
+  <!-- Book text lines -->
+  <line x1="33" y1="75" x2="47" y2="75" stroke="#B0A898" stroke-width="0.8" opacity="0.7"/>
+  <line x1="33" y1="78" x2="47" y2="78" stroke="#B0A898" stroke-width="0.8" opacity="0.7"/>
+  <line x1="33" y1="81" x2="44" y2="81" stroke="#B0A898" stroke-width="0.8" opacity="0.7"/>
+  <line x1="53" y1="75" x2="67" y2="75" stroke="#B0A898" stroke-width="0.8" opacity="0.7"/>
+  <line x1="53" y1="78" x2="67" y2="78" stroke="#B0A898" stroke-width="0.8" opacity="0.7"/>
+  <line x1="53" y1="81" x2="64" y2="81" stroke="#B0A898" stroke-width="0.8" opacity="0.7"/>
+  <ellipse cx="50" cy="47" rx="28" ry="30" fill="#99C9D7"/>
+  <ellipse cx="42" cy="38" rx="9" ry="7" fill="#C5E4EC" opacity="0.55"/>
+  <!-- Reading face — eyes looking slightly down -->
+  <circle cx="41" cy="44" r="4.5" fill="#2D4A52"/>
+  <circle cx="43" cy="43" r="1.5" fill="white"/>
+  <circle cx="59" cy="44" r="4.5" fill="#2D4A52"/>
+  <circle cx="61" cy="43" r="1.5" fill="white"/>
+  <path d="M44 55 Q50 59 56 55" stroke="#2D4A52" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+</svg>

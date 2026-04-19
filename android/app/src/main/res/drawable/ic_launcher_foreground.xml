@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Anshin app icon foreground — kawaii mascot in calm pose
+  viewportWidth/Height = 108 (standard adaptive icon foreground size)
+  Safe zone = 72dp centered, so face features are within 18..90 on each axis
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Ground shadow -->
+    <path
+        android:fillColor="#7AAFBB"
+        android:fillAlpha="0.18"
+        android:pathData="M54,96 A20,4 0 1,0 54,88 A20,4 0 1,0 54,96Z"/>
+
+    <!-- Left leg -->
+    <path
+        android:fillColor="#7AAFBB"
+        android:pathData="M42,77 Q39,85 41,90 Q43,94 47,93 Q51,92 50,85 Q50,78 46,77 Z"/>
+
+    <!-- Right leg -->
+    <path
+        android:fillColor="#7AAFBB"
+        android:pathData="M66,77 Q69,85 67,90 Q65,94 61,93 Q57,92 58,85 Q58,78 62,77 Z"/>
+
+    <!-- Left arm -->
+    <path
+        android:fillColor="#7AAFBB"
+        android:pathData="M27,56 Q19,54 17,62 Q15,69 23,70 Q30,71 32,64 Z"/>
+
+    <!-- Right arm -->
+    <path
+        android:fillColor="#7AAFBB"
+        android:pathData="M81,56 Q89,54 91,62 Q93,69 85,70 Q78,71 76,64 Z"/>
+
+    <!-- Body (ellipse as path arc) -->
+    <path
+        android:fillColor="#99C9D7"
+        android:pathData="M54,22 A30,32 0 1,0 54.001,22 Z"/>
+
+    <!-- Body highlight -->
+    <path
+        android:fillColor="#C5E4EC"
+        android:fillAlpha="0.55"
+        android:pathData="M46,30 A10,8 0 1,0 46.001,30 Z"/>
+
+    <!-- Left eye — happy closed arc -->
+    <path
+        android:strokeColor="#2D4A52"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:pathData="M40,47 Q44,42 48,47"/>
+
+    <!-- Right eye — happy closed arc -->
+    <path
+        android:strokeColor="#2D4A52"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:pathData="M60,47 Q64,42 68,47"/>
+
+    <!-- Smile -->
+    <path
+        android:strokeColor="#2D4A52"
+        android:strokeWidth="2.2"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:pathData="M47,59 Q54,66 61,59"/>
+
+</vector>

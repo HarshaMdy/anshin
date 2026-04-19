@@ -13,6 +13,7 @@ import '../../../../core/constants/strings_post_session.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/widgets/mascot_widget.dart';
 import '../../../../routing/app_routes.dart';
 
 class PostSessionScreen extends StatefulWidget {
@@ -49,7 +50,18 @@ class _PostSessionScreenState extends State<PostSessionScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   // ── Top spacer — room to breathe ──────────────────────
-                  const Spacer(flex: 3),
+                  const Spacer(flex: 2),
+
+                  // ── Mascot — peaceful, eyes closed after SOS ──────────
+                  const Center(
+                    child: MascotWidget(
+                      emotion: MascotEmotion.eyesClosed,
+                      size: 90,
+                      breathe: true,
+                    ),
+                  ),
+
+                  const Spacer(flex: 1),
 
                   // ── Rotating message — the emotional core ─────────────
                   Text(

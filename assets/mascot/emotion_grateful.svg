@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <ellipse cx="50" cy="89" rx="18" ry="3.5" fill="#7AAFBB" opacity="0.2"/>
+  <path d="M39 72 Q36 80 38 85 Q40 89 44 88 Q48 87 46 80 Q46 73 43 72 Z" fill="#7AAFBB"/>
+  <path d="M61 72 Q64 80 62 85 Q60 89 56 88 Q52 87 54 80 Q54 73 57 72 Z" fill="#7AAFBB"/>
+  <path d="M24 52 Q16 50 14 58 Q12 65 20 66 Q27 67 29 60 Z" fill="#7AAFBB"/>
+  <path d="M76 52 Q84 50 86 58 Q88 65 80 66 Q73 67 71 60 Z" fill="#7AAFBB"/>
+  <ellipse cx="50" cy="47" rx="28" ry="30" fill="#99C9D7"/>
+  <ellipse cx="42" cy="38" rx="9" ry="7" fill="#C5E4EC" opacity="0.55"/>
+  <!-- Left heart eye -->
+  <path d="M41 47 C41 47 35.5 42 35.5 39 C35.5 36.5 37.5 36 39.5 37.5 C40.3 38 41 39 41 39 C41 39 41.7 38 42.5 37.5 C44.5 36 46.5 36.5 46.5 39 C46.5 42 41 47 41 47 Z" fill="#2D4A52"/>
+  <!-- Right heart eye -->
+  <path d="M59 47 C59 47 53.5 42 53.5 39 C53.5 36.5 55.5 36 57.5 37.5 C58.3 38 59 39 59 39 C59 39 59.7 38 60.5 37.5 C62.5 36 64.5 36.5 64.5 39 C64.5 42 59 47 59 47 Z" fill="#2D4A52"/>
+  <!-- Big warm smile -->
+  <path d="M41 56 Q50 65 59 56" stroke="#2D4A52" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <!-- Rosy cheeks -->
+  <ellipse cx="33" cy="51" rx="4.5" ry="2.5" fill="#F4A0A0" opacity="0.5"/>
+  <ellipse cx="67" cy="51" rx="4.5" ry="2.5" fill="#F4A0A0" opacity="0.5"/>
+</svg>

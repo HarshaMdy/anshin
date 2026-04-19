@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/widgets/mascot_widget.dart';
 import '../providers/auth_provider.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
@@ -17,7 +18,6 @@ class SplashScreen extends ConsumerStatefulWidget {
 class _SplashScreenState extends ConsumerState<SplashScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _breathController;
-  late final Animation<double> _breathAnim;
 
   // Track whether both the minimum display time AND auth have finished
   bool _minTimeDone = false;
@@ -28,14 +28,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   void initState() {
     super.initState();
 
-    // Gentle breathing pulse on the mascot placeholder (Override 3 idle animation)
+    // MascotWidget owns its own breathing animation (breathe: true).
+    // Keep the controller here only to satisfy SingleTickerProviderStateMixin.
     _breathController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 4),
-    )..repeat(reverse: true);
-
-    _breathAnim = Tween<double>(begin: 1.0, end: 1.02).animate(
-      CurvedAnimation(parent: _breathController, curve: Curves.easeInOut),
     );
 
     // Minimum display time: 600ms — feels intentional, under the 800ms cap
@@ -93,40 +90,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // ── Mascot placeholder ──────────────────────────────────────────
-            // Real kawaii SVG replaces this in Task 16.
-            // Breathing animation (Override 3 idle) already wired.
-            AnimatedBuilder(
-              animation: _breathAnim,
-              builder: (context, child) => Transform.scale(
-                scale: _breathAnim.value,
-                child: child,
-              ),
-              child: Container(
-                width: 120,
-                height: 120,
-                decoration: BoxDecoration(
-                  color: AppColors.mascotBase,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.mascotBase.withValues(alpha: 0.3),
-                      blurRadius: 24,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: Center(
-                  child: Container(
-                    width: 28,
-                    height: 10,
-                    decoration: BoxDecoration(
-                      color: AppColors.mascotEye,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                ),
-              ),
+            // ── Mascot — calm with breathing idle animation ─────────────────
+            const MascotWidget(
+              emotion: MascotEmotion.calm,
+              size: 120,
+              breathe: true,
             ),
 
             const SizedBox(height: 24),

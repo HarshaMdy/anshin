@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <ellipse cx="50" cy="92" rx="22" ry="3.5" fill="#7AAFBB" opacity="0.2"/>
+  <!-- Cross-legged sitting — legs tucked out to sides -->
+  <path d="M35 75 Q28 77 26 82 Q25 87 30 88 Q35 89 40 84 Q45 80 43 75 Z" fill="#7AAFBB"/>
+  <path d="M65 75 Q72 77 74 82 Q75 87 70 88 Q65 89 60 84 Q55 80 57 75 Z" fill="#7AAFBB"/>
+  <!-- Arms resting on knees -->
+  <path d="M28 60 Q21 60 20 67 Q19 73 26 73 Q32 73 34 67 Z" fill="#7AAFBB"/>
+  <path d="M72 60 Q79 60 80 67 Q81 73 74 73 Q68 73 66 67 Z" fill="#7AAFBB"/>
+  <ellipse cx="50" cy="48" rx="28" ry="30" fill="#99C9D7"/>
+  <ellipse cx="42" cy="39" rx="9" ry="7" fill="#C5E4EC" opacity="0.55"/>
+  <!-- Grounded peaceful face — half-smile, gentle eyes -->
+  <path d="M37 44 Q41 39 45 44" stroke="#2D4A52" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <path d="M55 44 Q59 39 63 44" stroke="#2D4A52" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <path d="M43 55 Q50 61 57 55" stroke="#2D4A52" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- Grounding anchor dots (subtle) -->
+  <circle cx="50" cy="92" r="2.5" fill="#7AAFBB" opacity="0.5"/>
+  <circle cx="42" cy="92" r="1.5" fill="#7AAFBB" opacity="0.35"/>
+  <circle cx="58" cy="92" r="1.5" fill="#7AAFBB" opacity="0.35"/>
+</svg>

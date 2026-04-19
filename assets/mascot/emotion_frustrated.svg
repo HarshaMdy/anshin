@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <ellipse cx="50" cy="89" rx="18" ry="3.5" fill="#7AAFBB" opacity="0.2"/>
+  <path d="M39 72 Q36 80 38 85 Q40 89 44 88 Q48 87 46 80 Q46 73 43 72 Z" fill="#7AAFBB"/>
+  <path d="M61 72 Q64 80 62 85 Q60 89 56 88 Q52 87 54 80 Q54 73 57 72 Z" fill="#7AAFBB"/>
+  <!-- Arms crossed / tense -->
+  <path d="M24 54 Q16 52 14 60 Q12 67 20 68 Q27 69 29 62 Z" fill="#7AAFBB"/>
+  <path d="M76 54 Q84 52 86 60 Q88 67 80 68 Q73 69 71 62 Z" fill="#7AAFBB"/>
+  <ellipse cx="50" cy="47" rx="28" ry="30" fill="#99C9D7"/>
+  <ellipse cx="42" cy="38" rx="9" ry="7" fill="#C5E4EC" opacity="0.55"/>
+  <!-- Left eye — with angry angled brow -->
+  <circle cx="41" cy="44" r="4.5" fill="#2D4A52"/>
+  <circle cx="43" cy="42" r="1.5" fill="white"/>
+  <path d="M35 38 Q41 35.5 45 38.5" stroke="#2D4A52" stroke-width="2.3" fill="none" stroke-linecap="round"/>
+  <!-- Right eye — with angry angled brow -->
+  <circle cx="59" cy="44" r="4.5" fill="#2D4A52"/>
+  <circle cx="61" cy="42" r="1.5" fill="white"/>
+  <path d="M55 38.5 Q59 35.5 65 38" stroke="#2D4A52" stroke-width="2.3" fill="none" stroke-linecap="round"/>
+  <!-- Tight pressed mouth -->
+  <path d="M44 57 Q50 56 56 57" stroke="#2D4A52" stroke-width="2.3" fill="none" stroke-linecap="round"/>
+  <!-- Frustration marks on cheeks -->
+  <path d="M31 50 L35.5 51.5" stroke="#F4A0A0" stroke-width="1.8" stroke-linecap="round" opacity="0.65"/>
+  <path d="M64.5 50 L69 51.5" stroke="#F4A0A0" stroke-width="1.8" stroke-linecap="round" opacity="0.65"/>
+</svg>

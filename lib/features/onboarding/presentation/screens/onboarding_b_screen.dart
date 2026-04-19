@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/strings_onboarding.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/widgets/mascot_widget.dart';
 import '../../../../routing/app_routes.dart';
 import '../providers/onboarding_provider.dart';
 
@@ -57,6 +58,14 @@ class _OnboardingBScreenState extends ConsumerState<OnboardingBScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    const Center(
+                      child: MascotWidget(
+                        emotion: MascotEmotion.calm,
+                        size: 80,
+                        breathe: true,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
                     Text(
                       StringsOnboarding.screen2Heading,
                       style: AppTypography.headingLarge

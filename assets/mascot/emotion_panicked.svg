@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <ellipse cx="50" cy="89" rx="18" ry="3.5" fill="#7AAFBB" opacity="0.2"/>
+  <path d="M39 72 Q36 80 38 85 Q40 89 44 88 Q48 87 46 80 Q46 73 43 72 Z" fill="#7AAFBB"/>
+  <path d="M61 72 Q64 80 62 85 Q60 89 56 88 Q52 87 54 80 Q54 73 57 72 Z" fill="#7AAFBB"/>
+  <!-- Arms raised in alarm -->
+  <path d="M25 48 Q16 42 13 50 Q11 57 20 59 Q27 60 30 53 Z" fill="#7AAFBB"/>
+  <path d="M75 48 Q84 42 87 50 Q89 57 80 59 Q73 60 70 53 Z" fill="#7AAFBB"/>
+  <ellipse cx="50" cy="47" rx="28" ry="30" fill="#99C9D7"/>
+  <ellipse cx="42" cy="38" rx="9" ry="7" fill="#C5E4EC" opacity="0.55"/>
+  <!-- Left eye — very wide -->
+  <circle cx="41" cy="42" r="7" fill="#2D4A52"/>
+  <circle cx="43.5" cy="39.5" r="2.2" fill="white"/>
+  <!-- Right eye — very wide -->
+  <circle cx="59" cy="42" r="7" fill="#2D4A52"/>
+  <circle cx="61.5" cy="39.5" r="2.2" fill="white"/>
+  <!-- Open O mouth -->
+  <ellipse cx="50" cy="57" rx="5.5" ry="4.5" fill="#2D4A52"/>
+  <ellipse cx="50" cy="57" rx="3.5" ry="3" fill="#5C2020"/>
+  <!-- Sweat drops -->
+  <path d="M30 32 Q32 27 30 24 Q28 27 30 32 Z" fill="#99C9D7" opacity="0.7"/>
+  <path d="M70 32 Q72 27 70 24 Q68 27 70 32 Z" fill="#99C9D7" opacity="0.7"/>
+</svg>

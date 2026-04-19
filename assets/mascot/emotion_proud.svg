@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <ellipse cx="50" cy="89" rx="18" ry="3.5" fill="#7AAFBB" opacity="0.2"/>
+  <path d="M39 72 Q36 80 38 85 Q40 89 44 88 Q48 87 46 80 Q46 73 43 72 Z" fill="#7AAFBB"/>
+  <path d="M61 72 Q64 80 62 85 Q60 89 56 88 Q52 87 54 80 Q54 73 57 72 Z" fill="#7AAFBB"/>
+  <!-- Arms slightly raised — proud pose -->
+  <path d="M23 50 Q15 47 13 55 Q11 62 19 63 Q26 64 29 57 Z" fill="#7AAFBB"/>
+  <path d="M77 50 Q85 47 87 55 Q89 62 81 63 Q74 64 71 57 Z" fill="#7AAFBB"/>
+  <ellipse cx="50" cy="47" rx="28" ry="30" fill="#99C9D7"/>
+  <ellipse cx="42" cy="38" rx="9" ry="7" fill="#C5E4EC" opacity="0.55"/>
+  <!-- Star above head -->
+  <path d="M50 7 L51.8 12.5 L57.5 12.5 L53 15.8 L54.8 21 L50 17.8 L45.2 21 L47 15.8 L42.5 12.5 L48.2 12.5 Z" fill="#FFD166"/>
+  <!-- Left eye — confident happy arc -->
+  <path d="M37 43 Q41 38 45 43" stroke="#2D4A52" stroke-width="2.3" fill="none" stroke-linecap="round"/>
+  <!-- Right eye — confident happy arc -->
+  <path d="M55 43 Q59 38 63 43" stroke="#2D4A52" stroke-width="2.3" fill="none" stroke-linecap="round"/>
+  <!-- Big proud smile -->
+  <path d="M41 55 Q50 64 59 55" stroke="#2D4A52" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <!-- Puffed cheeks -->
+  <ellipse cx="33" cy="50" rx="4.5" ry="3" fill="#F4A0A0" opacity="0.5"/>
+  <ellipse cx="67" cy="50" rx="4.5" ry="3" fill="#F4A0A0" opacity="0.5"/>
+</svg>
