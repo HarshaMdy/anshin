@@ -1,22 +1,95 @@
-// Home screen — Task 12 adds greeting + today card (check-in state).
-// Full home layout (SOS button, tool cards, etc.) is built in later tasks.
+// Home screen — Content Bible §4 / Runbook Override 4
+// Layout (top → bottom):
+//   • Time-based greeting
+//   • Today card  (check-in state — from Task 12)
+//   • SOS button  (prominent, always visible)
+//   • 6 section cards in a 2-column grid:
+//       Breathe · Ground · Journal · Learn · Visualize · Sleep
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/strings_home.dart';
 import '../../../../core/database/app_database.dart';
+import '../../../../core/providers/notification_provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/widgets/mascot_widget.dart';
 import '../../../../routing/app_routes.dart';
-import '../../../../core/providers/notification_provider.dart';
 import '../../../activity_log/presentation/providers/activity_log_provider.dart';
 import '../../../daily/presentation/providers/checkin_provider.dart';
 import '../../../journal/presentation/providers/journal_provider.dart';
 import '../../../subscription/presentation/providers/subscription_provider.dart';
 
+// ─── Section card data ────────────────────────────────────────────────────────
+
+class _Section {
+  final String title;
+  final String sub;
+  final String route;
+  final MascotEmotion emotion;
+  final Color accent;
+
+  const _Section({
+    required this.title,
+    required this.sub,
+    required this.route,
+    required this.emotion,
+    required this.accent,
+  });
+}
+
+// ─── Screen ───────────────────────────────────────────────────────────────────
+
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
+
+  // Six section cards — order and content from Content Bible §4
+  static const List<_Section> _sections = [
+    _Section(
+      title: StringsHome.cardBreatheTitle,
+      sub: StringsHome.cardBreatheSub,
+      route: AppRoutes.breathingPicker,
+      emotion: MascotEmotion.breathing,
+      accent: AppColors.accentCoral,
+    ),
+    _Section(
+      title: StringsHome.cardGroundTitle,
+      sub: StringsHome.cardGroundSub,
+      route: AppRoutes.groundingPicker,
+      emotion: MascotEmotion.grounded,
+      accent: AppColors.accentTeal,
+    ),
+    _Section(
+      title: StringsHome.cardJournalTitle,
+      sub: StringsHome.cardJournalSub,
+      route: AppRoutes.journalHome,
+      emotion: MascotEmotion.holdingPen,
+      accent: AppColors.accentGold,
+    ),
+    _Section(
+      title: StringsHome.cardLearnTitle,
+      sub: StringsHome.cardLearnSub,
+      route: AppRoutes.learnHome,
+      emotion: MascotEmotion.readingBook,
+      accent: AppColors.accentTeal,
+    ),
+    _Section(
+      title: StringsHome.cardVisualizeTitle,
+      sub: StringsHome.cardVisualizeSub,
+      route: AppRoutes.visualizeHome,
+      emotion: MascotEmotion.eyesClosed,
+      accent: AppColors.accentCoral,
+    ),
+    _Section(
+      title: StringsHome.cardSleepTitle,
+      sub: StringsHome.cardSleepSub,
+      route: AppRoutes.sleepHome,
+      emotion: MascotEmotion.sleeping,
+      accent: AppColors.accentGold,
+    ),
+  ];
 
   // ── Time-based greeting ───────────────────────────────────────────────────
 
@@ -30,13 +103,11 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Trigger background sync for any unsynced local rows
+    // Background side-effects: sync + RC identity + notification setup
     ref.watch(activityLogSyncProvider);
     ref.watch(checkinSyncProvider);
     ref.watch(journalSyncProvider);
-    // Associate Firebase userId with RevenueCat customer record
     ref.watch(rcIdentityProvider);
-    // Re-apply notification schedule + reset 7-day re-engagement clock
     ref.watch(notificationSetupProvider);
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -62,7 +133,7 @@ class HomeScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // ── Greeting ──────────────────────────────────────────────────
+              // ── Greeting ────────────────────────────────────────────────
               Text(
                 _greeting(),
                 style: AppTypography.headingLarge
@@ -71,7 +142,7 @@ class HomeScreen extends ConsumerWidget {
 
               const SizedBox(height: 20),
 
-              // ── Today card (check-in state) ───────────────────────────────
+              // ── Today card ───────────────────────────────────────────────
               checkinAsync.when(
                 data: (checkin) => _TodayCard(
                   checkin: checkin,
@@ -91,15 +162,102 @@ class HomeScreen extends ConsumerWidget {
                 error: (_, _) => const SizedBox.shrink(),
               ),
 
+              const SizedBox(height: 20),
+
+              // ── SOS button ───────────────────────────────────────────────
+              _SosButton(onTap: () => context.push(AppRoutes.sos)),
+
               const SizedBox(height: 32),
 
-              // ── Remaining home content (added in later tasks) ─────────────
-              Center(
-                child: Text(
-                  'Home',
-                  style: AppTypography.bodyMedium
-                      .copyWith(color: textSecondary),
+              // ── Section cards (2-column grid) ────────────────────────────
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate:
+                    const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: 0.88,
                 ),
+                itemCount: _sections.length,
+                itemBuilder: (context, index) {
+                  final s = _sections[index];
+                  return _SectionCard(
+                    section: s,
+                    surface: surface,
+                    borderColor: borderColor,
+                    textPrimary: textPrimary,
+                    textSecondary: textSecondary,
+                    onTap: () => context.push(s.route),
+                  );
+                },
+              ),
+
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// SOS button
+// ═════════════════════════════════════════════════════════════════════════════
+
+class _SosButton extends StatelessWidget {
+  final VoidCallback onTap;
+  const _SosButton({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.accentCoral.withValues(alpha: 0.09),
+      borderRadius: BorderRadius.circular(16),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: onTap,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: AppColors.accentCoral.withValues(alpha: 0.45),
+            ),
+          ),
+          padding:
+              const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          child: Row(
+            children: [
+              // Left: label stack
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      StringsHome.sosButtonLabel,
+                      style: AppTypography.headingSmall.copyWith(
+                        color: AppColors.accentCoral,
+                        letterSpacing: 1.0,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      StringsHome.firstLaunchPrimary,
+                      style: AppTypography.caption.copyWith(
+                        color: AppColors.accentCoral.withValues(alpha: 0.75),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Right: arrow
+              Icon(
+                Icons.arrow_forward_ios_rounded,
+                color: AppColors.accentCoral,
+                size: 18,
               ),
             ],
           ),
@@ -110,7 +268,79 @@ class HomeScreen extends ConsumerWidget {
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
-// Today card
+// Section card
+// ═════════════════════════════════════════════════════════════════════════════
+
+class _SectionCard extends StatelessWidget {
+  final _Section section;
+  final Color surface;
+  final Color borderColor;
+  final Color textPrimary;
+  final Color textSecondary;
+  final VoidCallback onTap;
+
+  const _SectionCard({
+    required this.section,
+    required this.surface,
+    required this.borderColor,
+    required this.textPrimary,
+    required this.textSecondary,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: surface,
+      borderRadius: BorderRadius.circular(20),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        onTap: onTap,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: borderColor),
+          ),
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Mascot contextual variant
+              SvgPicture.asset(
+                section.emotion.assetPath,
+                width: 72,
+                height: 72,
+              ),
+
+              const Spacer(),
+
+              // Title
+              Text(
+                section.title,
+                style: AppTypography.headingSmall
+                    .copyWith(color: textPrimary),
+              ),
+
+              const SizedBox(height: 3),
+
+              // Sublabel
+              Text(
+                section.sub,
+                style: AppTypography.caption
+                    .copyWith(color: textSecondary),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// Today card  (unchanged from Task 12)
 // ═════════════════════════════════════════════════════════════════════════════
 
 class _TodayCard extends StatelessWidget {
@@ -132,7 +362,7 @@ class _TodayCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ── Loading skeleton ───────────────────────────────────────────────────
+    // ── Loading skeleton ─────────────────────────────────────────────────
     if (isLoading) {
       return Container(
         height: 64,
@@ -144,7 +374,7 @@ class _TodayCard extends StatelessWidget {
       );
     }
 
-    // ── Not yet checked in ─────────────────────────────────────────────────
+    // ── Not yet checked in ───────────────────────────────────────────────
     if (checkin == null) {
       return Material(
         color: surface,
@@ -161,7 +391,7 @@ class _TodayCard extends StatelessWidget {
                 horizontal: 20, vertical: 18),
             child: Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.add_circle_outline,
                   color: AppColors.accentCoral,
                   size: 22,
@@ -186,7 +416,7 @@ class _TodayCard extends StatelessWidget {
       );
     }
 
-    // ── Checked in — show pill + contextual suggestion ─────────────────────
+    // ── Checked in — contextual suggestion ──────────────────────────────
     final String suggestion;
     final String actionRoute;
     final IconData actionIcon;
@@ -223,7 +453,7 @@ class _TodayCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ✓ Checked in pill
+              // ✓ Checked-in pill
               Container(
                 padding: const EdgeInsets.symmetric(
                     horizontal: 10, vertical: 4),
@@ -245,7 +475,6 @@ class _TodayCard extends StatelessWidget {
 
               const SizedBox(height: 12),
 
-              // Contextual suggestion text
               Text(
                 suggestion,
                 style: AppTypography.bodyMedium
@@ -254,7 +483,6 @@ class _TodayCard extends StatelessWidget {
 
               const SizedBox(height: 10),
 
-              // Subtle action indicator
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
