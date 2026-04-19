@@ -126,8 +126,10 @@ class HomeScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: bg,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+      floatingActionButton: SizedBox(
+        // Explicit width prevents the FAB from expanding to fill unconstrained
+        // screen height — floatingActionButton gets loose (0→∞) constraints.
+        width: MediaQuery.of(context).size.width - 40,
         child: _SosButton(onTap: () => context.push(AppRoutes.sos)),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -208,10 +210,14 @@ class _SosButton extends StatelessWidget {
   final VoidCallback onTap;
   const _SosButton({required this.onTap});
 
+  // Slightly deeper red than accentCoral (#E87070) — clearly urgent without
+  // being aggressive. Used only for the SOS button.
+  static const Color _red = Color(0xFFBF3030);
+
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: AppColors.accentCoral.withValues(alpha: 0.09),
+      color: _red.withValues(alpha: 0.10),
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
@@ -220,7 +226,7 @@ class _SosButton extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: AppColors.accentCoral.withValues(alpha: 0.45),
+              color: _red.withValues(alpha: 0.50),
             ),
           ),
           padding:
@@ -235,7 +241,7 @@ class _SosButton extends StatelessWidget {
                     Text(
                       StringsHome.sosButtonLabel,
                       style: AppTypography.headingSmall.copyWith(
-                        color: AppColors.accentCoral,
+                        color: _red,
                         letterSpacing: 1.0,
                         fontWeight: FontWeight.w700,
                       ),
@@ -244,7 +250,7 @@ class _SosButton extends StatelessWidget {
                     Text(
                       StringsHome.firstLaunchPrimary,
                       style: AppTypography.caption.copyWith(
-                        color: AppColors.accentCoral.withValues(alpha: 0.75),
+                        color: _red.withValues(alpha: 0.80),
                       ),
                     ),
                   ],
@@ -253,7 +259,7 @@ class _SosButton extends StatelessWidget {
               // Right: arrow
               Icon(
                 Icons.arrow_forward_ios_rounded,
-                color: AppColors.accentCoral,
+                color: _red,
                 size: 18,
               ),
             ],
