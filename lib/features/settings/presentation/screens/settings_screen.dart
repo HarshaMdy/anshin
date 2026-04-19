@@ -353,24 +353,35 @@ class SettingsScreen extends ConsumerWidget {
             textSecondary: textSecondary,
           ),
 
-          // Status tile
+          // Status tile — tapping opens paywall (free) or manage page (premium)
           ListTile(
             tileColor: surface,
             title: Text(
               StringsSettings.sectionSubscription,
               style: AppTypography.bodyLarge.copyWith(color: textPrimary),
             ),
-            trailing: Text(
-              isPremium
-                  ? StringsSettings.premiumActive
-                  : StringsSettings.premiumNotSubscribed,
-              style: AppTypography.caption.copyWith(
-                color: isPremium
-                    ? AppColors.accentTeal
-                    : textSecondary,
-                fontWeight: FontWeight.w600,
-              ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  isPremium
+                      ? StringsSettings.premiumActive
+                      : StringsSettings.premiumNotSubscribed,
+                  style: AppTypography.caption.copyWith(
+                    color: isPremium
+                        ? AppColors.accentTeal
+                        : AppColors.accentCoral,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Icon(Icons.chevron_right, color: textSecondary, size: 20),
+              ],
             ),
+            onTap: isPremium
+                ? () => _launch(
+                    'https://play.google.com/store/account/subscriptions')
+                : () => context.push(AppRoutes.paywall),
           ),
 
           Divider(height: 1, color: dividerColor),
