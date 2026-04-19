@@ -9,7 +9,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../routing/app_routes.dart';
-import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../subscription/presentation/providers/subscription_provider.dart';
 import '../../domain/breathing_pattern.dart';
 import '../providers/breathing_provider.dart';
 
@@ -39,9 +39,8 @@ class BreathingPickerScreen extends ConsumerWidget {
     final patterns = ref.watch(breathingPatternsProvider);
     final selectedId = ref.watch(selectedPatternIdProvider);
 
-    final auth = ref.watch(authProvider).valueOrNull;
-    final hasPremium =
-        auth is AuthAuthenticated && auth.user.hasPremiumAccess;
+    // isPremiumProvider combines RC entitlements + Firestore subscriptionStatus
+    final hasPremium = ref.watch(isPremiumProvider);
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
 

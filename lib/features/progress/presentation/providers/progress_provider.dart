@@ -1,19 +1,21 @@
 // Riverpod providers for the Progress tab.
 //
 // windowDaysProvider    — StateProvider<int>: 7 (free) or 30 (premium)
-// isPremiumProvider     — stub; wire purchases_flutter when paywall is live
+// isPremiumProvider     — re-exported from subscription_provider
 // progressRepositoryProvider
 // progressDataProvider  — FutureProvider<ProgressData?>
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../activity_log/presentation/providers/activity_log_provider.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../subscription/presentation/providers/subscription_provider.dart';
 import '../../data/progress_repository.dart';
 
-// ── Premium stub ──────────────────────────────────────────────────────────────
-// TODO: replace with purchases_flutter subscription check when paywall is wired.
-
-final isPremiumProvider = Provider<bool>((ref) => false);
+// isPremiumProvider is defined in subscription_provider — re-export for
+// backward-compatibility with progress_screen.dart which already imports it
+// from this file.
+export '../../../subscription/presentation/providers/subscription_provider.dart'
+    show isPremiumProvider;
 
 // ── Period selection ──────────────────────────────────────────────────────────
 

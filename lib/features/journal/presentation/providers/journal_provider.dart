@@ -12,6 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/database/app_database.dart';
 import '../../../activity_log/presentation/providers/activity_log_provider.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../subscription/presentation/providers/subscription_provider.dart';
 import '../../data/journal_repository.dart';
 
 // ── Repository ────────────────────────────────────────────────────────────────
@@ -62,10 +63,10 @@ final journalEntryCountProvider = FutureProvider<int>((ref) async {
 });
 
 /// True when the user may write a new entry.
-/// Premium users are always allowed; free users capped at 30.
+/// Premium users have no cap; free users capped at 30 entries.
 final canCreateJournalEntryProvider = FutureProvider<bool>((ref) async {
-  // TODO: check subscription status from purchases_flutter when paywall is wired
-  // For now treat everyone as free to keep the cap visible during development.
+  final isPremium = ref.watch(isPremiumProvider);
+  if (isPremium) return true; // unlimited for premium
   final count = await ref.watch(journalEntryCountProvider.future);
   return count < kFreeJournalEntryLimit;
 });
