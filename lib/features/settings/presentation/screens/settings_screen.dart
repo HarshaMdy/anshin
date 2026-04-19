@@ -135,11 +135,15 @@ class SettingsScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: bg,
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.canPop()
-              ? context.pop()
-              : context.go(AppRoutes.profile),
+        // Settings is a shell tab — no conceptual "back" destination.
+        // Show the title instead of a back button.
+        automaticallyImplyLeading: false,
+        title: Text(
+          StringsSettings.sectionAbout
+              .isEmpty // fallback label
+              ? 'Settings'
+              : 'Settings',
+          style: AppTypography.headingSmall.copyWith(color: textPrimary),
         ),
         backgroundColor: bg,
         elevation: 0,
