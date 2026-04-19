@@ -124,79 +124,97 @@ class HomeScreen extends ConsumerWidget {
 
     final checkinAsync = ref.watch(todayCheckinProvider);
 
+    // The SOS button must stay pinned above the NavigationBar regardless of
+    // scroll position.  floatingActionButton can't be used for full-width card
+    // widgets because Scaffold gives it unconstrained (0→∞) height — even
+    // SizedBox(width) only bounds one axis and Material fills the other.
+    // Using Stack + Positioned(left/right/bottom) inside the body constrains
+    // ALL four edges so the card sizes itself by content height only.
     return Scaffold(
       backgroundColor: bg,
-      floatingActionButton: SizedBox(
-        // Explicit width prevents the FAB from expanding to fill unconstrained
-        // screen height — floatingActionButton gets loose (0→∞) constraints.
-        width: MediaQuery.of(context).size.width - 40,
-        child: _SosButton(onTap: () => context.push(AppRoutes.sos)),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 24, 20, 120),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // ── Greeting ────────────────────────────────────────────────
-              Text(
-                _greeting(),
-                style: AppTypography.headingLarge
-                    .copyWith(color: textPrimary),
+      body: Stack(
+        children: [
+          // ── Scrollable content ─────────────────────────────────────────
+          SafeArea(
+            child: SingleChildScrollView(
+              // Bottom padding reserves room so the last card is never hidden
+              // behind the pinned SOS button (button ≈ 72 px + 20 gap + 20 margin).
+              padding: const EdgeInsets.fromLTRB(20, 24, 20, 130),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // ── Greeting ──────────────────────────────────────────
+                  Text(
+                    _greeting(),
+                    style: AppTypography.headingLarge
+                        .copyWith(color: textPrimary),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // ── Today card ────────────────────────────────────────
+                  checkinAsync.when(
+                    data: (checkin) => _TodayCard(
+                      checkin: checkin,
+                      surface: surface,
+                      borderColor: borderColor,
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                    ),
+                    loading: () => _TodayCard(
+                      checkin: null,
+                      surface: surface,
+                      borderColor: borderColor,
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                      isLoading: true,
+                    ),
+                    error: (_, _) => const SizedBox.shrink(),
+                  ),
+
+                  const SizedBox(height: 28),
+
+                  // ── Section cards (2-column grid) ─────────────────────
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                      childAspectRatio: 0.88,
+                    ),
+                    itemCount: _sections.length,
+                    itemBuilder: (context, index) {
+                      final s = _sections[index];
+                      return _SectionCard(
+                        section: s,
+                        surface: surface,
+                        borderColor: borderColor,
+                        textPrimary: textPrimary,
+                        textSecondary: textSecondary,
+                        onTap: () => context.push(s.route),
+                      );
+                    },
+                  ),
+                ],
               ),
-
-              const SizedBox(height: 20),
-
-              // ── Today card ───────────────────────────────────────────────
-              checkinAsync.when(
-                data: (checkin) => _TodayCard(
-                  checkin: checkin,
-                  surface: surface,
-                  borderColor: borderColor,
-                  textPrimary: textPrimary,
-                  textSecondary: textSecondary,
-                ),
-                loading: () => _TodayCard(
-                  checkin: null,
-                  surface: surface,
-                  borderColor: borderColor,
-                  textPrimary: textPrimary,
-                  textSecondary: textSecondary,
-                  isLoading: true,
-                ),
-                error: (_, _) => const SizedBox.shrink(),
-              ),
-
-              const SizedBox(height: 28),
-
-              // ── Section cards (2-column grid) ────────────────────────────
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate:
-                    const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                  childAspectRatio: 0.88,
-                ),
-                itemCount: _sections.length,
-                itemBuilder: (context, index) {
-                  final s = _sections[index];
-                  return _SectionCard(
-                    section: s,
-                    surface: surface,
-                    borderColor: borderColor,
-                    textPrimary: textPrimary,
-                    textSecondary: textSecondary,
-                    onTap: () => context.push(s.route),
-                  );
-                },
-              ),
-            ],
+            ),
           ),
-        ),
+
+          // ── SOS button — pinned above NavigationBar ─────────────────────
+          // Positioned(left, right, bottom) gives an explicit width
+          // (screenWidth − 40) and anchors height to content only.
+          // bottom: 20 sits inside the body which already ends at the top
+          // of the NavigationBar, so the button floats 20 dp above it.
+          Positioned(
+            left: 20,
+            right: 20,
+            bottom: 20,
+            child: _SosButton(onTap: () => context.push(AppRoutes.sos)),
+          ),
+        ],
       ),
     );
   }
@@ -210,9 +228,9 @@ class _SosButton extends StatelessWidget {
   final VoidCallback onTap;
   const _SosButton({required this.onTap});
 
-  // Slightly deeper red than accentCoral (#E87070) — clearly urgent without
-  // being aggressive. Used only for the SOS button.
-  static const Color _red = Color(0xFFBF3030);
+  // Material Red 700 (#D32F2F) — universally recognisable emergency red,
+  // vivid enough to stand out without being aggressive. SOS-only colour.
+  static const Color _red = Color(0xFFD32F2F);
 
   @override
   Widget build(BuildContext context) {
