@@ -62,6 +62,7 @@ class _CheckinScreenState extends ConsumerState<CheckinScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.close),
+          tooltip: 'Close',
           onPressed: () =>
               context.canPop() ? context.pop() : context.go(AppRoutes.home),
         ),
@@ -223,7 +224,11 @@ class _MoodCircle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return Semantics(
+      button: true,
+      selected: isSelected,
+      label: isSelected ? '$label, selected' : label,
+      child: GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: Column(
@@ -264,6 +269,7 @@ class _MoodCircle extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
         ],
+      ),
       ),
     );
   }
@@ -416,30 +422,35 @@ class _TagChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        padding:
-            const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-        decoration: BoxDecoration(
-          color: selected
-              ? AppColors.accentCoral.withValues(alpha: 0.12)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: selected ? '$label, selected' : label,
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          padding:
+              const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          decoration: BoxDecoration(
             color: selected
-                ? AppColors.accentCoral
-                : textSecondary.withValues(alpha: 0.30),
-            width: selected ? 1.5 : 1,
+                ? AppColors.accentCoral.withValues(alpha: 0.12)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: selected
+                  ? AppColors.accentCoral
+                  : textSecondary.withValues(alpha: 0.30),
+              width: selected ? 1.5 : 1,
+            ),
           ),
-        ),
-        child: Text(
-          label,
-          style: AppTypography.bodyMedium.copyWith(
-            color: selected ? AppColors.accentCoral : textSecondary,
-            fontWeight:
-                selected ? FontWeight.w600 : FontWeight.w400,
+          child: Text(
+            label,
+            style: AppTypography.bodyMedium.copyWith(
+              color: selected ? AppColors.accentCoral : textSecondary,
+              fontWeight:
+                  selected ? FontWeight.w600 : FontWeight.w400,
+            ),
           ),
         ),
       ),

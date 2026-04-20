@@ -6,8 +6,8 @@
 // rcIdentityProvider    — Provider<void> (logs userId into RC on auth)
 // purchaseNotifierProvider — purchase + restore actions
 //
-// Sandbox note: with kRevenueCatApiKey = placeholder, getOfferings() returns
-// null.  isPremiumProvider still functions via Firestore hasPremiumAccess.
+// If getOfferings() returns null (e.g. products not yet live in Play Console),
+// isPremiumProvider still functions via Firestore hasPremiumAccess.
 import 'dart:async';
 
 import 'package:flutter/services.dart';

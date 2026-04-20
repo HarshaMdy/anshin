@@ -199,6 +199,7 @@ class _StepView extends StatelessWidget {
                   color: AppColors.sosTextSecondary,
                   size: 22,
                 ),
+                tooltip: 'Go back',
                 onPressed: onBack,
               ),
               Expanded(
@@ -295,6 +296,7 @@ class _CompletionView extends StatelessWidget {
                 color: AppColors.sosTextSecondary,
                 size: 22,
               ),
+              tooltip: 'Go back',
               onPressed: onBack,
             ),
           ),

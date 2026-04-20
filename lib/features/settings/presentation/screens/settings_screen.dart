@@ -251,50 +251,46 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             textSecondary: textSecondary,
           ),
 
-          Column(
-            children: [
-              RadioListTile<ThemeMode>(
-                value: ThemeMode.light,
-                groupValue: currentTheme,
-                onChanged: (v) =>
-                    ref.read(themeProvider.notifier).setTheme(v!),
-                tileColor: surface,
-                activeColor: AppColors.accentCoral,
-                title: Text(
-                  StringsSettings.themeLight,
-                  style:
-                      AppTypography.bodyLarge.copyWith(color: textPrimary),
+          RadioGroup<ThemeMode>(
+            groupValue: currentTheme,
+            onChanged: (v) =>
+                ref.read(themeProvider.notifier).setTheme(v!),
+            child: Column(
+              children: [
+                RadioListTile<ThemeMode>(
+                  value: ThemeMode.light,
+                  tileColor: surface,
+                  activeColor: AppColors.accentCoral,
+                  title: Text(
+                    StringsSettings.themeLight,
+                    style:
+                        AppTypography.bodyLarge.copyWith(color: textPrimary),
+                  ),
                 ),
-              ),
-              Divider(height: 1, color: dividerColor),
-              RadioListTile<ThemeMode>(
-                value: ThemeMode.dark,
-                groupValue: currentTheme,
-                onChanged: (v) =>
-                    ref.read(themeProvider.notifier).setTheme(v!),
-                tileColor: surface,
-                activeColor: AppColors.accentCoral,
-                title: Text(
-                  StringsSettings.themeDark,
-                  style:
-                      AppTypography.bodyLarge.copyWith(color: textPrimary),
+                Divider(height: 1, color: dividerColor),
+                RadioListTile<ThemeMode>(
+                  value: ThemeMode.dark,
+                  tileColor: surface,
+                  activeColor: AppColors.accentCoral,
+                  title: Text(
+                    StringsSettings.themeDark,
+                    style:
+                        AppTypography.bodyLarge.copyWith(color: textPrimary),
+                  ),
                 ),
-              ),
-              Divider(height: 1, color: dividerColor),
-              RadioListTile<ThemeMode>(
-                value: ThemeMode.system,
-                groupValue: currentTheme,
-                onChanged: (v) =>
-                    ref.read(themeProvider.notifier).setTheme(v!),
-                tileColor: surface,
-                activeColor: AppColors.accentCoral,
-                title: Text(
-                  StringsSettings.themeSystem,
-                  style:
-                      AppTypography.bodyLarge.copyWith(color: textPrimary),
+                Divider(height: 1, color: dividerColor),
+                RadioListTile<ThemeMode>(
+                  value: ThemeMode.system,
+                  tileColor: surface,
+                  activeColor: AppColors.accentCoral,
+                  title: Text(
+                    StringsSettings.themeSystem,
+                    style:
+                        AppTypography.bodyLarge.copyWith(color: textPrimary),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
 
           const SizedBox(height: 24),

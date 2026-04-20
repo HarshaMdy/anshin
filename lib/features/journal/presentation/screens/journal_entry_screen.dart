@@ -205,6 +205,7 @@ class _JournalEntryScreenState extends ConsumerState<JournalEntryScreen> {
               scrolledUnderElevation: 0,
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back),
+                tooltip: 'Go back',
                 onPressed: _back,
               ),
               title: _ProgressDots(step: _step),

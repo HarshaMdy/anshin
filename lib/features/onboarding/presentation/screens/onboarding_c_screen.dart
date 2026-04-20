@@ -92,6 +92,7 @@ class _OnboardingCScreenState extends ConsumerState<OnboardingCScreen> {
         scrolledUnderElevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
+          tooltip: 'Go back',
           onPressed: _saving
               ? null
               : () => context.canPop()

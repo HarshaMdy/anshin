@@ -37,6 +37,30 @@ enum MascotEmotion {
 }
 
 extension MascotEmotionAsset on MascotEmotion {
+  /// Human-readable label used as the TalkBack semantics description.
+  String get semanticsLabel {
+    switch (this) {
+      case MascotEmotion.calm:        return 'Anshin mascot — calm';
+      case MascotEmotion.anxious:     return 'Anshin mascot — anxious';
+      case MascotEmotion.panicked:    return 'Anshin mascot — panicked';
+      case MascotEmotion.sad:         return 'Anshin mascot — sad';
+      case MascotEmotion.tired:       return 'Anshin mascot — tired';
+      case MascotEmotion.overwhelmed: return 'Anshin mascot — overwhelmed';
+      case MascotEmotion.hopeful:     return 'Anshin mascot — hopeful';
+      case MascotEmotion.relieved:    return 'Anshin mascot — relieved';
+      case MascotEmotion.grateful:    return 'Anshin mascot — grateful';
+      case MascotEmotion.frustrated:  return 'Anshin mascot — frustrated';
+      case MascotEmotion.numb:        return 'Anshin mascot — numb';
+      case MascotEmotion.proud:       return 'Anshin mascot — proud';
+      case MascotEmotion.holdingPen:  return 'Anshin mascot holding a pen';
+      case MascotEmotion.readingBook: return 'Anshin mascot reading a book';
+      case MascotEmotion.sleeping:    return 'Anshin mascot sleeping';
+      case MascotEmotion.breathing:   return 'Anshin mascot breathing';
+      case MascotEmotion.grounded:    return 'Anshin mascot grounded';
+      case MascotEmotion.eyesClosed:  return 'Anshin mascot with eyes closed';
+    }
+  }
+
   String get assetPath {
     switch (this) {
       case MascotEmotion.calm:        return 'assets/mascot/emotion_calm.svg';
@@ -137,6 +161,7 @@ class _MascotWidgetState extends State<MascotWidget>
       widget.emotion.assetPath,
       width: widget.size,
       height: widget.size,
+      semanticsLabel: widget.emotion.semanticsLabel,
     );
 
     if (_anim == null) return svg;

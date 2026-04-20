@@ -20,8 +20,7 @@ void main() async {
   await NotificationService().init();
 
   // ── RevenueCat SDK initialisation ────────────────────────────────────────
-  // Sandbox mode: using placeholder key until Play Console products are live
-  // (Task 21).  Debug logging enabled in debug builds only.
+  // Debug logging enabled in debug builds only.
   if (kDebugMode) {
     await Purchases.setLogLevel(LogLevel.debug);
   }

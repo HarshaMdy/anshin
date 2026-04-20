@@ -89,12 +89,14 @@ class JournalDetailScreen extends ConsumerWidget {
         scrolledUnderElevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
+          tooltip: 'Go back',
           onPressed: () =>
               context.canPop() ? context.pop() : context.go(AppRoutes.journalHome),
         ),
         actions: [
           IconButton(
             icon: Icon(Icons.delete_outline, color: AppColors.accentError),
+            tooltip: 'Delete entry',
             onPressed: userId.isEmpty
                 ? null
                 : () => _confirmDelete(context, ref, userId),

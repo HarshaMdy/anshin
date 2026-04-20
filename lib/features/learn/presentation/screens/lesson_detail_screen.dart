@@ -60,6 +60,7 @@ class LessonDetailScreen extends StatelessWidget {
         scrolledUnderElevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
+          tooltip: 'Go back',
           onPressed: () =>
               context.canPop() ? context.pop() : context.go(AppRoutes.learnHome),
         ),

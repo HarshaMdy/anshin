@@ -201,6 +201,7 @@ class _SessionView extends StatelessWidget {
                   color: AppColors.sosTextSecondary,
                   size: 22,
                 ),
+                tooltip: 'Stop session',
                 onPressed: onStop,
               ),
               Expanded(

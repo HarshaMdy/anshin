@@ -40,6 +40,7 @@ class GroundingPickerScreen extends ConsumerWidget {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
+          tooltip: 'Go back',
           onPressed: () =>
               context.canPop() ? context.pop() : context.go(AppRoutes.home),
         ),

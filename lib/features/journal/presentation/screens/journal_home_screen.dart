@@ -395,9 +395,20 @@ class _MonthCalendar extends ConsumerWidget {
               // Disable future dates — can't journal tomorrow.
               final isFuture = date.isAfter(today);
 
-              return GestureDetector(
-                onTap: isFuture ? null : () => onDateTap(date, hasEntry),
-                child: Column(
+              return Semantics(
+                button: !isFuture,
+                enabled: !isFuture,
+                selected: isSelected,
+                label: isSelected
+                    ? 'Selected: $day ${_kMonthsFull[month.month - 1]}'
+                    : isFuture
+                        ? '$day ${_kMonthsFull[month.month - 1]}, future date'
+                        : hasEntry
+                            ? '$day ${_kMonthsFull[month.month - 1]}, has entry'
+                            : '$day ${_kMonthsFull[month.month - 1]}',
+                child: GestureDetector(
+                  onTap: isFuture ? null : () => onDateTap(date, hasEntry),
+                  child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -442,6 +453,7 @@ class _MonthCalendar extends ConsumerWidget {
                         size: 8,
                       ),
                   ],
+                ),
                 ),
               );
             },
@@ -500,10 +512,14 @@ class _SelectedDateChip extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
-                GestureDetector(
-                  onTap: onClear,
-                  child: const Icon(Icons.close_rounded,
-                      size: 14, color: AppColors.accentCoral),
+                Semantics(
+                  button: true,
+                  label: 'Clear date filter',
+                  child: GestureDetector(
+                    onTap: onClear,
+                    child: const Icon(Icons.close_rounded,
+                        size: 14, color: AppColors.accentCoral),
+                  ),
                 ),
               ],
             ),

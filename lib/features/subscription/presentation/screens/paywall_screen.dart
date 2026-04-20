@@ -180,6 +180,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                       color: textSecondary,
                       size: 22,
                     ),
+                    tooltip: 'Close',
                     onPressed: busy ? null : () => Navigator.of(context).pop(),
                   ),
                 ],
@@ -497,7 +498,11 @@ class _PlanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: selected ? '$label plan, selected' : '$label plan',
+      child: GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
@@ -594,6 +599,7 @@ class _PlanCard extends StatelessWidget {
             ),
           ],
         ),
+      ),
       ),
     );
   }
