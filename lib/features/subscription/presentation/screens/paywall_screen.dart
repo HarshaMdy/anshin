@@ -2,13 +2,12 @@
 //
 // Full-screen modal pushed from anywhere a premium feature is tapped.
 // Shows mascot, benefits, annual/monthly plan selector, and CTA.
-//
-// In sandbox mode (placeholder RC key) the purchase button shows a
-// "not yet active" Snackbar instead of opening the Play Store — this is
-// expected until Task 21 (Play Console + RC linking).
+// Live pricing is fetched from RevenueCat offerings; hardcoded fallback
+// values from StringsPaywall are used when offerings are unavailable.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/constants/strings_paywall.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -29,17 +28,28 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
   bool _purchasing = false;
   bool _restoring  = false;
 
+  // ── URL launcher ──────────────────────────────────────────────────────────
+
+  Future<void> _launchUrl(String url) async {
+    final uri = Uri.parse(url);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not open link.')),
+      );
+    }
+  }
+
   // ── Purchase ───────────────────────────────────────────────────────────────
 
   Future<void> _purchase(Offerings? offerings) async {
     final Package? package = _selectedPackage(offerings);
 
     if (package == null) {
-      // Sandbox mode — RC products not yet linked
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text(StringsPaywall.sandboxUnavailable),
+          content: Text('Store products not yet available. Please try again shortly.'),
           duration: Duration(seconds: 4),
         ),
       );
@@ -86,6 +96,23 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     }
   }
 
+  /// Formats the annual price divided by 12 as a currency string.
+  /// E.g. price=34.99, currencyCode='USD' → '$2.92'
+  String _perMonth(double annualPrice, String currencyCode) {
+    final perMonth = annualPrice / 12;
+    // Simple formatting: prepend currency symbol for common codes
+    final symbol = switch (currencyCode.toUpperCase()) {
+      'USD' => '\$',
+      'EUR' => '€',
+      'GBP' => '£',
+      'INR' => '₹',
+      'AUD' => 'A\$',
+      'CAD' => 'CA\$',
+      _ => '$currencyCode ',
+    };
+    return '$symbol${perMonth.toStringAsFixed(2)}';
+  }
+
   Package? _selectedPackage(Offerings? offerings) {
     final packages = offerings?.current?.availablePackages;
     if (packages == null || packages.isEmpty) return null;
@@ -116,6 +143,25 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     final offeringsAsync = ref.watch(offeringsProvider);
     final offerings = offeringsAsync.valueOrNull;
     final busy = _purchasing || _restoring;
+
+    // Live pricing from RC — falls back to StringsPaywall constants
+    final packages = offerings?.current?.availablePackages ?? [];
+    final annualPkg = packages
+        .where((p) => p.packageType == PackageType.annual)
+        .firstOrNull;
+    final monthlyPkg = packages
+        .where((p) => p.packageType == PackageType.monthly)
+        .firstOrNull;
+
+    final annualPrice  = annualPkg?.storeProduct.priceString
+        ?? StringsPaywall.annualPrice;
+    final monthlyPrice = monthlyPkg?.storeProduct.priceString
+        ?? StringsPaywall.monthlyPrice;
+
+    // Per-month breakdown for annual (live: price / 12, fallback hardcoded)
+    final annualSubtext = annualPkg != null
+        ? "That's ${_perMonth(annualPkg.storeProduct.price, annualPkg.storeProduct.currencyCode)}/month"
+        : StringsPaywall.annualSubtext;
 
     return Scaffold(
       backgroundColor: bg,
@@ -232,8 +278,8 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                     _PlanCard(
                       plan: 'annual',
                       label: StringsPaywall.planAnnual,
-                      price: StringsPaywall.annualPrice,
-                      subtext: StringsPaywall.annualSubtext,
+                      price: annualPrice,
+                      subtext: annualSubtext,
                       badge: StringsPaywall.annualBadge,
                       selected: _selectedPlan == 'annual',
                       onTap: busy
@@ -248,7 +294,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                     _PlanCard(
                       plan: 'monthly',
                       label: StringsPaywall.planMonthly,
-                      price: StringsPaywall.monthlyPrice,
+                      price: monthlyPrice,
                       subtext: StringsPaywall.monthlySubtext,
                       selected: _selectedPlan == 'monthly',
                       onTap: busy
@@ -334,7 +380,8 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       TextButton(
-                        onPressed: null, // TODO: open terms URL
+                        onPressed: () => _launchUrl(
+                            'https://harshamdy.github.io/anshin/terms.html'),
                         style: TextButton.styleFrom(
                           foregroundColor: textSecondary,
                           textStyle: AppTypography.caption,
@@ -349,7 +396,8 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                           style: AppTypography.caption
                               .copyWith(color: textSecondary)),
                       TextButton(
-                        onPressed: null, // TODO: open privacy URL
+                        onPressed: () => _launchUrl(
+                            'https://harshamdy.github.io/anshin/privacy.html'),
                         style: TextButton.styleFrom(
                           foregroundColor: textSecondary,
                           textStyle: AppTypography.caption,
