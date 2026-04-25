@@ -124,6 +124,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.learnHome,
         builder: (_, _) => const LearnHomeScreen(),
       ),
+      // Track screen — literal segment must come BEFORE :lessonId param
+      // so go_router matches '/learn/understanding' exactly, not as an id.
+      GoRoute(
+        path: AppRoutes.understandingTrack,
+        builder: (_, _) => const UnderstandingTrackScreen(),
+      ),
       GoRoute(
         path: AppRoutes.lessonDetail,
         builder: (_, state) => LessonDetailScreen(

@@ -8,6 +8,7 @@ import '../../../../core/constants/strings_onboarding.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/mascot_widget.dart';
+import '../../../../core/widgets/scene_painter.dart';
 import '../../../../routing/app_routes.dart';
 import '../providers/onboarding_provider.dart';
 
@@ -49,75 +50,106 @@ class _OnboardingBScreenState extends ConsumerState<OnboardingBScreen> {
         title: _StepIndicator(step: 2, textSecondary: textSecondary),
         centerTitle: true,
       ),
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const Center(
-                      child: MascotWidget(
-                        emotion: MascotEmotion.calm,
-                        size: 80,
-                        breathe: true,
+      body: Column(
+        children: [
+          Expanded(
+            child: SafeArea(
+              bottom: false,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          const Center(
+                            child: MascotWidget(
+                              emotion: MascotEmotion.anxious,
+                              size: 80,
+                              breathe: true,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          Text(
+                            StringsOnboarding.screen2Heading,
+                            style: AppTypography.headingLarge.copyWith(
+                              color: textPrimary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 28),
+                          for (final option
+                              in StringsOnboarding.screen2Options) ...[
+                            _OptionTile(
+                              label: option,
+                              selected: _selected == option,
+                              onTap: () =>
+                                  setState(() => _selected = option),
+                              surface: surface,
+                              borderColor: borderColor,
+                              textPrimary: textPrimary,
+                            ),
+                            const SizedBox(height: 10),
+                          ],
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 20),
-                    Text(
-                      StringsOnboarding.screen2Heading,
-                      style: AppTypography.headingLarge
-                          .copyWith(color: textPrimary),
-                    ),
-                    const SizedBox(height: 28),
-                    for (final option
-                        in StringsOnboarding.screen2Options) ...[
-                      _OptionTile(
-                        label: option,
-                        selected: _selected == option,
-                        onTap: () => setState(() => _selected = option),
-                        surface: surface,
-                        borderColor: borderColor,
-                        textPrimary: textPrimary,
-                      ),
-                      const SizedBox(height: 10),
-                    ],
-                  ],
-                ),
-              ),
-            ),
+                  ),
 
-            // ── Continue button ───────────────────────────────────────────────
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-              child: ElevatedButton(
-                onPressed: _selected == null
-                    ? null
-                    : () {
-                        ref
-                            .read(onboardingNotifierProvider.notifier)
-                            .setFrequency(_selected!);
-                        context.push(AppRoutes.onboardingC);
-                      },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.accentCoral,
-                  foregroundColor: Colors.white,
-                  disabledBackgroundColor:
-                      AppColors.accentCoral.withValues(alpha: 0.35),
-                  minimumSize: const Size(double.infinity, 56),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16)),
-                  textStyle: AppTypography.button,
-                  elevation: 0,
-                ),
-                child: Text(StringsOnboarding.continueButton),
+                  // ── Continue button ─────────────────────────────────────
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
+                    child: ElevatedButton(
+                      onPressed: _selected == null
+                          ? null
+                          : () {
+                              ref
+                                  .read(onboardingNotifierProvider.notifier)
+                                  .setFrequency(_selected!);
+                              context.push(AppRoutes.onboardingC);
+                            },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.accentCoral,
+                        foregroundColor: Colors.white,
+                        disabledBackgroundColor:
+                            AppColors.accentCoral.withValues(alpha: 0.35),
+                        minimumSize: const Size(double.infinity, 56),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16)),
+                        textStyle: AppTypography.button,
+                        elevation: 0,
+                      ),
+                      child: Text(StringsOnboarding.continueButton),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+
+          // ── Illustrated forest floor footer strip ─────────────────────
+          SizedBox(
+            height: 100,
+            width: double.infinity,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: morningForestGradient,
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                ),
+                const CustomPaint(painter: ForestFloorPainter()),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -186,7 +218,7 @@ class _OptionTile extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 160),
         padding:
-            const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+            const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
         decoration: BoxDecoration(
           color: selected
               ? AppColors.accentCoral.withValues(alpha: 0.07)

@@ -11,6 +11,7 @@ import '../../../../core/constants/strings_settings.dart';
 import '../../../../core/providers/theme_provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/widgets/mascot_widget.dart';
 import '../../../../routing/app_routes.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../subscription/presentation/providers/subscription_provider.dart';
@@ -173,6 +174,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       ),
       body: ListView(
         children: [
+          // ── Premium card ─────────────────────────────────────────────────
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+            child: _PremiumCard(
+              isPremium: isPremium,
+              onTap: isPremium
+                  ? () => _launch(
+                      'https://play.google.com/store/account/subscriptions')
+                  : () => context.push(AppRoutes.paywall),
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
           // ── Audio & haptics ─────────────────────────────────────────────
           _SectionHeader(
             StringsSettings.sectionAudio,
@@ -615,6 +630,129 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
           const SizedBox(height: 40),
         ],
+      ),
+    );
+  }
+}
+
+// ─── Premium card ────────────────────────────────────────────────────────────
+
+class _PremiumCard extends StatelessWidget {
+  final bool isPremium;
+  final VoidCallback onTap;
+
+  const _PremiumCard({required this.isPremium, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    if (isPremium) {
+      // Already premium — green confirmation card
+      return Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              AppColors.accentTeal,
+              AppColors.accentTeal.withValues(alpha: 0.75),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        padding: const EdgeInsets.all(18),
+        child: Row(
+          children: [
+            const MascotWidget(emotion: MascotEmotion.proud, size: 48),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'You have Premium ✓',
+                    style: AppTypography.headingSmall.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    'All features unlocked. Thank you!',
+                    style: AppTypography.caption.copyWith(
+                      color: Colors.white.withValues(alpha: 0.85),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Free user — coral upgrade card
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFFE8907A), Color(0xFFD07060)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.accentCoral.withValues(alpha: 0.30),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.all(18),
+        child: Row(
+          children: [
+            const MascotWidget(emotion: MascotEmotion.hopeful, size: 48),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Upgrade to Premium',
+                    style: AppTypography.headingSmall.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    'Unlock all breathing patterns, grounding, and more.',
+                    style: AppTypography.caption.copyWith(
+                      color: Colors.white.withValues(alpha: 0.88),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 7),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      'Start free trial',
+                      style: AppTypography.caption.copyWith(
+                        color: AppColors.accentCoral,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

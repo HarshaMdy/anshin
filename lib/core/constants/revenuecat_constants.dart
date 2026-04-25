@@ -1,5 +1,5 @@
 // RevenueCat SDK constants
-const String kRevenueCatApiKey = 'test_ZRghVXMEHNfyngtTXMnDwZEXluj';
+const String kRevenueCatApiKey = 'goog_fOozbagrSKQsqcAbeMUaddWbOvf';
 
 // RevenueCat entitlement identifier — must match the RC dashboard
 const String kEntitlementPremium = 'premium';

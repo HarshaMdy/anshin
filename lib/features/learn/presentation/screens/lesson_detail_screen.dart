@@ -1,8 +1,8 @@
 // Lesson detail — Content Bible §12
 // Renders lessons 1 and 2 as scrollable text screens with exact copy.
-// Lesson 1 ends with a "Next lesson →" CTA; lesson 2 ends with "Back to Learn".
-// Section headers inside the body are auto-detected (short lines, no terminal
-// punctuation) and rendered at headingSmall weight for visual rhythm.
+// "Mark as complete" shows a modal sheet with +10 points confirmation.
+// Lesson 1 sheet: "Next lesson" → pushes lesson 2.
+// Lesson 2 sheet: "Done" → pops back to UnderstandingTrackScreen.
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -12,41 +12,75 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/mascot_widget.dart';
 import '../../../../routing/app_routes.dart';
 
-class LessonDetailScreen extends StatelessWidget {
+class LessonDetailScreen extends StatefulWidget {
   final String lessonId;
 
   const LessonDetailScreen({super.key, required this.lessonId});
 
   @override
+  State<LessonDetailScreen> createState() => _LessonDetailScreenState();
+}
+
+class _LessonDetailScreenState extends State<LessonDetailScreen> {
+  bool _isComplete = false;
+
+  bool get _isLesson1 => widget.lessonId == '1';
+
+  // Resolve lesson content
+  String get _title =>
+      _isLesson1 ? StringsLearn.lesson1Title : StringsLearn.lesson2Title;
+  String get _number =>
+      _isLesson1 ? StringsLearn.lesson1Number : StringsLearn.lesson2Number;
+  String get _readTime =>
+      _isLesson1 ? StringsLearn.lesson1ReadTime : StringsLearn.lesson2ReadTime;
+  String get _body =>
+      _isLesson1 ? StringsLearn.lesson1Body : StringsLearn.lesson2Body;
+  String get _completionPoints => _isLesson1
+      ? StringsLearn.lesson1CompletionPoints
+      : StringsLearn.lesson2CompletionPoints;
+  String get _completionLabel => _isLesson1
+      ? StringsLearn.lesson1CompletionLabel
+      : StringsLearn.lesson2CompletionLabel;
+
+  void _markComplete() {
+    setState(() => _isComplete = true);
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (_) => _CompletionSheet(
+        points: _completionPoints,
+        label: _completionLabel,
+        isLesson1: _isLesson1,
+        onNextLesson: _isLesson1
+            ? () {
+                Navigator.of(context).pop(); // close sheet
+                context.push(AppRoutes.lessonDetailPath('2'));
+              }
+            : null,
+        onDone: () {
+          Navigator.of(context).pop(); // close sheet
+          if (context.canPop()) context.pop(); // back to track screen
+        },
+      ),
+    ).then((_) {
+      // If user swiped the sheet away without tapping a button, reset state
+      // so the button remains usable.
+      if (mounted) setState(() => _isComplete = false);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg =
-        isDark ? AppColors.darkBackground : AppColors.lightBackground;
+    final bg = isDark ? AppColors.darkBackground : AppColors.lightBackground;
     final textPrimary =
         isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
     final textSecondary =
         isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
 
-    // Resolve lesson content by id
-    final isLesson1 = lessonId == '1';
-    final title =
-        isLesson1 ? StringsLearn.lesson1Title : StringsLearn.lesson2Title;
-    final number =
-        isLesson1 ? StringsLearn.lesson1Number : StringsLearn.lesson2Number;
-    final readTime = isLesson1
-        ? StringsLearn.lesson1ReadTime
-        : StringsLearn.lesson2ReadTime;
-    final body =
-        isLesson1 ? StringsLearn.lesson1Body : StringsLearn.lesson2Body;
-    final completionPoints = isLesson1
-        ? StringsLearn.lesson1CompletionPoints
-        : StringsLearn.lesson2CompletionPoints;
-    final completionLabel = isLesson1
-        ? StringsLearn.lesson1CompletionLabel
-        : StringsLearn.lesson2CompletionLabel;
-
-    // Split body into paragraphs; double newlines delimit them
-    final paragraphs = body
+    // Split body text into paragraphs (double newline delimited)
+    final paragraphs = _body
         .split('\n\n')
         .map((p) => p.trim())
         .where((p) => p.isNotEmpty)
@@ -61,19 +95,39 @@ class LessonDetailScreen extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           tooltip: 'Go back',
-          onPressed: () =>
-              context.canPop() ? context.pop() : context.go(AppRoutes.learnHome),
+          onPressed: () => context.canPop()
+              ? context.pop()
+              : context.go(AppRoutes.understandingTrack),
+        ),
+        title: Text(
+          _title,
+          style: AppTypography.headingSmall.copyWith(
+            color: textPrimary,
+            fontSize: 15,
+          ),
+          overflow: TextOverflow.ellipsis,
         ),
       ),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 48),
+        padding: const EdgeInsets.fromLTRB(20, 8, 20, 48),
         children: [
+          // ── Small hopeful mascot — at the top ──────────────────────────
+          const Center(
+            child: MascotWidget(
+              emotion: MascotEmotion.hopeful,
+              size: 64,
+              breathe: true,
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
           // ── Meta badges: number + read time ────────────────────────────
           Row(
             children: [
-              _MetaBadge(label: number, color: AppColors.accentTeal),
+              _MetaBadge(label: _number, color: AppColors.accentTeal),
               const SizedBox(width: 8),
-              _MetaBadge(label: readTime, color: AppColors.accentGold),
+              _MetaBadge(label: _readTime, color: AppColors.accentGold),
             ],
           ),
 
@@ -81,9 +135,8 @@ class LessonDetailScreen extends StatelessWidget {
 
           // ── Lesson title ────────────────────────────────────────────────
           Text(
-            title,
-            style:
-                AppTypography.headingLarge.copyWith(color: textPrimary),
+            _title,
+            style: AppTypography.headingLarge.copyWith(color: textPrimary),
           ),
 
           const SizedBox(height: 28),
@@ -94,93 +147,29 @@ class LessonDetailScreen extends StatelessWidget {
 
           const SizedBox(height: 44),
 
-          // ── Completion section ──────────────────────────────────────────
-          const Center(
-            child: MascotWidget(
-              emotion: MascotEmotion.proud,
-              size: 80,
-              breathe: true,
+          // ── Mark as complete ────────────────────────────────────────────
+          // Full coral when active; muted after tap (sheet handles navigation).
+          ElevatedButton(
+            onPressed: _isComplete ? null : _markComplete,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.accentCoral,
+              foregroundColor: Colors.white,
+              disabledBackgroundColor:
+                  AppColors.accentCoral.withValues(alpha: 0.35),
+              minimumSize: const Size.fromHeight(52),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14)),
+              elevation: 0,
+              textStyle: AppTypography.button,
             ),
+            child: const Text('Mark as complete'),
           ),
-
-          const SizedBox(height: 16),
-
-          // Points pill
-          Center(
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 14, vertical: 6),
-              decoration: BoxDecoration(
-                color: AppColors.accentGold.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: AppColors.accentGold.withValues(alpha: 0.40),
-                ),
-              ),
-              child: Text(
-                completionPoints,
-                style: AppTypography.caption.copyWith(
-                  color: AppColors.accentGold,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 10),
-
-          // Completion label
-          Center(
-            child: Text(
-              completionLabel,
-              style:
-                  AppTypography.bodyMedium.copyWith(color: textSecondary),
-            ),
-          ),
-
-          const SizedBox(height: 28),
-
-          // ── CTA ─────────────────────────────────────────────────────────
-          if (isLesson1)
-            ElevatedButton(
-              onPressed: () =>
-                  context.push(AppRoutes.lessonDetailPath('2')),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.accentCoral,
-                foregroundColor: Colors.white,
-                minimumSize: const Size.fromHeight(52),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14)),
-                elevation: 0,
-              ),
-              child: Text(
-                StringsLearn.lesson1NextButton,
-                style: AppTypography.button.copyWith(color: Colors.white),
-              ),
-            )
-          else
-            OutlinedButton(
-              onPressed: () => context.go(AppRoutes.learnHome),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: textPrimary,
-                minimumSize: const Size.fromHeight(52),
-                side: BorderSide(
-                    color: AppColors.accentTeal.withValues(alpha: 0.50)),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14)),
-              ),
-              child: Text(
-                StringsLearn.lesson2BackButton,
-                style: AppTypography.button.copyWith(color: textPrimary),
-              ),
-            ),
         ],
       ),
     );
   }
 
-  // Detect section headers: short text that does not end with sentence-terminal
-  // punctuation and is not a list item.  These are styled at headingSmall.
+  // Section headers: short lines that don't end with sentence punctuation.
   Widget _buildParagraph(
       String text, Color textPrimary, Color textSecondary) {
     final isSectionHeader = text.length < 52 &&
@@ -195,11 +184,141 @@ class LessonDetailScreen extends StatelessWidget {
         text,
         style: isSectionHeader
             ? AppTypography.headingSmall
-                .copyWith(color: textPrimary)
-                .copyWith(height: 1.3)
+                .copyWith(color: textPrimary, height: 1.3)
             : AppTypography.bodyLarge
-                .copyWith(color: textSecondary)
-                .copyWith(height: 1.65),
+                .copyWith(color: textSecondary, height: 1.65),
+      ),
+    );
+  }
+}
+
+// ─── Completion modal bottom sheet ───────────────────────────────────────────
+
+class _CompletionSheet extends StatelessWidget {
+  final String points;
+  final String label;
+  final bool isLesson1;
+  final VoidCallback? onNextLesson; // non-null only for lesson 1
+  final VoidCallback onDone;
+
+  const _CompletionSheet({
+    required this.points,
+    required this.label,
+    required this.isLesson1,
+    required this.onNextLesson,
+    required this.onDone,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final sheetBg = isDark ? AppColors.darkSurface : AppColors.lightSurface;
+    final textPrimary =
+        isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
+    final textSecondary =
+        isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: sheetBg,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      padding: EdgeInsets.fromLTRB(
+        24,
+        16,
+        24,
+        // Extra bottom padding for devices with home indicator
+        MediaQuery.of(context).viewPadding.bottom + 32,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // ── Drag handle ─────────────────────────────────────────────────
+          Container(
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: textSecondary.withValues(alpha: 0.25),
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+
+          const SizedBox(height: 28),
+
+          // ── Proud mascot ────────────────────────────────────────────────
+          const MascotWidget(
+            emotion: MascotEmotion.proud,
+            size: 80,
+            breathe: true,
+          ),
+
+          const SizedBox(height: 16),
+
+          // ── Points badge ─────────────────────────────────────────────────
+          Container(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+            decoration: BoxDecoration(
+              color: AppColors.accentGold.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                  color: AppColors.accentGold.withValues(alpha: 0.40)),
+            ),
+            child: Text(
+              points,
+              style: AppTypography.caption.copyWith(
+                color: AppColors.accentGold,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 10),
+
+          // ── Completion label ─────────────────────────────────────────────
+          Text(
+            label,
+            style: AppTypography.bodyMedium.copyWith(color: textSecondary),
+            textAlign: TextAlign.center,
+          ),
+
+          const SizedBox(height: 28),
+
+          // ── Primary CTA ──────────────────────────────────────────────────
+          // Lesson 1: "Next lesson" → push lesson 2
+          // Lesson 2: "Done" → pop back to track list
+          ElevatedButton(
+            onPressed: isLesson1 ? onNextLesson : onDone,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.accentCoral,
+              foregroundColor: Colors.white,
+              minimumSize: const Size.fromHeight(52),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14)),
+              elevation: 0,
+              textStyle: AppTypography.button,
+            ),
+            child: Text(
+              isLesson1
+                  ? StringsLearn.lesson1NextButton
+                  : StringsLearn.backToLearn,
+            ),
+          ),
+
+          // Lesson 1: also offer a "skip for now" option
+          if (isLesson1) ...[
+            const SizedBox(height: 10),
+            TextButton(
+              onPressed: onDone,
+              style: TextButton.styleFrom(
+                foregroundColor: textSecondary,
+                minimumSize: const Size.fromHeight(44),
+                textStyle: AppTypography.bodyMedium,
+              ),
+              child: const Text('Maybe later'),
+            ),
+          ],
+        ],
       ),
     );
   }

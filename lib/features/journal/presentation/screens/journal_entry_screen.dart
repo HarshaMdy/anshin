@@ -406,69 +406,92 @@ class _MoodStep extends StatelessWidget {
             style: AppTypography.headingLarge.copyWith(color: textPrimary),
           ),
           const SizedBox(height: 28),
+
+          // 3 × 4 grid — 72dp circles, 56dp SVG inside, 16dp/20dp gaps
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
-              mainAxisSpacing: 16,
-              crossAxisSpacing: 12,
-              childAspectRatio: 0.82,
+              crossAxisCount: 3,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 20,
+              // Fixed extent: 72 (circle) + 6 (gap) + ~18 (label) + headroom
+              mainAxisExtent: 104,
             ),
-            itemCount: labels.length,
+            itemCount: _emotions.length,
             itemBuilder: (context, i) {
               final label = labels[i];
               final selected = selectedMood == label;
-              return GestureDetector(
-                onTap: () => onSelect(label),
-                behavior: HitTestBehavior.opaque,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    AnimatedContainer(
-                      duration: const Duration(milliseconds: 180),
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: selected
-                            ? AppColors.accentCoral.withValues(alpha: 0.12)
-                            : surface,
-                        border: Border.all(
-                          color: selected
-                              ? AppColors.accentCoral
-                              : borderColor,
-                          width: selected ? 2 : 1,
+
+              return Semantics(
+                button: true,
+                selected: selected,
+                label: selected ? '$label, selected' : label,
+                child: GestureDetector(
+                  onTap: () => onSelect(label),
+                  behavior: HitTestBehavior.opaque,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Scale animation wraps the circle so the border
+                      // scales with it rather than the SVG independently.
+                      AnimatedScale(
+                        scale: selected ? 1.1 : 1.0,
+                        duration: const Duration(milliseconds: 180),
+                        curve: Curves.easeOut,
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 180),
+                          width: 72,
+                          height: 72,
+                          // alignment centers the SVG within the circle
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            // White unselected, 10% coral tint selected
+                            color: selected
+                                ? AppColors.accentCoral.withValues(alpha: 0.10)
+                                : surface,
+                            border: Border.all(
+                              color: selected
+                                  ? AppColors.accentCoral   // 2dp coral
+                                  : borderColor,            // 1dp #E8E2D9
+                              width: selected ? 2.0 : 1.0,
+                            ),
+                          ),
+                          child: SvgPicture.asset(
+                            _emotions[i].assetPath,
+                            width: 56,
+                            height: 56,
+                          ),
                         ),
                       ),
-                      child: SvgPicture.asset(
-                        _emotions[i].assetPath,
-                        width: 38,
-                        height: 38,
+                      const SizedBox(height: 6),
+                      Text(
+                        label,
+                        style: AppTypography.caption.copyWith(
+                          fontSize: 12,
+                          color: selected
+                              ? AppColors.accentCoral
+                              : textSecondary,
+                          fontWeight: selected
+                              ? FontWeight.w600
+                              : FontWeight.w500,
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      label,
-                      style: AppTypography.caption.copyWith(
-                        fontSize: 11,
-                        color: selected
-                            ? AppColors.accentCoral
-                            : textSecondary,
-                        fontWeight: selected
-                            ? FontWeight.w600
-                            : FontWeight.w400,
-                      ),
-                      textAlign: TextAlign.center,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             },
           ),
+
           const SizedBox(height: 36),
+
+          // Continue — full coral when a mood is selected, muted otherwise
           ElevatedButton(
             onPressed: onNext,
             style: ElevatedButton.styleFrom(

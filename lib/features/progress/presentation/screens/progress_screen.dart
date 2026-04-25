@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/strings_progress.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/widgets/mascot_widget.dart';
 import '../../../../routing/app_routes.dart';
 import '../../data/progress_repository.dart';
 import '../providers/progress_provider.dart';
@@ -756,13 +757,17 @@ class _StatTile extends StatelessWidget {
           children: [
             Text(
               '$count',
-              style: AppTypography.headingMedium.copyWith(color: color),
+              style: AppTypography.headingMedium.copyWith(
+                color: color,
+                fontSize: 28,
+                fontWeight: FontWeight.w700,
+              ),
             ),
             const SizedBox(height: 2),
             Text(
               label,
               style: AppTypography.caption.copyWith(
-                  color: textSecondary, fontSize: 11),
+                  color: textSecondary, fontSize: 13),
               textAlign: TextAlign.center,
               maxLines: 2,
             ),
@@ -832,12 +837,9 @@ class _StreakCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       child: Row(
         children: [
-          Icon(
-            Icons.local_fire_department,
-            color: streak > 0
-                ? AppColors.accentGold
-                : textSecondary.withValues(alpha: 0.3),
-            size: 28,
+          MascotWidget(
+            emotion: streak > 0 ? MascotEmotion.proud : MascotEmotion.calm,
+            size: 48,
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -929,24 +931,28 @@ class _InsufficientDataCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 180,
       decoration: BoxDecoration(
         color: surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: borderColor),
       ),
-      padding: const EdgeInsets.all(24),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.bar_chart_outlined,
-            size: 40,
-            color: textSecondary.withValues(alpha: 0.3),
+          const MascotWidget(
+            emotion: MascotEmotion.hopeful,
+            size: 72,
+            breathe: true,
           ),
           const SizedBox(height: 12),
-          Text(
-            StringsProgress.insufficientDataBody,
-            textAlign: TextAlign.center,
-            style: AppTypography.bodyMedium.copyWith(color: textSecondary),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Text(
+              StringsProgress.insufficientDataBody,
+              textAlign: TextAlign.center,
+              style: AppTypography.bodyMedium.copyWith(color: textSecondary),
+            ),
           ),
         ],
       ),

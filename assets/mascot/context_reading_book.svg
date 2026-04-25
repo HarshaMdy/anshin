@@ -1,29 +1,25 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <ellipse cx="50" cy="92" rx="20" ry="3.5" fill="#7AAFBB" opacity="0.2"/>
-  <path d="M39 72 Q36 80 38 85 Q40 89 44 88 Q48 87 46 80 Q46 73 43 72 Z" fill="#7AAFBB"/>
-  <path d="M61 72 Q64 80 62 85 Q60 89 56 88 Q52 87 54 80 Q54 73 57 72 Z" fill="#7AAFBB"/>
-  <!-- Left arm extended inward (holding book) -->
-  <path d="M26 58 Q20 58 18 64 Q17 70 24 71 Q30 71 33 65 Z" fill="#7AAFBB"/>
-  <!-- Right arm extended inward (holding book) -->
-  <path d="M74 58 Q80 58 82 64 Q83 70 76 71 Q70 71 67 65 Z" fill="#7AAFBB"/>
-  <!-- Open book between arms -->
-  <path d="M28 72 Q50 68 72 72 L72 88 Q50 84 28 88 Z" fill="#F5F0E8"/>
-  <path d="M28 72 Q50 68 50 72 L50 88 Q50 84 28 88 Z" fill="#E8E0D0"/>
-  <line x1="50" y1="68" x2="50" y2="88" stroke="#D0C8B8" stroke-width="1.2"/>
-  <!-- Book text lines -->
-  <line x1="33" y1="75" x2="47" y2="75" stroke="#B0A898" stroke-width="0.8" opacity="0.7"/>
-  <line x1="33" y1="78" x2="47" y2="78" stroke="#B0A898" stroke-width="0.8" opacity="0.7"/>
-  <line x1="33" y1="81" x2="44" y2="81" stroke="#B0A898" stroke-width="0.8" opacity="0.7"/>
-  <line x1="53" y1="75" x2="67" y2="75" stroke="#B0A898" stroke-width="0.8" opacity="0.7"/>
-  <line x1="53" y1="78" x2="67" y2="78" stroke="#B0A898" stroke-width="0.8" opacity="0.7"/>
-  <line x1="53" y1="81" x2="64" y2="81" stroke="#B0A898" stroke-width="0.8" opacity="0.7"/>
-  <ellipse cx="50" cy="47" rx="28" ry="30" fill="#99C9D7"/>
-  <ellipse cx="42" cy="38" rx="9" ry="7" fill="#C5E4EC" opacity="0.55"/>
-  <!-- Reading face — eyes looking slightly down -->
-  <circle cx="41" cy="44" r="4.5" fill="#2D4A52"/>
-  <circle cx="43" cy="43" r="1.5" fill="white"/>
-  <circle cx="59" cy="44" r="4.5" fill="#2D4A52"/>
-  <circle cx="61" cy="43" r="1.5" fill="white"/>
-  <path d="M44 55 Q50 59 56 55" stroke="#2D4A52" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <ellipse cx="100" cy="184" rx="40" ry="7" fill="#5A8A9A" opacity="0.30"/>
+  <path d="M82 160 Q79 171 81 177 Q83 181 88 180 Q93 179 92 170 Q91 162 86 160 Z" fill="#7BA8B8" stroke="#2D5566" stroke-width="1.5"/>
+  <path d="M118 160 Q121 171 119 177 Q117 181 112 180 Q107 179 108 170 Q109 162 114 160 Z" fill="#7BA8B8" stroke="#2D5566" stroke-width="1.5"/>
+  <path d="M44 118 Q35 118 34 130 Q33 141 44 141 Q54 141 56 130 Z" fill="#7BA8B8" stroke="#2D5566" stroke-width="1.5"/>
+  <path d="M156 118 Q165 118 166 130 Q167 141 156 141 Q146 141 144 130 Z" fill="#7BA8B8" stroke="#2D5566" stroke-width="1.5"/>
+  <path d="M52 144 Q100 138 148 144 L148 170 Q100 164 52 170 Z" fill="#F5F0E8" stroke="#D0C4A8" stroke-width="1"/>
+  <path d="M52 144 Q100 138 100 144 L100 170 Q100 164 52 170 Z" fill="#EDE5D5"/>
+  <line x1="100" y1="138" x2="100" y2="170" stroke="#D0C8B8" stroke-width="1.5"/>
+  <line x1="60" y1="150" x2="94" y2="150" stroke="#B8B0A0" stroke-width="1" opacity="0.7"/>
+  <line x1="60" y1="156" x2="94" y2="156" stroke="#B8B0A0" stroke-width="1" opacity="0.7"/>
+  <line x1="60" y1="162" x2="88" y2="162" stroke="#B8B0A0" stroke-width="1" opacity="0.7"/>
+  <line x1="106" y1="150" x2="140" y2="150" stroke="#B8B0A0" stroke-width="1" opacity="0.7"/>
+  <line x1="106" y1="156" x2="140" y2="156" stroke="#B8B0A0" stroke-width="1" opacity="0.7"/>
+  <line x1="106" y1="162" x2="134" y2="162" stroke="#B8B0A0" stroke-width="1" opacity="0.7"/>
+  <ellipse cx="100" cy="108" rx="62" ry="58" fill="#7BA8B8"/>
+  <ellipse cx="108" cy="118" rx="46" ry="42" fill="#5A8A9A" opacity="0.35"/>
+  <ellipse cx="100" cy="108" rx="62" ry="58" fill="none" stroke="#2D5566" stroke-width="1.5"/>
+  <ellipse cx="72" cy="76" rx="20" ry="14" fill="white" opacity="0.35" transform="rotate(-45 72 76)"/>
+  <ellipse cx="84" cy="106" rx="7" ry="8" fill="#1A3A4A"/>
+  <circle cx="87" cy="104" r="2.5" fill="white"/>
+  <ellipse cx="116" cy="106" rx="7" ry="8" fill="#1A3A4A"/>
+  <circle cx="119" cy="104" r="2.5" fill="white"/>
+  <path d="M91 120 Q100 127 109 120" fill="none" stroke="#1A3A4A" stroke-width="1.8" stroke-linecap="round"/>
 </svg>

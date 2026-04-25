@@ -8,6 +8,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/widgets/mascot_widget.dart';
+import '../../../../core/widgets/scene_painter.dart';
 import '../../../../routing/app_routes.dart';
 import '../../../subscription/presentation/providers/subscription_provider.dart';
 import '../../domain/grounding_technique.dart';
@@ -50,11 +52,16 @@ class GroundingPickerScreen extends ConsumerWidget {
         scrolledUnderElevation: 0,
       ),
       body: ListView.separated(
-        padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
-        itemCount: GroundingTechnique.all.length,
-        separatorBuilder: (_, _) => const SizedBox(height: 12),
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 32),
+        itemCount: GroundingTechnique.all.length + 1, // +1 for hero
+        separatorBuilder: (_, i) => i == 0
+            ? const SizedBox(height: 16)
+            : const SizedBox(height: 12),
         itemBuilder: (context, index) {
-          final technique = GroundingTechnique.all[index];
+          if (index == 0) {
+            return const _GroundingHero();
+          }
+          final technique = GroundingTechnique.all[index - 1];
           final isAccessible = technique.isFree || hasPremium;
 
           return _TechniqueCard(
@@ -63,6 +70,68 @@ class GroundingPickerScreen extends ConsumerWidget {
             onTap: () => _onTap(context, technique, isAccessible),
           );
         },
+      ),
+    );
+  }
+}
+
+// ─── Hero section ─────────────────────────────────────────────────────────────
+
+class _GroundingHero extends StatelessWidget {
+  const _GroundingHero();
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: SizedBox(
+        height: 200,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: groundGradient,
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+            ),
+            const CustomPaint(painter: RiverScenePainter()),
+            const Center(
+              child: MascotWidget(
+                emotion: MascotEmotion.grounded,
+                size: 110,
+                breathe: true,
+              ),
+            ),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(16, 24, 16, 14),
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Colors.transparent, Color(0xAA0E3040)],
+                  ),
+                ),
+                child: const Text(
+                  'Choose a grounding technique',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    fontFamily: 'PlusJakartaSans',
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -81,6 +150,30 @@ class _TechniqueCard extends StatelessWidget {
     required this.onTap,
   });
 
+  // Distinct accent colour per technique index
+  static const List<Color> _accents = [
+    AppColors.accentTeal,      // Five Senses (free)
+    Color(0xFF7090C0),         // Body Scan — calm blue
+    AppColors.accentCoral,     // Cold Water — coral
+    AppColors.accentGold,      // Movement Reset — gold
+  ];
+
+  // Representative icon per technique ID
+  static const Map<String, IconData> _icons = {
+    'fiveSenses': Icons.visibility_outlined,       // eyes / seeing
+    'bodyScan':   Icons.accessibility_new_outlined,// body figure
+    'coldWater':  Icons.water_drop_outlined,       // water
+    'movement':   Icons.directions_walk_outlined,  // walking
+  };
+
+  // Approximate session duration label per technique ID
+  static const Map<String, String> _durations = {
+    'fiveSenses': '~3 min',
+    'bodyScan':   '~5 min',
+    'coldWater':  '~2 min',
+    'movement':   '~3 min',
+  };
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -94,6 +187,10 @@ class _TechniqueCard extends StatelessWidget {
 
     // steps[0] is intro; the numbered prompts are steps[1..N]
     final promptCount = technique.steps.length - 1;
+    final idx = GroundingTechnique.all.indexOf(technique);
+    final accent = idx >= 0 && idx < _accents.length
+        ? _accents[idx]
+        : AppColors.accentTeal;
 
     return Material(
       color: bg,
@@ -103,13 +200,37 @@ class _TechniqueCard extends StatelessWidget {
         onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: borderColor, width: 1),
+            // No borderRadius here — Material above already clips to rounded rect.
+            // Non-uniform border widths (left=4, others=1) are only valid without
+            // borderRadius; combining them throws in debug and aborts the paint pass.
+            border: Border(
+              left:   BorderSide(color: accent, width: 4),
+              top:    BorderSide(color: borderColor, width: 1),
+              right:  BorderSide(color: borderColor, width: 1),
+              bottom: BorderSide(color: borderColor, width: 1),
+            ),
           ),
           padding: const EdgeInsets.all(16),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // ── Technique icon circle ─────────────────────────────────────
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: accent.withValues(alpha: 0.12),
+                ),
+                child: Icon(
+                  _icons[technique.id] ?? Icons.spa_outlined,
+                  color: accent,
+                  size: 22,
+                ),
+              ),
+
+              const SizedBox(width: 14),
+
               // ── Text block ─────────────────────────────────────────────────
               Expanded(
                 child: Column(
@@ -127,8 +248,9 @@ class _TechniqueCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         _Badge(
-                            isFree: technique.isFree,
-                            isAccessible: isAccessible),
+                          isFree: technique.isFree,
+                          isAccessible: isAccessible,
+                        ),
                       ],
                     ),
 
@@ -139,16 +261,51 @@ class _TechniqueCard extends StatelessWidget {
                       technique.steps[0],
                       style: AppTypography.bodyMedium
                           .copyWith(color: textSecondary),
-                      maxLines: 3,
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
 
                     const SizedBox(height: 10),
 
-                    // Step count pill
-                    _StepCountPill(
-                      count: promptCount,
-                      textSecondary: textSecondary,
+                    // ── Stats footer: step count + duration ─────────────────
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.format_list_numbered,
+                          size: 12,
+                          color: textSecondary.withValues(alpha: 0.65),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '$promptCount steps',
+                          style: AppTypography.caption.copyWith(
+                            color: textSecondary.withValues(alpha: 0.65),
+                          ),
+                        ),
+                        if (_durations.containsKey(technique.id)) ...[
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Text(
+                              '·',
+                              style: AppTypography.caption.copyWith(
+                                color: textSecondary.withValues(alpha: 0.40),
+                              ),
+                            ),
+                          ),
+                          Icon(
+                            Icons.schedule_outlined,
+                            size: 12,
+                            color: textSecondary.withValues(alpha: 0.65),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            _durations[technique.id]!,
+                            style: AppTypography.caption.copyWith(
+                              color: textSecondary.withValues(alpha: 0.65),
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                   ],
                 ),
@@ -221,26 +378,3 @@ class _Chip extends StatelessWidget {
   }
 }
 
-// ─── Step count pill ──────────────────────────────────────────────────────────
-
-class _StepCountPill extends StatelessWidget {
-  final int count;
-  final Color textSecondary;
-
-  const _StepCountPill({required this.count, required this.textSecondary});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(Icons.list_outlined, size: 14, color: textSecondary),
-        const SizedBox(width: 4),
-        Text(
-          '$count steps',
-          style: AppTypography.caption.copyWith(color: textSecondary),
-        ),
-      ],
-    );
-  }
-}

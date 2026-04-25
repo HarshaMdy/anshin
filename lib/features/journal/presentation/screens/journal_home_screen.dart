@@ -99,7 +99,7 @@ class JournalHomeScreen extends ConsumerWidget {
               ),
             ),
 
-            // ── Calendar ──────────────────────────────────────────────────────
+            // ── Calendar (peeking mascot lives inside each PageView page) ────
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
@@ -260,23 +260,23 @@ class _CalendarStripState extends ConsumerState<_CalendarStrip> {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: widget.borderColor),
       ),
-      // ClipRRect keeps the PageView content inside the rounded corners.
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(15),
-        child: PageView.builder(
-          controller: _pageCtrl,
-          itemCount: _totalMonths,
-          onPageChanged: (page) {
-            ref.read(journalMonthProvider.notifier).state = _monthForPage(page);
-            // Clear date selection when the user swipes to a different month.
-            ref.read(journalSelectedDateProvider.notifier).state = null;
-          },
-          itemBuilder: (context, page) => _MonthCalendar(
-            month: _monthForPage(page),
-            textPrimary: widget.textPrimary,
-            textSecondary: widget.textSecondary,
-            onDateTap: widget.onDateTap,
-          ),
+      // No ClipRRect — removing it lets the mascot inside each page peek
+      // above the card edge (top: -20) without being clipped.
+      // The page content has 16dp internal padding and never touches the
+      // card's rounded corners, so the visual result is identical.
+      child: PageView.builder(
+        controller: _pageCtrl,
+        itemCount: _totalMonths,
+        onPageChanged: (page) {
+          ref.read(journalMonthProvider.notifier).state = _monthForPage(page);
+          // Clear date selection when the user swipes to a different month.
+          ref.read(journalSelectedDateProvider.notifier).state = null;
+        },
+        itemBuilder: (context, page) => _MonthCalendar(
+          month: _monthForPage(page),
+          textPrimary: widget.textPrimary,
+          textSecondary: widget.textSecondary,
+          onDateTap: widget.onDateTap,
         ),
       ),
     );
@@ -325,12 +325,16 @@ class _MonthCalendar extends ConsumerWidget {
     final daysInMonth = DateTime(month.year, month.month + 1, 0).day;
     final today       = DateTime.now();
 
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: [
+    return Stack(
+      // clipBehavior.none lets the mascot overflow above the card top edge.
+      clipBehavior: Clip.none,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
           // ── Month / year header ────────────────────────────────────────────
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -458,8 +462,26 @@ class _MonthCalendar extends ConsumerWidget {
               );
             },
           ),
-        ],
-      ),
+            ],
+          ),
+        ),
+
+        // ── Peeking mascot — inside the page so it slides with the card ────
+        // Positioned relative to the Stack root (which is the full page rect).
+        // top: -20  → mascot peeks 20dp above the card top edge.
+        // right: 8  → hugs the right edge.
+        // IgnorePointer keeps taps falling through to the calendar grid.
+        const Positioned(
+          top: -20,
+          right: 8,
+          child: IgnorePointer(
+            child: MascotWidget(
+              emotion: MascotEmotion.journalPeeking,
+              size: 52,
+            ),
+          ),
+        ),
+      ],
     );
   }
 

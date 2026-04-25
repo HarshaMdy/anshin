@@ -1,27 +1,24 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <ellipse cx="50" cy="89" rx="18" ry="3.5" fill="#7AAFBB" opacity="0.2"/>
-  <path d="M39 72 Q36 80 38 85 Q40 89 44 88 Q48 87 46 80 Q46 73 43 72 Z" fill="#7AAFBB"/>
-  <path d="M61 72 Q64 80 62 85 Q60 89 56 88 Q52 87 54 80 Q54 73 57 72 Z" fill="#7AAFBB"/>
-  <path d="M24 52 Q16 50 14 58 Q12 65 20 66 Q27 67 29 60 Z" fill="#7AAFBB"/>
-  <path d="M76 52 Q84 50 86 58 Q88 65 80 66 Q73 67 71 60 Z" fill="#7AAFBB"/>
-  <ellipse cx="50" cy="47" rx="28" ry="30" fill="#99C9D7"/>
-  <ellipse cx="42" cy="38" rx="9" ry="7" fill="#C5E4EC" opacity="0.55"/>
-  <!-- Breathing circles radiating from mouth area -->
-  <circle cx="50" cy="66" r="6" fill="none" stroke="#C5E4EC" stroke-width="1.5" opacity="0.7"/>
-  <circle cx="50" cy="66" r="11" fill="none" stroke="#C5E4EC" stroke-width="1" opacity="0.45"/>
-  <circle cx="50" cy="66" r="16" fill="none" stroke="#C5E4EC" stroke-width="0.8" opacity="0.25"/>
-  <!-- Calm eyes, focused -->
-  <circle cx="41" cy="43" r="4.5" fill="#2D4A52"/>
-  <circle cx="43" cy="41" r="1.5" fill="white"/>
-  <circle cx="59" cy="43" r="4.5" fill="#2D4A52"/>
-  <circle cx="61" cy="41" r="1.5" fill="white"/>
-  <!-- Mouth in "O" — breathing out -->
-  <ellipse cx="50" cy="56" rx="4" ry="3.5" fill="#2D4A52"/>
-  <ellipse cx="50" cy="56" rx="2.5" ry="2.2" fill="#5C3030"/>
-  <!-- Small breath particles -->
-  <circle cx="50" cy="28" r="2" fill="#C5E4EC" opacity="0.6"/>
-  <circle cx="44" cy="23" r="1.5" fill="#C5E4EC" opacity="0.4"/>
-  <circle cx="56" cy="23" r="1.5" fill="#C5E4EC" opacity="0.4"/>
-  <circle cx="50" cy="17" r="1" fill="#C5E4EC" opacity="0.3"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <ellipse cx="100" cy="178" rx="36" ry="7" fill="#5A8A9A" opacity="0.30"/>
+  <path d="M82 160 Q79 171 81 177 Q83 181 88 180 Q93 179 92 170 Q91 162 86 160 Z" fill="#7BA8B8" stroke="#2D5566" stroke-width="1.5"/>
+  <path d="M118 160 Q121 171 119 177 Q117 181 112 180 Q107 179 108 170 Q109 162 114 160 Z" fill="#7BA8B8" stroke="#2D5566" stroke-width="1.5"/>
+  <circle cx="100" cy="134" r="12" fill="none" stroke="#A8D0E0" stroke-width="2" opacity="0.65"/>
+  <circle cx="100" cy="134" r="22" fill="none" stroke="#A8D0E0" stroke-width="1.5" opacity="0.40"/>
+  <circle cx="100" cy="134" r="32" fill="none" stroke="#A8D0E0" stroke-width="1" opacity="0.22"/>
+  <path d="M41 112 Q30 108 27 120 Q24 131 36 133 Q47 134 49 122 Z" fill="#7BA8B8" stroke="#2D5566" stroke-width="1.5"/>
+  <path d="M159 112 Q170 108 173 120 Q176 131 164 133 Q153 134 151 122 Z" fill="#7BA8B8" stroke="#2D5566" stroke-width="1.5"/>
+  <ellipse cx="100" cy="108" rx="62" ry="58" fill="#7BA8B8"/>
+  <ellipse cx="108" cy="118" rx="46" ry="42" fill="#5A8A9A" opacity="0.35"/>
+  <ellipse cx="100" cy="108" rx="62" ry="58" fill="none" stroke="#2D5566" stroke-width="1.5"/>
+  <ellipse cx="72" cy="76" rx="20" ry="14" fill="white" opacity="0.35" transform="rotate(-45 72 76)"/>
+  <ellipse cx="84" cy="104" rx="7" ry="8" fill="#1A3A4A"/>
+  <circle cx="87" cy="101" r="2.5" fill="white"/>
+  <ellipse cx="116" cy="104" rx="7" ry="8" fill="#1A3A4A"/>
+  <circle cx="119" cy="101" r="2.5" fill="white"/>
+  <ellipse cx="100" cy="120" rx="6" ry="5" fill="#1A3A4A"/>
+  <ellipse cx="100" cy="120" rx="3.5" ry="3" fill="#0E2030"/>
+  <circle cx="100" cy="62" r="3.5" fill="#A8D0E0" opacity="0.55"/>
+  <circle cx="90" cy="52" r="2.5" fill="#A8D0E0" opacity="0.38"/>
+  <circle cx="110" cy="52" r="2.5" fill="#A8D0E0" opacity="0.38"/>
+  <circle cx="100" cy="42" r="2" fill="#A8D0E0" opacity="0.25"/>
 </svg>

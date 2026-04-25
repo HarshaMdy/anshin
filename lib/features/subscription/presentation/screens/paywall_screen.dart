@@ -163,6 +163,20 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
         ? "That's ${_perMonth(annualPkg.storeProduct.price, annualPkg.storeProduct.currencyCode)}/month"
         : StringsPaywall.annualSubtext;
 
+    // CTA subtext below the button — built from the store's localised
+    // priceString so users in India see "₹749/year" instead of "$34.99/year".
+    // storeProduct.priceString is already formatted with the correct currency
+    // symbol and locale (e.g. "₹749.00", "€29,99", "$34.99") — we just append
+    // the billing period. Falls back to the USD constants when RC is offline.
+    final ctaSubtextAnnual = annualPkg != null
+        ? 'Free for 7 days, then ${annualPkg.storeProduct.priceString}/year.'
+          ' Cancel anytime in Play Store.'
+        : StringsPaywall.ctaSubtextAnnual;
+    final ctaSubtextMonthly = monthlyPkg != null
+        ? 'Free for 7 days, then ${monthlyPkg.storeProduct.priceString}/month.'
+          ' Cancel anytime in Play Store.'
+        : StringsPaywall.ctaSubtextMonthly;
+
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
@@ -346,11 +360,11 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
 
                   const SizedBox(height: 8),
 
-                  // CTA subtext
+                  // CTA subtext — localised currency from RC, USD fallback
                   Text(
                     _selectedPlan == 'annual'
-                        ? StringsPaywall.ctaSubtextAnnual
-                        : StringsPaywall.ctaSubtextMonthly,
+                        ? ctaSubtextAnnual
+                        : ctaSubtextMonthly,
                     style: AppTypography.caption
                         .copyWith(color: textSecondary),
                     textAlign: TextAlign.center,

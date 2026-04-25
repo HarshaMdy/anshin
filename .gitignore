@@ -57,3 +57,8 @@ lib/core/config/secrets.dart
 
 # ─── Placeholder font files (real fonts will be added manually) ──────────────
 assets/fonts/*.ttf
+.vscode/ 
+.claude/settings.local.json 
+.vscode/ 
+.vscode/ 
+.claude/settings.local.json 

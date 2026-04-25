@@ -1,23 +1,25 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <ellipse cx="50" cy="89" rx="18" ry="3.5" fill="#7AAFBB" opacity="0.2"/>
-  <path d="M39 72 Q36 80 38 85 Q40 89 44 88 Q48 87 46 80 Q46 73 43 72 Z" fill="#7AAFBB"/>
-  <path d="M61 72 Q64 80 62 85 Q60 89 56 88 Q52 87 54 80 Q54 73 57 72 Z" fill="#7AAFBB"/>
-  <!-- Arms raised in alarm -->
-  <path d="M25 48 Q16 42 13 50 Q11 57 20 59 Q27 60 30 53 Z" fill="#7AAFBB"/>
-  <path d="M75 48 Q84 42 87 50 Q89 57 80 59 Q73 60 70 53 Z" fill="#7AAFBB"/>
-  <ellipse cx="50" cy="47" rx="28" ry="30" fill="#99C9D7"/>
-  <ellipse cx="42" cy="38" rx="9" ry="7" fill="#C5E4EC" opacity="0.55"/>
-  <!-- Left eye — very wide -->
-  <circle cx="41" cy="42" r="7" fill="#2D4A52"/>
-  <circle cx="43.5" cy="39.5" r="2.2" fill="white"/>
-  <!-- Right eye — very wide -->
-  <circle cx="59" cy="42" r="7" fill="#2D4A52"/>
-  <circle cx="61.5" cy="39.5" r="2.2" fill="white"/>
-  <!-- Open O mouth -->
-  <ellipse cx="50" cy="57" rx="5.5" ry="4.5" fill="#2D4A52"/>
-  <ellipse cx="50" cy="57" rx="3.5" ry="3" fill="#5C2020"/>
-  <!-- Sweat drops -->
-  <path d="M30 32 Q32 27 30 24 Q28 27 30 32 Z" fill="#99C9D7" opacity="0.7"/>
-  <path d="M70 32 Q72 27 70 24 Q68 27 70 32 Z" fill="#99C9D7" opacity="0.7"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <ellipse cx="100" cy="178" rx="36" ry="7" fill="#5A8A9A" opacity="0.30"/>
+  <path d="M82 160 Q79 171 81 177 Q83 181 88 180 Q93 179 92 170 Q91 162 86 160 Z" fill="#7BA8B8" stroke="#2D5566" stroke-width="1.5"/>
+  <path d="M118 160 Q121 171 119 177 Q117 181 112 180 Q107 179 108 170 Q109 162 114 160 Z" fill="#7BA8B8" stroke="#2D5566" stroke-width="1.5"/>
+  <path d="M42 90 Q30 79 23 90 Q16 102 29 109 Q41 114 48 101 Z" fill="#7BA8B8" stroke="#2D5566" stroke-width="1.5"/>
+  <path d="M158 90 Q170 79 177 90 Q184 102 171 109 Q159 114 152 101 Z" fill="#7BA8B8" stroke="#2D5566" stroke-width="1.5"/>
+  <ellipse cx="100" cy="108" rx="62" ry="58" fill="#7BA8B8"/>
+  <ellipse cx="108" cy="118" rx="46" ry="42" fill="#5A8A9A" opacity="0.35"/>
+  <ellipse cx="100" cy="108" rx="62" ry="58" fill="none" stroke="#2D5566" stroke-width="1.5"/>
+  <ellipse cx="72" cy="76" rx="20" ry="14" fill="white" opacity="0.35" transform="rotate(-45 72 76)"/>
+  <path d="M73 88 Q82 82 92 87" fill="none" stroke="#2D5566" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M108 87 Q118 82 127 88" fill="none" stroke="#2D5566" stroke-width="2.5" stroke-linecap="round"/>
+  <ellipse cx="84" cy="104" rx="9" ry="11" fill="#1A3A4A"/>
+  <circle cx="87" cy="100" r="3.2" fill="white"/>
+  <ellipse cx="116" cy="104" rx="9" ry="11" fill="#1A3A4A"/>
+  <circle cx="119" cy="100" r="3.2" fill="white"/>
+  <ellipse cx="100" cy="124" rx="8" ry="7" fill="#1A3A4A"/>
+  <ellipse cx="100" cy="124" rx="5" ry="4.5" fill="#0E2030"/>
+  <line x1="21" y1="74" x2="32" y2="77" stroke="#2D5566" stroke-width="1.5" stroke-linecap="round" opacity="0.55"/>
+  <line x1="18" y1="84" x2="30" y2="84" stroke="#2D5566" stroke-width="1.5" stroke-linecap="round" opacity="0.55"/>
+  <line x1="179" y1="74" x2="168" y2="77" stroke="#2D5566" stroke-width="1.5" stroke-linecap="round" opacity="0.55"/>
+  <line x1="182" y1="84" x2="170" y2="84" stroke="#2D5566" stroke-width="1.5" stroke-linecap="round" opacity="0.55"/>
+  <path d="M60 64 Q63 57 60 54 Q57 57 60 64 Z" fill="#A8D0E0" opacity="0.7"/>
+  <path d="M140 64 Q143 57 140 54 Q137 57 140 64 Z" fill="#A8D0E0" opacity="0.7"/>
 </svg>

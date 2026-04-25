@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <defs>
+    <linearGradient id="rainSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#9AAAB8"/>
+      <stop offset="100%" stop-color="#C4D0DA"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#rainSky)"/>
+  <line x1="60" y1="10" x2="54" y2="60" stroke="#B8CCE0" stroke-width="1" opacity="0.5"/>
+  <line x1="100" y1="0" x2="94" y2="55" stroke="#B8CCE0" stroke-width="1" opacity="0.4"/>
+  <line x1="155" y1="15" x2="149" y2="70" stroke="#B8CCE0" stroke-width="1" opacity="0.5"/>
+  <line x1="220" y1="5" x2="214" y2="60" stroke="#B8CCE0" stroke-width="1" opacity="0.45"/>
+  <line x1="280" y1="0" x2="274" y2="55" stroke="#B8CCE0" stroke-width="1" opacity="0.5"/>
+  <line x1="340" y1="20" x2="334" y2="75" stroke="#B8CCE0" stroke-width="1" opacity="0.4"/>
+  <line x1="380" y1="8" x2="374" y2="63" stroke="#B8CCE0" stroke-width="1" opacity="0.5"/>
+  <line x1="30" y1="80" x2="24" y2="130" stroke="#B8CCE0" stroke-width="1" opacity="0.35"/>
+  <line x1="130" y1="85" x2="124" y2="135" stroke="#B8CCE0" stroke-width="1" opacity="0.4"/>
+  <line x1="250" y1="70" x2="244" y2="120" stroke="#B8CCE0" stroke-width="1" opacity="0.38"/>
+  <line x1="370" y1="90" x2="364" y2="140" stroke="#B8CCE0" stroke-width="1" opacity="0.35"/>
+  <ellipse cx="200" cy="290" rx="200" ry="18" fill="#6878888" opacity="0.4"/>
+  <rect x="0" y="280" width="400" height="20" fill="#7A8A9A" opacity="0.35"/>
+  <path d="M182 250 Q179 260 181 265 Q183 269 188 268 Q193 267 191 258 Q190 250 185 250 Z" fill="#7BA8B8" stroke="#2D5566" stroke-width="1.5"/>
+  <path d="M218 250 Q221 260 219 265 Q217 269 212 268 Q207 267 209 258 Q210 250 215 250 Z" fill="#7BA8B8" stroke="#2D5566" stroke-width="1.5"/>
+  <path d="M152 207 Q143 207 142 217 Q141 226 151 226 Q160 226 161 217 Z" fill="#7BA8B8" stroke="#2D5566" stroke-width="1.5"/>
+  <path d="M248 207 Q257 207 258 217 Q259 226 249 226 Q240 226 239 217 Z" fill="#7BA8B8" stroke="#2D5566" stroke-width="1.5"/>
+  <rect x="154" y="220" width="92" height="66" rx="4" fill="#F0EBE0" stroke="#C8C0A8" stroke-width="1.5"/>
+  <rect x="154" y="220" width="10" height="66" rx="2" fill="#D4C8A8"/>
+  <line x1="168" y1="233" x2="236" y2="233" stroke="#C0B8A0" stroke-width="1" opacity="0.7"/>
+  <line x1="168" y1="241" x2="236" y2="241" stroke="#C0B8A0" stroke-width="1" opacity="0.7"/>
+  <line x1="168" y1="249" x2="228" y2="249" stroke="#C0B8A0" stroke-width="1" opacity="0.7"/>
+  <line x1="168" y1="257" x2="236" y2="257" stroke="#C0B8A0" stroke-width="1" opacity="0.7"/>
+  <ellipse cx="200" cy="202" rx="52" ry="49" fill="#7BA8B8"/>
+  <ellipse cx="207" cy="211" rx="38" ry="35" fill="#5A8A9A" opacity="0.35"/>
+  <ellipse cx="200" cy="202" rx="52" ry="49" fill="none" stroke="#2D5566" stroke-width="1.5"/>
+  <ellipse cx="178" cy="178" rx="17" ry="12" fill="white" opacity="0.35" transform="rotate(-45 178 178)"/>
+  <ellipse cx="191" cy="198" rx="6" ry="7" fill="#1A3A4A"/>
+  <circle cx="194" cy="196" r="2.2" fill="white"/>
+  <ellipse cx="209" cy="198" rx="6" ry="7" fill="#1A3A4A"/>
+  <circle cx="212" cy="196" r="2.2" fill="white"/>
+  <path d="M190 212 Q200 219 210 212" fill="none" stroke="#1A3A4A" stroke-width="1.8" stroke-linecap="round"/>
+</svg>

@@ -12,6 +12,7 @@ import '../../../../core/constants/strings_onboarding.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/mascot_widget.dart';
+import '../../../../core/widgets/scene_painter.dart';
 import '../../../../routing/app_routes.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../providers/onboarding_provider.dart';
@@ -102,141 +103,172 @@ class _OnboardingCScreenState extends ConsumerState<OnboardingCScreen> {
         title: _StepIndicator(textSecondary: textSecondary),
         centerTitle: true,
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // ── Heading ────────────────────────────────────────────────────
-              Text(
-                StringsOnboarding.screen3Heading,
-                style: AppTypography.headingLarge
-                    .copyWith(color: textPrimary),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                StringsOnboarding.screen3Sub,
-                style: AppTypography.bodyMedium
-                    .copyWith(color: textSecondary),
-              ),
-
-              const SizedBox(height: 40),
-
-              // ── Mascot — hopeful when time set, calm otherwise ──────────────
-              Center(
-                child: MascotWidget(
-                  emotion: _reminderTime != null
-                      ? MascotEmotion.hopeful
-                      : MascotEmotion.calm,
-                  size: 90,
-                  breathe: true,
-                ),
-              ),
-
-              const SizedBox(height: 28),
-
-              // ── Time display (after picking) ──────────────────────────────
-              if (_reminderTime != null) ...[
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 20, vertical: 14),
-                  decoration: BoxDecoration(
-                    color: AppColors.accentTeal.withValues(alpha: 0.07),
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(
-                      color: AppColors.accentTeal.withValues(alpha: 0.30),
+      body: Column(
+        children: [
+          Expanded(
+            child: SafeArea(
+              bottom: false,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // ── Heading ─────────────────────────────────────────────
+                    Text(
+                      StringsOnboarding.screen3Heading,
+                      style: AppTypography.headingLarge.copyWith(
+                        color: textPrimary,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.access_time_outlined,
-                          color: AppColors.accentTeal, size: 18),
-                      const SizedBox(width: 8),
-                      Text(
-                        _formatTime(_reminderTime!),
-                        style: AppTypography.headingSmall.copyWith(
-                          color: AppColors.accentTeal,
+                    const SizedBox(height: 10),
+                    Text(
+                      StringsOnboarding.screen3Sub,
+                      style: AppTypography.bodyMedium
+                          .copyWith(color: textSecondary),
+                    ),
+
+                    const SizedBox(height: 40),
+
+                    // ── Mascot — hopeful when time set, calm otherwise ───────
+                    Center(
+                      child: MascotWidget(
+                        emotion: _reminderTime != null
+                            ? MascotEmotion.hopeful
+                            : MascotEmotion.calm,
+                        size: 90,
+                        breathe: true,
+                      ),
+                    ),
+
+                    const SizedBox(height: 28),
+
+                    // ── Time display (after picking) ─────────────────────────
+                    if (_reminderTime != null) ...[
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 14),
+                        decoration: BoxDecoration(
+                          color: AppColors.accentTeal.withValues(alpha: 0.07),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color:
+                                AppColors.accentTeal.withValues(alpha: 0.30),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.access_time_outlined,
+                                color: AppColors.accentTeal, size: 18),
+                            const SizedBox(width: 8),
+                            Text(
+                              _formatTime(_reminderTime!),
+                              style: AppTypography.headingSmall.copyWith(
+                                color: AppColors.accentTeal,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
+                      const SizedBox(height: 12),
                     ],
-                  ),
-                ),
-                const SizedBox(height: 12),
-              ],
 
-              // ── Set / change reminder button ───────────────────────────────
-              OutlinedButton.icon(
-                onPressed: _saving ? null : _pickTime,
-                icon: const Icon(Icons.access_time_outlined, size: 18),
-                label: Text(
-                  _reminderTime == null
-                      ? StringsOnboarding.screen3SetButton
-                      : 'Change time',
-                ),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.accentTeal,
-                  side: BorderSide(
-                    color: AppColors.accentTeal.withValues(alpha: 0.5),
-                  ),
-                  minimumSize: const Size(double.infinity, 52),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14)),
-                  textStyle: AppTypography.button,
+                    // ── Set / change reminder button ─────────────────────────
+                    OutlinedButton.icon(
+                      onPressed: _saving ? null : _pickTime,
+                      icon: const Icon(Icons.access_time_outlined, size: 18),
+                      label: Text(
+                        _reminderTime == null
+                            ? StringsOnboarding.screen3SetButton
+                            : 'Change time',
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppColors.accentTeal,
+                        side: BorderSide(
+                          color: AppColors.accentTeal.withValues(alpha: 0.5),
+                        ),
+                        minimumSize: const Size(double.infinity, 52),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14)),
+                        textStyle: AppTypography.button,
+                      ),
+                    ),
+
+                    const Spacer(),
+
+                    // ── Confirm with reminder ─────────────────────────────────
+                    if (_reminderTime != null)
+                      ElevatedButton(
+                        onPressed:
+                            _saving ? null : () => _complete(withReminder: true),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.accentCoral,
+                          foregroundColor: Colors.white,
+                          disabledBackgroundColor:
+                              AppColors.accentCoral.withValues(alpha: 0.35),
+                          minimumSize: const Size(double.infinity, 56),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16)),
+                          textStyle: AppTypography.button,
+                          elevation: 0,
+                        ),
+                        child: _saving
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                    color: Colors.white, strokeWidth: 2),
+                              )
+                            : const Text("I'm all set"),
+                      ),
+
+                    if (_reminderTime != null) const SizedBox(height: 12),
+
+                    // ── Skip / not right now ──────────────────────────────────
+                    TextButton(
+                      onPressed:
+                          _saving ? null : () => _complete(withReminder: false),
+                      style: TextButton.styleFrom(
+                        foregroundColor: textSecondary,
+                        minimumSize: const Size(double.infinity, 48),
+                        textStyle: AppTypography.bodyMedium,
+                      ),
+                      child: _saving && _reminderTime == null
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : Text(StringsOnboarding.screen3SkipButton),
+                    ),
+                  ],
                 ),
               ),
-
-              const Spacer(),
-
-              // ── Confirm with reminder ─────────────────────────────────────
-              if (_reminderTime != null)
-                ElevatedButton(
-                  onPressed:
-                      _saving ? null : () => _complete(withReminder: true),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.accentCoral,
-                    foregroundColor: Colors.white,
-                    disabledBackgroundColor:
-                        AppColors.accentCoral.withValues(alpha: 0.35),
-                    minimumSize: const Size(double.infinity, 56),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16)),
-                    textStyle: AppTypography.button,
-                    elevation: 0,
-                  ),
-                  child: _saving
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                              color: Colors.white, strokeWidth: 2),
-                        )
-                      : const Text("I'm all set"),
-                ),
-
-              if (_reminderTime != null) const SizedBox(height: 12),
-
-              // ── Skip / not right now ──────────────────────────────────────
-              TextButton(
-                onPressed:
-                    _saving ? null : () => _complete(withReminder: false),
-                style: TextButton.styleFrom(
-                  foregroundColor: textSecondary,
-                  minimumSize: const Size(double.infinity, 48),
-                  textStyle: AppTypography.bodyMedium,
-                ),
-                child: _saving && _reminderTime == null
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Text(StringsOnboarding.screen3SkipButton),
-              ),
-            ],
+            ),
           ),
-        ),
+
+          // ── Illustrated forest floor footer strip ─────────────────────────
+          SizedBox(
+            height: 100,
+            width: double.infinity,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: morningForestGradient,
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                ),
+                const CustomPaint(painter: ForestFloorPainter()),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

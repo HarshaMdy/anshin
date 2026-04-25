@@ -1,22 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <ellipse cx="50" cy="89" rx="18" ry="3.5" fill="#7AAFBB" opacity="0.2"/>
-  <path d="M39 72 Q36 80 38 85 Q40 89 44 88 Q48 87 46 80 Q46 73 43 72 Z" fill="#7AAFBB"/>
-  <path d="M61 72 Q64 80 62 85 Q60 89 56 88 Q52 87 54 80 Q54 73 57 72 Z" fill="#7AAFBB"/>
-  <!-- Arms slightly raised — proud pose -->
-  <path d="M23 50 Q15 47 13 55 Q11 62 19 63 Q26 64 29 57 Z" fill="#7AAFBB"/>
-  <path d="M77 50 Q85 47 87 55 Q89 62 81 63 Q74 64 71 57 Z" fill="#7AAFBB"/>
-  <ellipse cx="50" cy="47" rx="28" ry="30" fill="#99C9D7"/>
-  <ellipse cx="42" cy="38" rx="9" ry="7" fill="#C5E4EC" opacity="0.55"/>
-  <!-- Star above head -->
-  <path d="M50 7 L51.8 12.5 L57.5 12.5 L53 15.8 L54.8 21 L50 17.8 L45.2 21 L47 15.8 L42.5 12.5 L48.2 12.5 Z" fill="#FFD166"/>
-  <!-- Left eye — confident happy arc -->
-  <path d="M37 43 Q41 38 45 43" stroke="#2D4A52" stroke-width="2.3" fill="none" stroke-linecap="round"/>
-  <!-- Right eye — confident happy arc -->
-  <path d="M55 43 Q59 38 63 43" stroke="#2D4A52" stroke-width="2.3" fill="none" stroke-linecap="round"/>
-  <!-- Big proud smile -->
-  <path d="M41 55 Q50 64 59 55" stroke="#2D4A52" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-  <!-- Puffed cheeks -->
-  <ellipse cx="33" cy="50" rx="4.5" ry="3" fill="#F4A0A0" opacity="0.5"/>
-  <ellipse cx="67" cy="50" rx="4.5" ry="3" fill="#F4A0A0" opacity="0.5"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <ellipse cx="100" cy="178" rx="36" ry="7" fill="#5A8A9A" opacity="0.30"/>
+  <path d="M82 160 Q79 171 81 177 Q83 181 88 180 Q93 179 92 170 Q91 162 86 160 Z" fill="#7BA8B8" stroke="#2D5566" stroke-width="1.5"/>
+  <path d="M118 160 Q121 171 119 177 Q117 181 112 180 Q107 179 108 170 Q109 162 114 160 Z" fill="#7BA8B8" stroke="#2D5566" stroke-width="1.5"/>
+  <path d="M42 88 Q30 78 23 90 Q17 101 30 107 Q42 112 48 99 Z" fill="#7BA8B8" stroke="#2D5566" stroke-width="1.5"/>
+  <path d="M158 88 Q170 78 177 90 Q183 101 170 107 Q158 112 152 99 Z" fill="#7BA8B8" stroke="#2D5566" stroke-width="1.5"/>
+  <ellipse cx="100" cy="108" rx="62" ry="58" fill="#7BA8B8"/>
+  <ellipse cx="108" cy="118" rx="46" ry="42" fill="#5A8A9A" opacity="0.35"/>
+  <ellipse cx="100" cy="108" rx="62" ry="58" fill="none" stroke="#2D5566" stroke-width="1.5"/>
+  <ellipse cx="72" cy="76" rx="20" ry="14" fill="white" opacity="0.35" transform="rotate(-45 72 76)"/>
+  <path d="M100 14 L103.6 25 L115 25 L106 31.6 L109.6 42 L100 35.6 L90.4 42 L94 31.6 L85 25 L96.4 25 Z" fill="#FFD166"/>
+  <path d="M77 104 Q84 98 91 104" fill="none" stroke="#1A3A4A" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M109 104 Q116 98 123 104" fill="none" stroke="#1A3A4A" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M85 119 Q100 133 115 119" fill="none" stroke="#1A3A4A" stroke-width="2.5" stroke-linecap="round"/>
+  <ellipse cx="70" cy="115" rx="10" ry="6" fill="#F4A0A0" opacity="0.25"/>
+  <ellipse cx="130" cy="115" rx="10" ry="6" fill="#F4A0A0" opacity="0.25"/>
 </svg>

@@ -1,20 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <ellipse cx="50" cy="92" rx="22" ry="3.5" fill="#7AAFBB" opacity="0.2"/>
-  <!-- Cross-legged sitting — legs tucked out to sides -->
-  <path d="M35 75 Q28 77 26 82 Q25 87 30 88 Q35 89 40 84 Q45 80 43 75 Z" fill="#7AAFBB"/>
-  <path d="M65 75 Q72 77 74 82 Q75 87 70 88 Q65 89 60 84 Q55 80 57 75 Z" fill="#7AAFBB"/>
-  <!-- Arms resting on knees -->
-  <path d="M28 60 Q21 60 20 67 Q19 73 26 73 Q32 73 34 67 Z" fill="#7AAFBB"/>
-  <path d="M72 60 Q79 60 80 67 Q81 73 74 73 Q68 73 66 67 Z" fill="#7AAFBB"/>
-  <ellipse cx="50" cy="48" rx="28" ry="30" fill="#99C9D7"/>
-  <ellipse cx="42" cy="39" rx="9" ry="7" fill="#C5E4EC" opacity="0.55"/>
-  <!-- Grounded peaceful face — half-smile, gentle eyes -->
-  <path d="M37 44 Q41 39 45 44" stroke="#2D4A52" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-  <path d="M55 44 Q59 39 63 44" stroke="#2D4A52" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-  <path d="M43 55 Q50 61 57 55" stroke="#2D4A52" stroke-width="2" fill="none" stroke-linecap="round"/>
-  <!-- Grounding anchor dots (subtle) -->
-  <circle cx="50" cy="92" r="2.5" fill="#7AAFBB" opacity="0.5"/>
-  <circle cx="42" cy="92" r="1.5" fill="#7AAFBB" opacity="0.35"/>
-  <circle cx="58" cy="92" r="1.5" fill="#7AAFBB" opacity="0.35"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <ellipse cx="100" cy="184" rx="44" ry="7" fill="#5A8A9A" opacity="0.30"/>
+  <path d="M70 152 Q55 156 52 165 Q50 173 60 175 Q70 177 80 168 Q88 160 86 152 Z" fill="#7BA8B8" stroke="#2D5566" stroke-width="1.5"/>
+  <path d="M130 152 Q145 156 148 165 Q150 173 140 175 Q130 177 120 168 Q112 160 114 152 Z" fill="#7BA8B8" stroke="#2D5566" stroke-width="1.5"/>
+  <path d="M44 122 Q33 122 32 133 Q31 143 42 143 Q52 143 54 133 Z" fill="#7BA8B8" stroke="#2D5566" stroke-width="1.5"/>
+  <path d="M156 122 Q167 122 168 133 Q169 143 158 143 Q148 143 146 133 Z" fill="#7BA8B8" stroke="#2D5566" stroke-width="1.5"/>
+  <ellipse cx="100" cy="108" rx="62" ry="58" fill="#7BA8B8"/>
+  <ellipse cx="108" cy="118" rx="46" ry="42" fill="#5A8A9A" opacity="0.35"/>
+  <ellipse cx="100" cy="108" rx="62" ry="58" fill="none" stroke="#2D5566" stroke-width="1.5"/>
+  <ellipse cx="72" cy="76" rx="20" ry="14" fill="white" opacity="0.35" transform="rotate(-45 72 76)"/>
+  <path d="M77 104 Q84 98 91 104" fill="none" stroke="#1A3A4A" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M109 104 Q116 98 123 104" fill="none" stroke="#1A3A4A" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M89 119 Q100 128 111 119" fill="none" stroke="#1A3A4A" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="100" cy="184" r="5" fill="#6A98A8" opacity="0.50"/>
+  <circle cx="84" cy="184" r="3" fill="#6A98A8" opacity="0.35"/>
+  <circle cx="116" cy="184" r="3" fill="#6A98A8" opacity="0.35"/>
 </svg>

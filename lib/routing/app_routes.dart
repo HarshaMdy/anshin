@@ -40,6 +40,9 @@ abstract final class AppRoutes {
 
   // ─── Learn ───────────────────────────────────────────────────────────────
   static const learnHome = '/learn';
+  // Track-level screen (must be declared before lessonDetail so the literal
+  // segment 'understanding' is not swallowed by the :lessonId parameter).
+  static const understandingTrack = '/learn/understanding';
   static const lessonDetail = '/learn/:lessonId'; // param: lessonId
   static String lessonDetailPath(String id) => '/learn/$id';
 

@@ -5,11 +5,20 @@
 // Each phase drives an AnimatedContainer (expand = inhale/holdIn,
 // contract = exhale/holdOut) with a duration equal to that phase.
 // Completion: "Nice work." + one-word feeling prompt.
+//
+// Voice guidance (flutter_tts):
+//   • Configured once in initState: rate 0.45, pitch 0.85, vol 0.9, en-US.
+//   • A 300ms pre-pause fires before each cue — the silence itself feels like
+//     a breath and prevents the voice from cutting in abruptly.
+//   • Cue text is intentionally plain English: "Breathe in" / "Hold" /
+//     "Breathe out" rather than clinical "Inhale" / "Exhale".
+//   • Fired at the START of each phase (initState + every phase transition).
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/strings_breathing.dart';
@@ -49,10 +58,40 @@ class _BreathingSessionScreenState
 
   Timer? _timer;
 
+  // ── TTS ───────────────────────────────────────────────────────────────────
+  final FlutterTts _tts = FlutterTts();
+
+  /// Configure TTS once — calmer defaults than the system preset.
+  Future<void> _initTts() async {
+    await _tts.setLanguage('en-US');
+    await _tts.setSpeechRate(0.45);   // ~half speed — feels like a slow breath
+    await _tts.setPitch(0.85);        // slightly lower — warmer, less robotic
+    await _tts.setVolume(0.9);
+  }
+
+  /// Speak the cue for a phase.  The 300ms pre-pause lands in silence —
+  /// that silence itself signals "something is about to change" before
+  /// the voice arrives, matching how a good breathing coach behaves.
+  Future<void> _speakPhase(BreathingPhaseType type) async {
+    final cue = switch (type) {
+      BreathingPhaseType.inhale  => 'Breathe in',
+      BreathingPhaseType.holdIn  => 'Hold',
+      BreathingPhaseType.exhale  => 'Breathe out',
+      BreathingPhaseType.holdOut => 'Hold',
+    };
+    await Future.delayed(const Duration(milliseconds: 300));
+    if (mounted) await _tts.speak(cue);
+  }
+
   @override
   void initState() {
     super.initState();
     _pattern = BreathingPattern.byId(widget.patternId);
+    // _startPhase must be called SYNCHRONOUSLY before _startTimer so that
+    // _phaseRemaining has a non-zero value when the first timer tick fires.
+    // _initTts runs concurrently — it completes in ~50ms, well within the
+    // 300ms pre-pause in _speakPhase, so settings are applied before speak().
+    unawaited(_initTts());
     _startPhase(0);
     _startTimer();
   }
@@ -60,6 +99,7 @@ class _BreathingSessionScreenState
   @override
   void dispose() {
     _timer?.cancel();
+    unawaited(_tts.stop());
     super.dispose();
   }
 
@@ -72,6 +112,9 @@ class _BreathingSessionScreenState
     _phaseDuration = Duration(seconds: phase.durationSeconds);
     _expanded = phase.type == BreathingPhaseType.inhale ||
         phase.type == BreathingPhaseType.holdIn;
+    // Speak the cue at the start of every phase.
+    // unawaited — the 300ms delay runs independently; the UI doesn't block.
+    unawaited(_speakPhase(phase.type));
   }
 
   void _startTimer() {
@@ -97,6 +140,7 @@ class _BreathingSessionScreenState
 
   void _stop() {
     _timer?.cancel();
+    unawaited(_tts.stop()); // silence immediately when user exits
     if (context.canPop()) {
       context.pop();
     } else {
@@ -173,10 +217,11 @@ class _SessionView extends StatelessWidget {
   static const double _minCircle = 120.0;
   static const double _maxCircle = 240.0;
 
+  // Match the spoken cue exactly so visual and voice tell the same story.
   String get _phaseLabel => switch (pattern.phases[phaseIndex].type) {
-        BreathingPhaseType.inhale => 'Inhale',
-        BreathingPhaseType.holdIn => 'Hold',
-        BreathingPhaseType.exhale => 'Exhale',
+        BreathingPhaseType.inhale  => 'Breathe in',
+        BreathingPhaseType.holdIn  => 'Hold',
+        BreathingPhaseType.exhale  => 'Breathe out',
         BreathingPhaseType.holdOut => 'Hold',
       };
 

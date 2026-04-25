@@ -1,7 +1,6 @@
 // Daily check-in screen — Content Bible §10
-// Mood 5-circle scale (sentiment icons — swappable for mascot SVGs later),
-// anxiety 1-10 slider, optional tags, save → SQLite + Firestore.
-// Theme-adaptive (follows user theme, not forced dark).
+// Mood 5-mascot scale (mascot SVG expressions), anxiety 1-10 slider, optional
+// tags, save → SQLite + Firestore.  Theme-adaptive (follows user theme).
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -9,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/strings_checkin.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/widgets/mascot_widget.dart';
 import '../../../../routing/app_routes.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../providers/checkin_provider.dart';
@@ -76,11 +76,24 @@ class _CheckinScreenState extends ConsumerState<CheckinScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // ── Calm mascot above heading ─────────────────────────────────
+              const Center(
+                child: MascotWidget(
+                  emotion: MascotEmotion.calm,
+                  size: 72,
+                  breathe: true,
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
               // ── Heading ───────────────────────────────────────────────────
               Text(
                 StringsCheckin.heading,
-                style: AppTypography.headingLarge
-                    .copyWith(color: textPrimary),
+                style: AppTypography.headingLarge.copyWith(
+                  color: textPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
 
               const SizedBox(height: 36),
@@ -155,7 +168,7 @@ class _CheckinScreenState extends ConsumerState<CheckinScreen> {
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
-// Mood scale
+// Mood scale — mascot SVG expressions
 // ═════════════════════════════════════════════════════════════════════════════
 
 class _MoodRow extends StatelessWidget {
@@ -169,13 +182,13 @@ class _MoodRow extends StatelessWidget {
     required this.textSecondary,
   });
 
-  // Placeholder sentiment icons — swap for mascot SVGs when assets are ready.
-  static const List<IconData> _icons = [
-    Icons.sentiment_very_dissatisfied_outlined,
-    Icons.sentiment_dissatisfied_outlined,
-    Icons.sentiment_neutral_outlined,
-    Icons.sentiment_satisfied_outlined,
-    Icons.sentiment_very_satisfied_outlined,
+  // 5 mascot emotions mapped to the mood scale 1–5
+  static const List<MascotEmotion> _emotions = [
+    MascotEmotion.checkin1,  // Struggling
+    MascotEmotion.checkin2,  // Rough
+    MascotEmotion.checkin3,  // Okay
+    MascotEmotion.checkin4,  // Good
+    MascotEmotion.checkin5,  // Great
   ];
 
   static const List<String> _labels = [
@@ -192,9 +205,9 @@ class _MoodRow extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         for (var i = 0; i < 5; i++)
-          _MoodCircle(
+          _MoodMascot(
             mood: i + 1,
-            icon: _icons[i],
+            emotion: _emotions[i],
             label: _labels[i],
             isSelected: selectedMood == i + 1,
             onTap: () => onSelect(i + 1),
@@ -205,17 +218,17 @@ class _MoodRow extends StatelessWidget {
   }
 }
 
-class _MoodCircle extends StatelessWidget {
+class _MoodMascot extends StatelessWidget {
   final int mood;
-  final IconData icon;
+  final MascotEmotion emotion;
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
   final Color textSecondary;
 
-  const _MoodCircle({
+  const _MoodMascot({
     required this.mood,
-    required this.icon,
+    required this.emotion,
     required this.label,
     required this.isSelected,
     required this.onTap,
@@ -229,47 +242,52 @@ class _MoodCircle extends StatelessWidget {
       selected: isSelected,
       label: isSelected ? '$label, selected' : label,
       child: GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            width: 56,
-            height: 56,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: isSelected
-                  ? AppColors.accentCoral.withValues(alpha: 0.12)
-                  : Colors.transparent,
-              border: Border.all(
-                color: isSelected
-                    ? AppColors.accentCoral
-                    : textSecondary.withValues(alpha: 0.30),
-                width: isSelected ? 2 : 1,
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Coral circle behind mascot when selected + scale 1.15x
+            AnimatedScale(
+              scale: isSelected ? 1.15 : 1.0,
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOut,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isSelected
+                      ? AppColors.accentCoral.withValues(alpha: 0.18)
+                      : Colors.transparent,
+                  border: Border.all(
+                    color: isSelected
+                        ? AppColors.accentCoral
+                        : textSecondary.withValues(alpha: 0.20),
+                    width: isSelected ? 2 : 1,
+                  ),
+                ),
+                child: Center(
+                  child: MascotWidget(
+                    emotion: emotion,
+                    size: 38,
+                  ),
+                ),
               ),
             ),
-            child: Icon(
-              icon,
-              size: 28,
-              color:
-                  isSelected ? AppColors.accentCoral : textSecondary,
+            const SizedBox(height: 6),
+            Text(
+              label,
+              style: AppTypography.caption.copyWith(
+                fontSize: 11,
+                color: isSelected ? AppColors.accentCoral : textSecondary,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+              ),
+              textAlign: TextAlign.center,
             ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            label,
-            style: AppTypography.caption.copyWith(
-              fontSize: 11,
-              color: isSelected ? AppColors.accentCoral : textSecondary,
-              fontWeight:
-                  isSelected ? FontWeight.w600 : FontWeight.w400,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
+          ],
+        ),
       ),
     );
   }

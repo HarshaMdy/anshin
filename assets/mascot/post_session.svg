@@ -8,9 +8,12 @@
   <ellipse cx="108" cy="118" rx="46" ry="42" fill="#5A8A9A" opacity="0.35"/>
   <ellipse cx="100" cy="108" rx="62" ry="58" fill="none" stroke="#2D5566" stroke-width="1.5"/>
   <ellipse cx="72" cy="76" rx="20" ry="14" fill="white" opacity="0.35" transform="rotate(-45 72 76)"/>
-  <path d="M84 107 C84 107 76 100 76 95 C76 91 79 90 82 92 C83 92.5 84 94 84 94 C84 94 85 92.5 86 92 C89 90 92 91 92 95 C92 100 84 107 84 107 Z" fill="#1A3A4A"/>
-  <path d="M116 107 C116 107 108 100 108 95 C108 91 111 90 114 92 C115 92.5 116 94 116 94 C116 94 117 92.5 118 92 C121 90 124 91 124 95 C124 100 116 107 116 107 Z" fill="#1A3A4A"/>
-  <path d="M86 119 Q100 133 114 119" fill="none" stroke="#1A3A4A" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M77 104 Q84 98 91 104" fill="none" stroke="#1A3A4A" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M109 104 Q116 98 123 104" fill="none" stroke="#1A3A4A" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M86 119 Q100 132 114 119" fill="none" stroke="#1A3A4A" stroke-width="2.3" stroke-linecap="round"/>
   <ellipse cx="70" cy="115" rx="10" ry="5.5" fill="#F4A0A0" opacity="0.25"/>
   <ellipse cx="130" cy="115" rx="10" ry="5.5" fill="#F4A0A0" opacity="0.25"/>
+  <path d="M134 66 L135.2 70 L139.5 70 L136.2 72.5 L137.5 76.5 L134 74.2 L130.5 76.5 L131.8 72.5 L128.5 70 L132.8 70 Z" fill="#FFD166" opacity="0.85"/>
+  <path d="M112 105 Q118 102 122 106" fill="none" stroke="#A8D0E0" stroke-width="1.5" stroke-linecap="round" opacity="0.55"/>
+  <path d="M114 112 Q121 109 125 113" fill="none" stroke="#A8D0E0" stroke-width="1.2" stroke-linecap="round" opacity="0.40"/>
 </svg>
